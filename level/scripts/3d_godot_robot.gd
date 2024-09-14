@@ -16,11 +16,14 @@ func apply_rotation(_velocity: Vector3) -> void:
 
 func animate(_velocity: Vector3) -> void:
 	if not _character.is_on_floor():
-		animation.play("Jump")
+		if _velocity.y < 0:
+			animation.play("Fall")
+		else:
+			animation.play("Jump")
 		return
 
 	if _velocity: 
-		if _character.is_running():
+		if _character.is_running() and _character.is_on_floor():
 			animation.play("Sprint")
 			return
 		

@@ -22,6 +22,7 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 func _physics_process(delta):
 	if not is_on_floor():
 		velocity.y -= gravity * delta
+		_body.animate(velocity)
 	
 	if is_on_floor():
 		if Input.is_action_just_pressed("jump"):
@@ -50,13 +51,13 @@ func _move() -> void:
 	is_running()
 	_direction = _direction.rotated(Vector3.UP, _spring_arm_offset.rotation.y)
 	
-	if _direction: #se tiver direcao movimenta normal
+	if _direction:
 		velocity.x = _direction.x * _current_speed
 		velocity.z = _direction.z * _current_speed
 		_body.apply_rotation(velocity)
 		return
 	
-	velocity.x = move_toward(velocity.x, 0, _current_speed)#se nao esta parado
+	velocity.x = move_toward(velocity.x, 0, _current_speed)
 	velocity.z = move_toward(velocity.z, 0, _current_speed)
 	
 func is_running() -> bool:
