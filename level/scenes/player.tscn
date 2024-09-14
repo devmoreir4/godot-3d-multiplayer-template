@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://cffjduipbb3s5"]
+[gd_scene load_steps=35 format=3 uid="uid://cffjduipbb3s5"]
 
 [ext_resource type="Script" path="res://level/scripts/player.gd" id="1_tdh26"]
 [ext_resource type="Texture2D" uid="uid://bdg48m6l86q8i" path="res://characters/player/3DGodotRobot_GodotPalette.png" id="1_w11jc"]
@@ -4503,6 +4503,14 @@ _data = {
 "WallSlide": SubResource("Animation_ef22y")
 }
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_wb3a5"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("_body", "_spring_arm_offset")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 collision_mask = 3
@@ -4732,3 +4740,6 @@ spring_length = 5.0
 
 [node name="Camera3D" type="Camera3D" parent="SpringArmOffset/SpringArm3D"]
 current = true
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_wb3a5")

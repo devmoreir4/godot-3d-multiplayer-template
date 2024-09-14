@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://dugaivbj1o66n"]
+[gd_scene load_steps=7 format=3 uid="uid://dugaivbj1o66n"]
 
+[ext_resource type="Script" path="res://level/scripts/level.gd" id="1_e1sh7"]
 [ext_resource type="PackedScene" uid="uid://cffjduipbb3s5" path="res://level/scenes/player.tscn" id="1_uvcbi"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_r5xs5"]
@@ -15,6 +16,8 @@ size = Vector3(100, 0.05, 100)
 fog_enabled = true
 
 [node name="Level" type="Node3D"]
+script = ExtResource("1_e1sh7")
+player_scene = ExtResource("1_uvcbi")
 
 [node name="Environment" type="Node3D" parent="."]
 
@@ -36,6 +39,119 @@ transform = Transform3D(1, 0, 0, 0, -0.5, 0.866025, 0, -0.866025, -0.5, 0, 4, 0)
 shadow_enabled = true
 shadow_blur = 0.5
 
-[node name="Players" type="Node3D" parent="."]
+[node name="Menu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Player" parent="." instance=ExtResource("1_uvcbi")]
+[node name="ColorRect" type="ColorRect" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.111197, 0.111197, 0.111197, 1)
+
+[node name="MainContainer" type="VBoxContainer" parent="Menu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -578.5
+offset_top = -88.5
+offset_right = 578.5
+offset_bottom = 88.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 140
+alignment = 1
+
+[node name="Label" type="Label" parent="Menu/MainContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 65
+text = "Godot Multiplayer Template"
+
+[node name="Internet" type="VBoxContainer" parent="Menu/MainContainer"]
+layout_direction = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PlayerOption" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Label" type="Label" parent="Menu/MainContainer/Internet/PlayerOption"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 30
+text = "Nick : "
+
+[node name="NickInput" type="LineEdit" parent="Menu/MainContainer/Internet/PlayerOption"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+placeholder_text = "YourNick"
+max_length = 20
+expand_to_text_length = true
+
+[node name="PlayerColor" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Label" type="Label" parent="Menu/MainContainer/Internet/PlayerColor"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 30
+text = "Player Color : "
+
+[node name="ColorInput" type="OptionButton" parent="Menu/MainContainer/Internet/PlayerColor"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+alignment = 1
+item_count = 4
+selected = 0
+fit_to_longest_item = false
+popup/item_0/text = "Blue"
+popup/item_0/id = 0
+popup/item_1/text = "Red"
+popup/item_1/id = 1
+popup/item_2/text = "Yellow"
+popup/item_2/id = 2
+popup/item_3/text = "Green"
+popup/item_3/id = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Host" type="Button" parent="Menu/MainContainer/Internet/Buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "HOST"
+
+[node name="Client" type="Button" parent="Menu/MainContainer/Internet/Buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "CLIENT"
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://level/scenes/player.tscn")
+spawn_path = NodePath("..")
+
+[connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Client" to="." method="_on_client_pressed"]
