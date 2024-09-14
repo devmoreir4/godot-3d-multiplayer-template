@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://dugaivbj1o66n"]
+
+[ext_resource type="PackedScene" uid="uid://cffjduipbb3s5" path="res://level/scenes/player.tscn" id="1_uvcbi"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_r5xs5"]
+size = Vector2(100, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o02aj"]
+albedo_color = Color(0, 0.321569, 0.172549, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x3h1o"]
+size = Vector3(100, 0.05, 100)
+
+[sub_resource type="Environment" id="Environment_qb4jd"]
+fog_enabled = true
+
+[node name="Level" type="Node3D"]
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="Floor" type="StaticBody3D" parent="Environment"]
+collision_layer = 2
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Floor"]
+mesh = SubResource("PlaneMesh_r5xs5")
+surface_material_override/0 = SubResource("StandardMaterial3D_o02aj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Floor"]
+shape = SubResource("BoxShape3D_x3h1o")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_qb4jd")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, -0.5, 0.866025, 0, -0.866025, -0.5, 0, 4, 0)
+shadow_enabled = true
+shadow_blur = 0.5
+
+[node name="Players" type="Node3D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("1_uvcbi")]
