@@ -153,5 +153,7 @@ text = "CLIENT"
 _spawnable_scenes = PackedStringArray("res://level/scenes/player.tscn")
 spawn_path = NodePath("..")
 
+[node name="Players" type="Node3D" parent="."]
+
 [connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Client" to="." method="_on_client_pressed"]

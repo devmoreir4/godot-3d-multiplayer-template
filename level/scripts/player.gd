@@ -5,7 +5,7 @@ const NORMAL_SPEED = 5.0
 const SPRINT_SPEED = 9.0
 const JUMP_VELOCITY = 10
 
-var _current_speed: float
+var current_speed: float
 
 @export_category("Objects")
 @export var _body: Node3D = null
@@ -16,8 +16,12 @@ var _current_speed: float
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 func _enter_tree():
-	set_multiplayer_authority(name.to_int())
+	set_multiplayer_authority(str(name).to_int())
 	$SpringArmOffset/SpringArm3D/Camera3D.current = is_multiplayer_authority()
+
+#func _ready():
+	#if not is_multiplayer_authority(): return
+	#camera_3d.current = true
 
 func _physics_process(delta):
 	if not is_multiplayer_authority():
@@ -33,9 +37,6 @@ func _physics_process(delta):
 			velocity.y = JUMP_VELOCITY
 	else:
 		velocity.y -= gravity * delta
-	
-	if Input.is_action_just_pressed("quit"):
-		$"../".exit_game(name.to_int())
 	
 	_move()
 	move_and_slide()
@@ -59,20 +60,20 @@ func _move() -> void:
 	_direction = _direction.rotated(Vector3.UP, _spring_arm_offset.rotation.y)
 	
 	if _direction:
-		velocity.x = _direction.x * _current_speed
-		velocity.z = _direction.z * _current_speed
+		velocity.x = _direction.x * current_speed
+		velocity.z = _direction.z * current_speed
 		_body.apply_rotation(velocity)
 		return
 	
-	velocity.x = move_toward(velocity.x, 0, _current_speed)
-	velocity.z = move_toward(velocity.z, 0, _current_speed)
+	velocity.x = move_toward(velocity.x, 0, current_speed)
+	velocity.z = move_toward(velocity.z, 0, current_speed)
 	
 func is_running() -> bool:
 	if Input.is_action_pressed("shift"):
-		_current_speed = SPRINT_SPEED
+		current_speed = SPRINT_SPEED
 		return true
 	else:
-		_current_speed = NORMAL_SPEED
+		current_speed = NORMAL_SPEED
 		return false
 
 #@rpc("any_peer", "call_local")
