@@ -36,7 +36,6 @@ func _physics_process(delta):
 	
 	if Input.is_action_just_pressed("quit"):
 		$"../".exit_game(name.to_int())
-		get_tree().quit()
 	
 	_move()
 	move_and_slide()
