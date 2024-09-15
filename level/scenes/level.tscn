@@ -1,16 +1,38 @@
-[gd_scene load_steps=7 format=3 uid="uid://dugaivbj1o66n"]
+[gd_scene load_steps=15 format=3 uid="uid://dugaivbj1o66n"]
 
 [ext_resource type="Script" path="res://level/scripts/level.gd" id="1_e1sh7"]
 [ext_resource type="PackedScene" uid="uid://cffjduipbb3s5" path="res://level/scenes/player.tscn" id="1_uvcbi"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_r5xs5"]
-size = Vector2(100, 100)
+size = Vector2(90, 90)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o02aj"]
 albedo_color = Color(0, 0.321569, 0.172549, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_x3h1o"]
-size = Vector3(100, 0.05, 100)
+size = Vector3(90, 0.05, 90)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lc35d"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8pl0k"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_f43m5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_womqi"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_taagp"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_q5fs2"]
+size = Vector3(25, 1, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fs7ud"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_epsao"]
+size = Vector3(25, 1, 1.5)
 
 [sub_resource type="Environment" id="Environment_qb4jd"]
 fog_enabled = true
@@ -30,6 +52,56 @@ surface_material_override/0 = SubResource("StandardMaterial3D_o02aj")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Floor"]
 shape = SubResource("BoxShape3D_x3h1o")
+
+[node name="Box_1" type="StaticBody3D" parent="Environment"]
+collision_layer = 2
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Box_1"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 2.91206, 0.456, 6.91607)
+material_override = SubResource("StandardMaterial3D_lc35d")
+mesh = SubResource("BoxMesh_8pl0k")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Box_1"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 2.91167, 0.456274, 6.91607)
+shape = SubResource("BoxShape3D_f43m5")
+
+[node name="Box_2" type="StaticBody3D" parent="Environment"]
+collision_layer = 2
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Box_2"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 2.91206, 2.456, 9.916)
+mesh = SubResource("BoxMesh_8pl0k")
+surface_material_override/0 = SubResource("StandardMaterial3D_womqi")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Box_2"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 2.91167, 2.456, 9.916)
+shape = SubResource("BoxShape3D_f43m5")
+
+[node name="Box_3" type="StaticBody3D" parent="Environment"]
+collision_layer = 2
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Box_3"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 2.91206, 4.456, 12.916)
+mesh = SubResource("BoxMesh_8pl0k")
+surface_material_override/0 = SubResource("StandardMaterial3D_taagp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Box_3"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 2.91167, 4.456, 12.916)
+shape = SubResource("BoxShape3D_f43m5")
+
+[node name="Box_4" type="StaticBody3D" parent="Environment"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
+collision_layer = 2
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Box_4"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -3.52997, 5.947, 17.398)
+layers = 2
+mesh = SubResource("BoxMesh_q5fs2")
+surface_material_override/0 = SubResource("StandardMaterial3D_fs7ud")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Box_4"]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -3.52997, 5.947, 17.398)
+shape = SubResource("BoxShape3D_epsao")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
 environment = SubResource("Environment_qb4jd")
@@ -116,7 +188,7 @@ alignment = 1
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 30
-text = "Player Color : "
+text = "Player : "
 
 [node name="ColorInput" type="OptionButton" parent="Menu/MainContainer/Internet/PlayerColor"]
 layout_mode = 2
@@ -125,13 +197,13 @@ alignment = 1
 item_count = 4
 selected = 0
 fit_to_longest_item = false
-popup/item_0/text = "Blue"
+popup/item_0/text = "01 (Blue)"
 popup/item_0/id = 0
-popup/item_1/text = "Red"
+popup/item_1/text = "02 (Red)"
 popup/item_1/id = 1
-popup/item_2/text = "Yellow"
+popup/item_2/text = "03 (Yellow)"
 popup/item_2/id = 2
-popup/item_3/text = "Green"
+popup/item_3/text = "04 (Green)"
 popup/item_3/id = 3
 
 [node name="Buttons" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
@@ -152,8 +224,6 @@ text = "CLIENT"
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://level/scenes/player.tscn")
 spawn_path = NodePath("..")
-
-[node name="Players" type="Node3D" parent="."]
 
 [connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Client" to="." method="_on_client_pressed"]

@@ -4512,7 +4512,7 @@ properties/1/spawn = true
 properties/1/replication_mode = 1
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("_body", "_spring_arm_offset")]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 collision_mask = 3
 script = ExtResource("1_tdh26")
 _body = NodePath("3DGodotRobot")
@@ -4731,6 +4731,7 @@ libraries = {
 autoplay = "Idle"
 
 [node name="SpringArmOffset" type="Node3D" parent="." node_paths=PackedStringArray("_spring_arm")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 script = ExtResource("4_ygggd")
 _spring_arm = NodePath("SpringArm3D")
 
