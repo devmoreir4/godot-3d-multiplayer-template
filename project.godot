@@ -10,10 +10,12 @@ config_version=5
 
 [application]
 
-config/name="Multiplayer"
+config/name="TemplateOnlineMultiplayer"
+config/description="This is a template for a 3D multiplayer game developed in the Godot engine."
+config/tags=PackedStringArray("3d", "network")
 run/main_scene="res://level/scenes/level.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://icon.png"
 
 [input]
 
