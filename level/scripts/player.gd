@@ -10,18 +10,12 @@ var current_speed: float
 @export_category("Objects")
 @export var _body: Node3D = null
 @export var _spring_arm_offset: Node3D = null
-@onready var camera_3d = $SpringArmOffset/SpringArm3D/Camera3D
 
-# Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
 	$SpringArmOffset/SpringArm3D/Camera3D.current = is_multiplayer_authority()
-
-#func _ready():
-	#if not is_multiplayer_authority(): return
-	#camera_3d.current = true
 
 func _physics_process(delta):
 	if not is_multiplayer_authority():
@@ -33,7 +27,6 @@ func _physics_process(delta):
 	
 	if is_on_floor():
 		if Input.is_action_just_pressed("jump"):
-			#rpc_id(1, "_on_jump", velocity.y)
 			velocity.y = JUMP_VELOCITY
 	else:
 		velocity.y -= gravity * delta
@@ -75,7 +68,3 @@ func is_running() -> bool:
 	else:
 		current_speed = NORMAL_SPEED
 		return false
-
-#@rpc("any_peer", "call_local")
-#func _on_jump(jump_velocity):
-	#velocity.y = jump_velocity

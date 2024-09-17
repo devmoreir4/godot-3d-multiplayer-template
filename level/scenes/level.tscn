@@ -178,32 +178,33 @@ placeholder_text = "YourNick"
 max_length = 20
 expand_to_text_length = true
 
-[node name="PlayerColor" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
+[node name="PlayerSkin" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="Label" type="Label" parent="Menu/MainContainer/Internet/PlayerColor"]
+[node name="Label" type="Label" parent="Menu/MainContainer/Internet/PlayerSkin"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 30
-text = "Player : "
+text = "Player Skin : "
 
-[node name="ColorInput" type="OptionButton" parent="Menu/MainContainer/Internet/PlayerColor"]
+[node name="SkinInput" type="OptionButton" parent="Menu/MainContainer/Internet/PlayerSkin"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
+disabled = true
 alignment = 1
 item_count = 4
 selected = 0
 fit_to_longest_item = false
-popup/item_0/text = "01 (Blue)"
+popup/item_0/text = "Blue"
 popup/item_0/id = 0
-popup/item_1/text = "02 (Red)"
+popup/item_1/text = "Green"
 popup/item_1/id = 1
-popup/item_2/text = "03 (Yellow)"
+popup/item_2/text = "Red"
 popup/item_2/id = 2
-popup/item_3/text = "04 (Green)"
+popup/item_3/text = "Yellow"
 popup/item_3/id = 3
 
 [node name="Buttons" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
@@ -225,5 +226,6 @@ text = "CLIENT"
 _spawnable_scenes = PackedStringArray("res://level/scenes/player.tscn")
 spawn_path = NodePath("..")
 
+[connection signal="item_selected" from="Menu/MainContainer/Internet/PlayerSkin/SkinInput" to="." method="_on_skin_input_item_selected"]
 [connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Client" to="." method="_on_client_pressed"]
