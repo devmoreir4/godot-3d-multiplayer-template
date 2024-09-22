@@ -1,49 +1,58 @@
 extends Node3D
 
-const SPAWN_RADIUS : float = 10.0
-const MAX_PLAYERS : int = 10
-const PORT : int = 1027
-const IP_DEFAULT : String = "127.0.0.1"
-
+@onready var address_input = $Menu/MainContainer/MainMenu/Option3/AddressInput
+@onready var players_container = $PlayersContainer
 @onready var menu = $Menu
 @export var player_scene : PackedScene
 
-var peer = ENetMultiplayerPeer.new()
-
-func _unhandled_input(_event):
-	if Input.is_action_just_pressed("quit"):
-		get_tree().quit()
+func _ready():
+	if not multiplayer.is_server():
+		return
 		
+	multiplayer.peer_connected.connect(_add_player)
+	multiplayer.peer_disconnected.connect(_remove_player)
+
 func _on_host_pressed():
 	menu.hide()
-	peer.create_server(PORT, MAX_PLAYERS)
-	multiplayer.multiplayer_peer = peer
-	multiplayer.peer_connected.connect(add_player)
-	multiplayer.peer_disconnected.connect(remove_player)
-	add_player(multiplayer.get_unique_id())
+	Network.start_host()
 
 func _on_client_pressed():
 	menu.hide()
-	peer.create_client(IP_DEFAULT, PORT)
-	multiplayer.multiplayer_peer = peer
-
-func add_player(id: int):
+	Network.join_game(address_input.text)
+	
+func _add_player(id: int):
+	if not multiplayer.is_server() or id == 1:
+		return
+		
+	if players_container.has_node(str(id)):
+		return
+		
 	var player = player_scene.instantiate()
-	var pos := Vector2.from_angle(randf() * 2 * PI) * SPAWN_RADIUS
-	player.position = Vector3(pos.x, 0, pos.y)
 	player.name = str(id)
-	add_child(player)
+	player.position = get_spawn_point()
+	players_container.add_child(player, true)
 	
 	if multiplayer.is_server():
 		rpc("sync_player_position", id, player.position)
-
+		
+func get_spawn_point():
+	var spawn_point = Vector2.from_angle(randf() * 2 * PI) * 10 # SPAWN_RADIUS
+	return Vector3(spawn_point.x, 0, spawn_point.y)
+	
+func _remove_player(id):
+	if not multiplayer.is_server():
+		return
+	
+	if not players_container.has_node(str(id)):
+		return
+		
+	var player_node = players_container.get_node(str(id))
+	if player_node:
+		player_node.queue_free()
+	
 @rpc("any_peer", "call_local")
 func sync_player_position(id: int, new_position: Vector3):
-	var player = get_node(str(id))
+	var player = players_container.get_node(str(id))
 	if player:
 		player.position = new_position
-
-func remove_player(id: int):
-	var player = get_node_or_null(str(id))
-	if player:
-		player.queue_free()
+		

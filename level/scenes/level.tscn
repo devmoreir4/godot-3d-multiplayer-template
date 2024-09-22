@@ -141,7 +141,7 @@ offset_right = 578.5
 offset_bottom = 88.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 140
+theme_override_constants/separation = 100
 alignment = 1
 
 [node name="Label" type="Label" parent="Menu/MainContainer"]
@@ -151,7 +151,7 @@ size_flags_vertical = 0
 theme_override_font_sizes/font_size = 65
 text = "Godot Multiplayer Template"
 
-[node name="Internet" type="VBoxContainer" parent="Menu/MainContainer"]
+[node name="MainMenu" type="VBoxContainer" parent="Menu/MainContainer"]
 layout_direction = 1
 layout_mode = 2
 size_flags_horizontal = 4
@@ -159,73 +159,82 @@ size_flags_vertical = 4
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="PlayerOption" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
+[node name="Option1" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="Label" type="Label" parent="Menu/MainContainer/Internet/PlayerOption"]
+[node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option1"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 30
 text = "Nick : "
 
-[node name="NickInput" type="LineEdit" parent="Menu/MainContainer/Internet/PlayerOption"]
+[node name="NickInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option1"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 placeholder_text = "YourNick"
 max_length = 20
 expand_to_text_length = true
 
-[node name="PlayerSkin" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
+[node name="Option2" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
-[node name="Label" type="Label" parent="Menu/MainContainer/Internet/PlayerSkin"]
+[node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option2"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 30
 text = "Player Skin : "
 
-[node name="SkinInput" type="OptionButton" parent="Menu/MainContainer/Internet/PlayerSkin"]
+[node name="SkinInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-disabled = true
+placeholder_text = "blue"
 alignment = 1
-item_count = 4
-selected = 0
-fit_to_longest_item = false
-popup/item_0/text = "Blue"
-popup/item_0/id = 0
-popup/item_1/text = "Green"
-popup/item_1/id = 1
-popup/item_2/text = "Red"
-popup/item_2/id = 2
-popup/item_3/text = "Yellow"
-popup/item_3/id = 3
 
-[node name="Buttons" type="HBoxContainer" parent="Menu/MainContainer/Internet"]
+[node name="Option3" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option3"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 30
+text = "IP Address : "
+
+[node name="AddressInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+placeholder_text = "127.0.0.1"
+alignment = 1
+expand_to_text_length = true
+
+[node name="Buttons" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
 layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
 
-[node name="Host" type="Button" parent="Menu/MainContainer/Internet/Buttons"]
+[node name="Host" type="Button" parent="Menu/MainContainer/MainMenu/Buttons"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "HOST"
 
-[node name="Client" type="Button" parent="Menu/MainContainer/Internet/Buttons"]
+[node name="Client" type="Button" parent="Menu/MainContainer/MainMenu/Buttons"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "CLIENT"
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://level/scenes/player.tscn")
-spawn_path = NodePath("..")
+spawn_path = NodePath("../PlayersContainer")
 
-[connection signal="item_selected" from="Menu/MainContainer/Internet/PlayerSkin/SkinInput" to="." method="_on_skin_input_item_selected"]
-[connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Host" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="Menu/MainContainer/Internet/Buttons/Client" to="." method="_on_client_pressed"]
+[node name="PlayersContainer" type="Node3D" parent="."]
+
+[connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Client" to="." method="_on_client_pressed"]
