@@ -1,5 +1,6 @@
 extends Node3D
 
+@onready var nick_input: LineEdit = $Menu/MainContainer/MainMenu/Option1/NickInput
 @onready var address_input = $Menu/MainContainer/MainMenu/Option3/AddressInput
 @onready var players_container = $PlayersContainer
 @onready var menu = $Menu
@@ -18,7 +19,7 @@ func _on_host_pressed():
 
 func _on_client_pressed():
 	menu.hide()
-	Network.join_game(address_input.text)
+	Network.join_game(address_input.text, nick_input.text)
 	
 func _add_player(id: int):
 	if not multiplayer.is_server() or id == 1:
@@ -27,6 +28,11 @@ func _add_player(id: int):
 	if players_container.has_node(str(id)):
 		return
 		
+	print("-------------- ADDING ------------------")
+	print("Player id: ", id)
+	print(Network.players)
+	print("---------------------------------------")
+
 	var player = player_scene.instantiate()
 	player.name = str(id)
 	player.position = get_spawn_point()

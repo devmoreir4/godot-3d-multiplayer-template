@@ -5,7 +5,9 @@ const SERVER_PORT: int = 5466
 const MAX_PLAYERS : int = 10
 
 var players = {}
-var player_info = {"nick": "host"}
+var player_info = {
+	"nick" : "host"
+}
 
 signal player_connected(peer_id, player_info)
 signal server_disconnected
@@ -24,7 +26,10 @@ func start_host():
 		return error
 	multiplayer.multiplayer_peer = peer
 	
-func join_game(address):
+	players[1] = player_info # server
+	player_connected.emit(1, player_info)
+	
+func join_game(address, nickname):
 	if !address:
 		address = SERVER_ADDRESS
 	var peer = ENetMultiplayerPeer.new()
@@ -32,6 +37,7 @@ func join_game(address):
 	if error:
 		return error
 	multiplayer.multiplayer_peer = peer
+	player_info["nick"] = nickname
 	
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
