@@ -20,7 +20,6 @@ func _on_player_connected(peer_id, player_info):
 		var player_data = Network.players[id]
 		if id != peer_id:
 			rpc_id(peer_id, "sync_player_skin", id, player_data["skin"])
-			#rpc_id(peer_id, "sync_player_position", id, player_data["position"])
 
 	_add_player(peer_id, player_info)
 	
@@ -28,15 +27,12 @@ func _on_host_pressed():
 	menu.hide()
 	Network.start_host()
 
-func _on_client_pressed():
+func _on_join_pressed():
 	menu.hide()
 	Network.join_game(address_input.text.strip_edges(), nick_input.text.strip_edges(), skin_input.text.strip_edges())
 	
 func _add_player(id: int, player_info : Dictionary):
-	if not multiplayer.is_server() or id == 1:
-		return
-		
-	if players_container.has_node(str(id)):
+	if players_container.has_node(str(id)) or not multiplayer.is_server() or id == 1:
 		return
 
 	var player = player_scene.instantiate()
@@ -81,3 +77,7 @@ func sync_player_skin(id: int, skin_name: String):
 	var player = players_container.get_node(str(id))
 	if player:
 		player.set_player_skin(skin_name)
+		
+func _on_quit_pressed() -> void:
+	get_tree().quit()
+	

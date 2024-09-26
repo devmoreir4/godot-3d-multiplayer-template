@@ -21,10 +21,6 @@ config/icon="res://icon.png"
 
 Network="*res://level/scripts/network.gd"
 
-[global_group]
-
-button=""
-
 [input]
 
 move_left={

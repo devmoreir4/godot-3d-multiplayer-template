@@ -31,7 +31,7 @@ func start_host():
 		return error
 	multiplayer.multiplayer_peer = peer
 	
-	players[1] = player_info # server
+	players[1] = player_info # host info
 	player_connected.emit(1, player_info)
 	
 func join_game(address, nickname, skin_color):
@@ -62,7 +62,6 @@ func _register_player(new_player_info):
 	
 func _on_player_disconnected(id):
 	players.erase(id)
-	#player_connected.emit(id)
 	
 func _on_connection_failed():
 	multiplayer.multiplayer_peer = null

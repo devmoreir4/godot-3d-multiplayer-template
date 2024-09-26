@@ -1,7 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://dugaivbj1o66n"]
+[gd_scene load_steps=17 format=3 uid="uid://dugaivbj1o66n"]
 
 [ext_resource type="Script" path="res://level/scripts/level.gd" id="1_e1sh7"]
 [ext_resource type="PackedScene" uid="uid://cffjduipbb3s5" path="res://level/scenes/player.tscn" id="1_uvcbi"]
+[ext_resource type="FontFile" uid="uid://diapabmalpcrj" path="res://assets/fonts/Kurland.ttf" id="3_icc4p"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_r5xs5"]
 size = Vector2(90, 90)
@@ -36,6 +37,9 @@ size = Vector3(25, 1, 1.5)
 
 [sub_resource type="Environment" id="Environment_qb4jd"]
 fog_enabled = true
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_npnbc"]
+color = Color(0, 0, 0, 0)
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_e1sh7")
@@ -126,19 +130,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.111197, 0.111197, 0.111197, 1)
+color = Color(0.0901961, 0.0901961, 0.0901961, 1)
 
 [node name="MainContainer" type="VBoxContainer" parent="Menu"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchors_preset = 14
 anchor_top = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -578.0
-offset_top = -275.0
-offset_right = 579.0
-offset_bottom = 275.0
+offset_top = -257.0
+offset_bottom = 257.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
@@ -148,7 +149,8 @@ alignment = 1
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-theme_override_font_sizes/font_size = 60
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 70
 text = "Multiplayer Template"
 
 [node name="MainMenu" type="VBoxContainer" parent="Menu/MainContainer"]
@@ -159,6 +161,11 @@ size_flags_vertical = 4
 theme_override_constants/separation = 20
 alignment = 1
 
+[node name="HSeparator1" type="HSeparator" parent="Menu/MainContainer/MainMenu"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxLine_npnbc")
+
 [node name="Option1" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -168,12 +175,14 @@ alignment = 1
 [node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option1"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 30
-text = "Nick : "
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
+text = "Nickname : "
 
 [node name="NickInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option1"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
 placeholder_text = "YourNick"
 max_length = 20
 expand_to_text_length = true
@@ -186,13 +195,15 @@ alignment = 1
 [node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option2"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
 text = "Player Skin : "
 
 [node name="SkinInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option2"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
 placeholder_text = "blue"
 alignment = 1
 expand_to_text_length = true
@@ -206,30 +217,60 @@ alignment = 1
 [node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option3"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
 text = "IP Address : "
 
 [node name="AddressInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option3"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
 placeholder_text = "127.0.0.1"
 alignment = 1
 expand_to_text_length = true
+
+[node name="HSeparator2" type="HSeparator" parent="Menu/MainContainer/MainMenu"]
+layout_mode = 2
+theme_override_constants/separation = 30
+theme_override_styles/separator = SubResource("StyleBoxLine_npnbc")
 
 [node name="Buttons" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
 layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
 
-[node name="Host" type="Button" parent="Menu/MainContainer/MainMenu/Buttons" groups=["button"]]
+[node name="Host" type="Button" parent="Menu/MainContainer/MainMenu/Buttons"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_hover_color = Color(0, 0.52549, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0.52549, 0, 1)
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
 text = "HOST"
+flat = true
 
-[node name="Client" type="Button" parent="Menu/MainContainer/MainMenu/Buttons" groups=["button"]]
+[node name="Join" type="Button" parent="Menu/MainContainer/MainMenu/Buttons"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "CLIENT"
+theme_override_colors/font_hover_color = Color(0, 0.525257, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0.52549, 0, 1)
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
+text = "JOIN"
+flat = true
+
+[node name="Option4" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Quit" type="Button" parent="Menu/MainContainer/MainMenu/Option4"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.858807, 4.71681e-06, 1.15514e-06, 0.862745)
+theme_override_colors/font_pressed_color = Color(0.858824, 0, 0, 0.862745)
+theme_override_fonts/font = ExtResource("3_icc4p")
+theme_override_font_sizes/font_size = 35
+text = "QUIT"
+flat = true
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("res://level/scenes/player.tscn")
@@ -238,4 +279,5 @@ spawn_path = NodePath("../PlayersContainer")
 [node name="PlayersContainer" type="Node3D" parent="."]
 
 [connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Host" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Client" to="." method="_on_client_pressed"]
+[connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Menu/MainContainer/MainMenu/Option4/Quit" to="." method="_on_quit_pressed"]
