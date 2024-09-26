@@ -11,6 +11,12 @@ const JUMP_VELOCITY = 10
 @export var _body: Node3D = null
 @export var _spring_arm_offset: Node3D = null
 
+@export_category("Skin Colors")
+@export var blue_texture : CompressedTexture2D
+@export var yellow_texture : CompressedTexture2D
+@export var green_texture : CompressedTexture2D
+@export var red_texture : CompressedTexture2D
+
 var _current_speed: float
 var _respawn_point = Vector3(0, 5, 0)
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -22,8 +28,6 @@ func _enter_tree():
 func _ready():
 	if multiplayer.is_server():
 		$SpringArmOffset/SpringArm3D/Camera3D.current = false
-		
-	change_nick(Network.players[multiplayer.get_unique_id()]["nick"])
 	
 func _physics_process(delta):
 	if not is_multiplayer_authority():
@@ -90,5 +94,39 @@ func _respawn():
 func change_nick(new_nick: String):
 	if nickname:
 		nickname.text = new_nick
-	else:
-		print("error: nickname is null")
+
+func get_texture_from_name(skin_name: String) -> CompressedTexture2D:
+	match skin_name:
+		"blue":
+			return blue_texture
+		"green":
+			return green_texture
+		"red":
+			return red_texture
+		"yellow":
+			return yellow_texture
+		_:
+			return blue_texture
+		
+@rpc("any_peer", "reliable")
+func set_player_skin(skin_name: String):
+	var texture = get_texture_from_name(skin_name)
+	var player = self
+	var bottom = player.get_node("3DGodotRobot/RobotArmature/Skeleton3D/Bottom") as MeshInstance3D
+	var chest = player.get_node("3DGodotRobot/RobotArmature/Skeleton3D/Chest") as MeshInstance3D
+	var face = player.get_node("3DGodotRobot/RobotArmature/Skeleton3D/Face") as MeshInstance3D
+	var limbs_head = player.get_node("3DGodotRobot/RobotArmature/Skeleton3D/Llimbs and head") as MeshInstance3D
+
+	set_mesh_texture(bottom, texture)
+	set_mesh_texture(chest, texture)
+	set_mesh_texture(face, texture)
+	set_mesh_texture(limbs_head, texture)
+	
+func set_mesh_texture(mesh_instance: MeshInstance3D, texture: CompressedTexture2D):
+	if mesh_instance:
+		var material := mesh_instance.get_surface_override_material(0)
+		if material and material is StandardMaterial3D:
+			var new_material := material
+			new_material.albedo_texture = texture
+			mesh_instance.set_surface_override_material(0, new_material)
+			

@@ -135,21 +135,21 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -578.5
-offset_top = -88.5
-offset_right = 578.5
-offset_bottom = 88.5
+offset_left = -578.0
+offset_top = -275.0
+offset_right = 579.0
+offset_bottom = 275.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 100
+theme_override_constants/separation = 50
 alignment = 1
 
 [node name="Label" type="Label" parent="Menu/MainContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-theme_override_font_sizes/font_size = 65
-text = "Godot Multiplayer Template"
+theme_override_font_sizes/font_size = 60
+text = "Multiplayer Template"
 
 [node name="MainMenu" type="VBoxContainer" parent="Menu/MainContainer"]
 layout_direction = 1
@@ -180,7 +180,6 @@ expand_to_text_length = true
 
 [node name="Option2" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 4
 alignment = 1
 
@@ -192,9 +191,11 @@ text = "Player Skin : "
 
 [node name="SkinInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option2"]
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 30
 placeholder_text = "blue"
 alignment = 1
+expand_to_text_length = true
 
 [node name="Option3" type="HBoxContainer" parent="Menu/MainContainer/MainMenu"]
 layout_mode = 2
@@ -220,12 +221,12 @@ layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
 
-[node name="Host" type="Button" parent="Menu/MainContainer/MainMenu/Buttons"]
+[node name="Host" type="Button" parent="Menu/MainContainer/MainMenu/Buttons" groups=["button"]]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "HOST"
 
-[node name="Client" type="Button" parent="Menu/MainContainer/MainMenu/Buttons"]
+[node name="Client" type="Button" parent="Menu/MainContainer/MainMenu/Buttons" groups=["button"]]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "CLIENT"

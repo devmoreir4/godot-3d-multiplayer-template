@@ -6,12 +6,17 @@ const MAX_PLAYERS : int = 10
 
 var players = {}
 var player_info = {
-	"nick" : "host"
+	"nick" : "host",
+	"skin" : "blue"
 }
 
 signal player_connected(peer_id, player_info)
 signal server_disconnected
 
+func _process(_delta):
+	if Input.is_action_just_pressed("quit"):
+		get_tree().quit(0)
+		
 func _ready() -> void:
 	multiplayer.server_disconnected.connect(_on_connection_failed)
 	multiplayer.connection_failed.connect(_on_server_disconnected)
@@ -29,7 +34,7 @@ func start_host():
 	players[1] = player_info # server
 	player_connected.emit(1, player_info)
 	
-func join_game(address, nickname):
+func join_game(address, nickname, skin_color):
 	if !address:
 		address = SERVER_ADDRESS
 	var peer = ENetMultiplayerPeer.new()
@@ -38,6 +43,7 @@ func join_game(address, nickname):
 		return error
 	multiplayer.multiplayer_peer = peer
 	player_info["nick"] = nickname
+	player_info["skin"] = skin_color
 	
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
@@ -56,7 +62,7 @@ func _register_player(new_player_info):
 	
 func _on_player_disconnected(id):
 	players.erase(id)
-	player_connected.emit(id)
+	#player_connected.emit(id)
 	
 func _on_connection_failed():
 	multiplayer.multiplayer_peer = null
