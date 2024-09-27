@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cw6pxwst2gh85"
-path="res://.godot/imported/GodotYellowPalette.png-d022adb444ced9a965a3c24ecdce817d.ctex"
+uid="uid://brp1gy30s4rks"
+path="res://.godot/imported/GodotRedPalette.png-08bd2ae0a0cfe45c50f42f0c3a248d1b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://characters/player/GodotRobotPaletteSwap/GodotYellowPalette.png"
-dest_files=["res://.godot/imported/GodotYellowPalette.png-d022adb444ced9a965a3c24ecdce817d.ctex"]
+source_file="res://assets/characters/player/GodotRobotPaletteSwap/GodotRedPalette.png"
+dest_files=["res://.godot/imported/GodotRedPalette.png-08bd2ae0a0cfe45c50f42f0c3a248d1b.ctex"]
 
 [params]
 

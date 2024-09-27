@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://fpmmv2oxjcdv"
-path.s3tc="res://.godot/imported/GodotPalette.png-3d04ba2431c3efbef1fb034e318dbd57.s3tc.ctex"
+uid="uid://bbid6mowxhd5b"
+path.s3tc="res://.godot/imported/GodotGreenPalette.png-8c760c09d8ace0593bb63002a2ed8eae.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://characters/player/GodotRobotPaletteSwap/GodotPalette.png"
-dest_files=["res://.godot/imported/GodotPalette.png-3d04ba2431c3efbef1fb034e318dbd57.s3tc.ctex"]
+source_file="res://assets/characters/player/GodotRobotPaletteSwap/GodotGreenPalette.png"
+dest_files=["res://.godot/imported/GodotGreenPalette.png-8c760c09d8ace0593bb63002a2ed8eae.s3tc.ctex"]
 
 [params]
 

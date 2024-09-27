@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cmuii2vrmfnc5"
-path="res://.godot/imported/3DGodotRobot.glb-6effeaaef0e4204f976c379d3464650a.scn"
+path="res://.godot/imported/3DGodotRobot.glb-c7060093cec96d07cab7f0bfb35f5061.scn"
 
 [deps]
 
-source_file="res://characters/player/3DGodotRobot.glb"
-dest_files=["res://.godot/imported/3DGodotRobot.glb-6effeaaef0e4204f976c379d3464650a.scn"]
+source_file="res://assets/characters/player/3DGodotRobot.glb"
+dest_files=["res://.godot/imported/3DGodotRobot.glb-c7060093cec96d07cab7f0bfb35f5061.scn"]
 
 [params]
 
@@ -17,6 +17,7 @@ nodes/root_type=""
 nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
 meshes/ensure_tangents=true
 meshes/generate_lods=true
 meshes/create_shadow_meshes=true
@@ -28,6 +29,7 @@ animation/import=true
 animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
 import_script/path=""
 _subresources={}
 gltf/naming_version=1
