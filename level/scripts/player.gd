@@ -5,7 +5,7 @@ const NORMAL_SPEED = 6.0
 const SPRINT_SPEED = 10.0
 const JUMP_VELOCITY = 10
 
-@onready var nickname = $PlayerNick/Nickname as Label3D
+@onready var nickname: Label3D = $PlayerNick/Nickname
 
 @export_category("Objects")
 @export var _body: Node3D = null
@@ -30,13 +30,12 @@ func _ready():
 		$SpringArmOffset/SpringArm3D/Camera3D.current = false
 	
 func _physics_process(delta):
-	if not is_multiplayer_authority():
-		return
-
+	if not is_multiplayer_authority(): return
+	
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 		_body.animate(velocity)
-	
+		
 	if is_on_floor():
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = JUMP_VELOCITY
@@ -47,7 +46,7 @@ func _physics_process(delta):
 	move_and_slide()
 	_body.animate(velocity)
 	_check_fall_and_respawn()
-
+	
 func _move() -> void:
 	var _input_direction: Vector2 = Vector2.ZERO
 	if is_multiplayer_authority():
@@ -56,11 +55,7 @@ func _move() -> void:
 			"move_forward", "move_backward"
 			)
 
-	var _direction: Vector3 = transform.basis * Vector3(
-		_input_direction.x,
-		0,
-		_input_direction.y
-	).normalized()
+	var _direction: Vector3 = transform.basis * Vector3(_input_direction.x, 0, _input_direction.y).normalized()
 	
 	is_running()
 	_direction = _direction.rotated(Vector3.UP, _spring_arm_offset.rotation.y)
@@ -94,35 +89,29 @@ func _respawn():
 func change_nick(new_nick: String):
 	if nickname:
 		nickname.text = new_nick
-
+		
 func get_texture_from_name(skin_name: String) -> CompressedTexture2D:
 	match skin_name:
-		"blue":
-			return blue_texture
-		"green":
-			return green_texture
-		"red":
-			return red_texture
-		"yellow":
-			return yellow_texture
-		_:
-			return blue_texture
+		"blue": return blue_texture
+		"green": return green_texture
+		"red": return red_texture
+		"yellow": return yellow_texture
+		_: return blue_texture
 		
 @rpc("any_peer", "reliable")
-func set_player_skin(skin_name: String):
+func set_player_skin(skin_name: String) -> void:
 	var texture = get_texture_from_name(skin_name)
-	var player = self
-	var bottom = player.get_node("3DGodotRobot/RobotArmature/Skeleton3D/Bottom") as MeshInstance3D
-	var chest = player.get_node("3DGodotRobot/RobotArmature/Skeleton3D/Chest") as MeshInstance3D
-	var face = player.get_node("3DGodotRobot/RobotArmature/Skeleton3D/Face") as MeshInstance3D
-	var limbs_head = player.get_node("3DGodotRobot/RobotArmature/Skeleton3D/Llimbs and head") as MeshInstance3D
-
+	var bottom: MeshInstance3D = get_node("3DGodotRobot/RobotArmature/Skeleton3D/Bottom")
+	var chest: MeshInstance3D = get_node("3DGodotRobot/RobotArmature/Skeleton3D/Chest")
+	var face: MeshInstance3D = get_node("3DGodotRobot/RobotArmature/Skeleton3D/Face")
+	var limbs_head: MeshInstance3D = get_node("3DGodotRobot/RobotArmature/Skeleton3D/Llimbs and head")
+	
 	set_mesh_texture(bottom, texture)
 	set_mesh_texture(chest, texture)
 	set_mesh_texture(face, texture)
 	set_mesh_texture(limbs_head, texture)
 	
-func set_mesh_texture(mesh_instance: MeshInstance3D, texture: CompressedTexture2D):
+func set_mesh_texture(mesh_instance: MeshInstance3D, texture: CompressedTexture2D) -> void:
 	if mesh_instance:
 		var material := mesh_instance.get_surface_override_material(0)
 		if material and material is StandardMaterial3D:
