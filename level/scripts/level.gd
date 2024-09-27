@@ -28,8 +28,6 @@ func _on_host_pressed():
 
 func _on_join_pressed():
 	menu.hide()
-	if !skin_input.text:
-		skin_input.text = "blue"
 	Network.join_game(nick_input.text.strip_edges(), skin_input.text.strip_edges(), address_input.text.strip_edges())
 	
 func _add_player(id: int, player_info : Dictionary):
