@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=4 uid="uid://cffjduipbb3s5"]
+[gd_scene load_steps=46 format=4 uid="uid://cffjduipbb3s5"]
 
 [ext_resource type="Script" path="res://level/scripts/player.gd" id="1_tdh26"]
 [ext_resource type="Texture2D" uid="uid://bdg48m6l86q8i" path="res://assets/characters/player/3DGodotRobot_GodotPalette.png" id="1_w11jc"]
@@ -119,13 +119,8 @@ bind/24/name = &"toe.R"
 bind/24/bone = -1
 bind/24/pose = Transform3D(-1.72851, -3.74972e-06, -5.0536e-07, -0.000271607, -0.230886, 1.7131, -1.28633e-05, 1.7132, 0.230893, -0.287996, -0.229828, -0.169801)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ktpfo"]
-resource_local_to_scene = true
-load_path = "res://.godot/imported/GodotPalette.png-3d04ba2431c3efbef1fb034e318dbd57.s3tc.ctex"
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_53giy"]
 resource_local_to_scene = true
-albedo_texture = SubResource("CompressedTexture2D_ktpfo")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_fun53"]
 resource_local_to_scene = true
@@ -227,13 +222,8 @@ bind/24/name = &"toe.R"
 bind/24/bone = -1
 bind/24/pose = Transform3D(-1.72851, -3.74972e-06, -5.0536e-07, -0.000271607, -0.230886, 1.7131, -1.28633e-05, 1.7132, 0.230893, -0.287996, -0.229828, -0.169801)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_est4u"]
-resource_local_to_scene = true
-load_path = "res://.godot/imported/GodotPalette.png-3d04ba2431c3efbef1fb034e318dbd57.s3tc.ctex"
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kw1ok"]
 resource_local_to_scene = true
-albedo_texture = SubResource("CompressedTexture2D_est4u")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s08cx"]
 resource_name = "Material.002"
@@ -356,13 +346,8 @@ bind/24/name = &"toe.R"
 bind/24/bone = -1
 bind/24/pose = Transform3D(-1.72851, -3.74972e-06, -5.0536e-07, -0.000271607, -0.230886, 1.7131, -1.28633e-05, 1.7132, 0.230893, -0.287996, -0.229828, -0.169801)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_s6ij4"]
-resource_local_to_scene = true
-load_path = "res://.godot/imported/GodotPalette.png-3d04ba2431c3efbef1fb034e318dbd57.s3tc.ctex"
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_krq4h"]
 resource_local_to_scene = true
-albedo_texture = SubResource("CompressedTexture2D_s6ij4")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_0hcp6"]
 resource_local_to_scene = true
@@ -464,13 +449,8 @@ bind/24/name = &"toe.R"
 bind/24/bone = -1
 bind/24/pose = Transform3D(-1.72851, -3.74972e-06, -5.0536e-07, -0.000271607, -0.230886, 1.7131, -1.28633e-05, 1.7132, 0.230893, -0.287996, -0.229828, -0.169801)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_c0f74"]
-resource_local_to_scene = true
-load_path = "res://.godot/imported/GodotPalette.png-3d04ba2431c3efbef1fb034e318dbd57.s3tc.ctex"
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ln88"]
 resource_local_to_scene = true
-albedo_texture = SubResource("CompressedTexture2D_c0f74")
 
 [sub_resource type="Animation" id="Animation_jou0i"]
 resource_name = "Attack1"
