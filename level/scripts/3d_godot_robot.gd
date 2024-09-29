@@ -8,7 +8,10 @@ const LERP_VELOCITY: float = 0.15
 @export var animation_player: AnimationPlayer = null
 
 func apply_rotation(_velocity: Vector3) -> void:
-	rotation.y = lerp_angle(rotation.y, atan2(-_velocity.x, -_velocity.z), LERP_VELOCITY)
+	var new_rotation_y = lerp_angle(rotation.y, atan2(-_velocity.x, -_velocity.z), LERP_VELOCITY)
+	rotation.y = new_rotation_y
+	
+	rpc("sync_player_rotation", new_rotation_y)
 	
 func animate(_velocity: Vector3) -> void:
 	if not _character.is_on_floor():
@@ -28,3 +31,6 @@ func animate(_velocity: Vector3) -> void:
 	
 	animation_player.play("Idle")
 	
+@rpc("any_peer", "reliable")
+func sync_player_rotation(rotation_y: float) -> void:
+	rotation.y = rotation_y
