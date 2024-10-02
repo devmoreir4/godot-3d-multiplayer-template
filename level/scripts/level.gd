@@ -28,7 +28,7 @@ func _on_host_pressed():
 
 func _on_join_pressed():
 	menu.hide()
-	Network.join_game(nick_input.text.strip_edges(), skin_input.text.strip_edges(), address_input.text.strip_edges())
+	Network.join_game(nick_input.text.strip_edges(), skin_input.text.strip_edges().to_lower(), address_input.text.strip_edges())
 	
 func _add_player(id: int, player_info : Dictionary):
 	if players_container.has_node(str(id)) or not multiplayer.is_server() or id == 1:

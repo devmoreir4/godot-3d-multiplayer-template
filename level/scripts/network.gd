@@ -42,7 +42,7 @@ func join_game(nickname: String, skin_color: String, address: String = SERVER_AD
 	multiplayer.multiplayer_peer = peer
 	if !nickname:
 		nickname = "Player_" + str(multiplayer.get_unique_id())
-	if !skin_color:
+	if !skin_color or (skin_color != "red" and skin_color != "blue" and skin_color != "green" and skin_color != "yellow"):
 		skin_color = "blue"
 	player_info["nick"] = nickname
 	player_info["skin"] = skin_color
