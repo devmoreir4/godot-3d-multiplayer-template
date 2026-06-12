@@ -1,0 +1,93 @@
+[gd_scene format=3 uid="uid://cmhutalglf0aa"]
+
+[ext_resource type="Script" uid="uid://vhyr1m3ah5td" path="res://scripts/health_bar.gd" id="1_1vcc2"]
+
+[node name="HealthBar" type="Control" unique_id=25732065]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 784.0
+offset_top = 42.0
+offset_right = 824.0
+offset_bottom = 82.0
+script = ExtResource("1_1vcc2")
+
+[node name="HealthSegment10" type="ColorRect" parent="." unique_id=1797801065]
+layout_mode = 0
+offset_left = 384.0
+offset_top = 2.0
+offset_right = 424.0
+offset_bottom = 42.0
+color = Color(0, 1, 0, 1)
+
+[node name="HealthSegment9" type="ColorRect" parent="." unique_id=1224334054]
+layout_mode = 0
+offset_left = 344.0
+offset_top = 2.0
+offset_right = 384.0
+offset_bottom = 42.0
+color = Color(0.32941177, 1, 0, 1)
+
+[node name="HealthSegment8" type="ColorRect" parent="." unique_id=2079324355]
+layout_mode = 0
+offset_left = 304.0
+offset_top = 2.0
+offset_right = 344.0
+offset_bottom = 42.0
+color = Color(0.6666667, 1, 0, 1)
+
+[node name="HealthSegment7" type="ColorRect" parent="." unique_id=1406156480]
+layout_mode = 0
+offset_left = 264.0
+offset_top = 2.0
+offset_right = 304.0
+offset_bottom = 42.0
+color = Color(1, 1, 0, 1)
+
+[node name="HealthSegment6" type="ColorRect" parent="." unique_id=1065380005]
+layout_mode = 0
+offset_left = 224.0
+offset_top = 2.0
+offset_right = 264.0
+offset_bottom = 42.0
+color = Color(1, 0.827451, 0, 1)
+
+[node name="HealthSegment5" type="ColorRect" parent="." unique_id=1055279510]
+layout_mode = 0
+offset_left = 184.0
+offset_top = 2.0
+offset_right = 224.0
+offset_bottom = 42.0
+color = Color(1, 0.6666667, 0, 1)
+
+[node name="HealthSegment4" type="ColorRect" parent="." unique_id=960297144]
+layout_mode = 0
+offset_left = 144.0
+offset_top = 2.0
+offset_right = 184.0
+offset_bottom = 42.0
+color = Color(1, 0.5019608, 0, 1)
+
+[node name="HealthSegment3" type="ColorRect" parent="." unique_id=711067341]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 2.0
+offset_right = 144.0
+offset_bottom = 42.0
+color = Color(1, 0.32941177, 0, 1)
+
+[node name="HealthSegment2" type="ColorRect" parent="." unique_id=135424909]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 2.0
+offset_right = 104.0
+offset_bottom = 42.0
+color = Color(1, 0.16862746, 0, 1)
+
+[node name="HealthSegment1" type="ColorRect" parent="." unique_id=1908827947]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 2.0
+offset_right = 64.0
+offset_bottom = 42.0
+color = Color(1, 0, 0, 1)

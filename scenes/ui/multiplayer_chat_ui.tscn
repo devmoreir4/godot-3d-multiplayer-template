@@ -44,12 +44,12 @@ vertical_alignment = 1
 [node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Chat" type="TextEdit" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="Chat" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-editable = false
-context_menu_enabled = false
-shortcut_keys_enabled = false
+bbcode_enabled = true
+selection_enabled = true
+scroll_following = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2

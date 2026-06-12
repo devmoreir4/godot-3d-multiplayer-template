@@ -3,11 +3,14 @@ class_name MultiplayerChatUI
 
 @onready var message: LineEdit = $Panel/MarginContainer/VBoxContainer/HBoxContainer/Message
 @onready var send: Button = $Panel/MarginContainer/VBoxContainer/HBoxContainer/Send
-@onready var chat: TextEdit = $Panel/MarginContainer/VBoxContainer/Chat
+@onready var chat: RichTextLabel = $Panel/MarginContainer/VBoxContainer/Chat
 
 signal message_sent(message_text: String)
 
-var chat_visible = false
+const MAX_CHAT_MESSAGES: int = 100
+
+var chat_visible: bool = false
+var chat_history: Array[String] = []
 
 func _ready():
 	send.pressed.connect(_on_send_pressed)
@@ -39,18 +42,28 @@ func _on_send_pressed():
 	message.text = ""
 	message.grab_focus()
 
-func add_message(nick: String, msg: String):
-	var time = Time.get_time_string_from_system()
-	var formatted_message = "[" + time + "] " + nick + ": " + msg + "\n"
-	chat.text += formatted_message
-	chat.scroll_vertical = chat.get_line_count()
+func add_message(nick: String, msg: String) -> void:
+	var time: String = Time.get_time_string_from_system()
+	var formatted_message := _escape_bbcode("[%s] %s: %s\n" % [time, nick, msg])
+	chat_history.append(formatted_message)
+	chat.append_text(formatted_message)
 	_limit_chat_history()
 
-func _limit_chat_history():
-	var lines = chat.text.split("\n")
-	if lines.size() > 100:
-		var start_index = lines.size() - 100
-		chat.text = "\n".join(lines.slice(start_index))
+func _limit_chat_history() -> void:
+	if chat_history.size() <= MAX_CHAT_MESSAGES:
+		return
+	while chat_history.size() > MAX_CHAT_MESSAGES:
+		chat_history.pop_front()
+	_render_chat_history()
 
-func clear_chat():
-	chat.text = ""
+func _render_chat_history() -> void:
+	chat.clear()
+	for entry in chat_history:
+		chat.append_text(entry)
+
+func _escape_bbcode(text: String) -> String:
+	return text.replace("[", "[lb]")
+
+func clear_chat() -> void:
+	chat_history.clear()
+	chat.clear()

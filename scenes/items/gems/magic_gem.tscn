@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bpcrivjdy82nk"]
+
+[ext_resource type="Script" uid="uid://1pepdm8d4raw" path="res://scripts/items/gems/magic_gem.gd" id="1_87a3u"]
+[ext_resource type="PackedScene" uid="uid://coinjdjw7guxw" path="res://assets/items/purple_gem.glb" id="2_vgees"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fpbew"]
+radius = 0.123535156
+height = 0.48158646
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_uvayn"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+
+[node name="MagicGem" type="RigidBody3D" unique_id=1737440134]
+collision_layer = 4
+collision_mask = 7
+linear_damp = 1.0
+angular_damp = 1.0
+script = ExtResource("1_87a3u")
+
+[node name="PurpleGem" parent="." unique_id=1128409298 instance=ExtResource("2_vgees")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1540826760]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.24909401, 0)
+shape = SubResource("CapsuleShape3D_fpbew")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1376390754]
+replication_config = SubResource("SceneReplicationConfig_uvayn")

@@ -6,17 +6,24 @@ extends Node3D
 
 @onready var multiplayer_chat: MultiplayerChatUI = $MultiplayerChatUI
 @onready var inventory_ui: InventoryUI = $InventoryUI
+@onready var health_bar: HealthBar = $HealthBar
 
 var chat_visible = false
 var inventory_visible = false
 
+const MAX_CHAT_MESSAGE_LENGTH := 160
+
 func _ready():
+	
+	after_ready()
+	
 	if DisplayServer.get_name() == "headless":
-		print("Dedicated server starting...")
 		Network.start_host("", "")
+		spawn_loot()
 
 	multiplayer_chat.hide()
 	main_menu.show_menu()
+	health_bar.hide()
 	multiplayer_chat.set_process_input(true)
 
 	main_menu.host_pressed.connect(_on_host_pressed)
@@ -30,16 +37,50 @@ func _ready():
 		multiplayer_chat.message_sent.connect(_on_chat_message_sent)
 
 	Network.server_disconnected.connect(_on_server_disconnected)
-
-	if not multiplayer.is_server():
-		return
-
 	Network.connect("player_connected", Callable(self, "_on_player_connected"))
 	multiplayer.peer_disconnected.connect(_remove_player)
-
-func _on_server_disconnected():
-	print("Server disconnected, returning to menu...")
 	
+func after_ready():
+	var ip_address :String
+	if OS.has_feature("windows"):
+		if OS.has_environment("COMPUTERNAME"):
+			ip_address =  IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),IP.TYPE_IPV4)
+	elif OS.has_feature("x11"):
+		if OS.has_environment("HOSTNAME"):
+			ip_address =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),IP.TYPE_IPV4)
+	elif OS.has_feature("OSX"):
+		if OS.has_environment("HOSTNAME"):
+			ip_address =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),IP.TYPE_IPV4)
+	get_node("/root/Level/MainMenuUI/MainContainer/MainMenu/Option3/AddressInput").text = ip_address
+
+
+func spawn_loot():
+	if multiplayer.is_server():
+		var lootRoot = get_node("Environment/ItemContainer")
+		
+		var magic_gem = load("res://scenes/items/gems/magic_gem.tscn")
+		var loot_item = magic_gem.instantiate()
+		loot_item.position = Vector3( -17.43, 0.025, 5.114 )
+		lootRoot.add_child(loot_item, true)
+		
+		loot_item = magic_gem.instantiate()
+		loot_item.position = Vector3( 0, 1.276, 17.786 )
+		lootRoot.add_child(loot_item, true)
+		
+		loot_item = magic_gem.instantiate()
+		loot_item.position = Vector3( 12.454, 0, 0 )
+		lootRoot.add_child(loot_item, true)
+		
+		loot_item = magic_gem.instantiate()
+		loot_item.position = Vector3( 0, 0, -6.283 )
+		lootRoot.add_child(loot_item, true)
+	
+		var pickaxe = load("res://scenes/items/weapons/pickaxe.tscn")
+		loot_item = pickaxe.instantiate()
+		loot_item.position = Vector3( 1.2, 7.6, 4.7 )
+		lootRoot.add_child(loot_item, true)
+		
+func _on_server_disconnected():
 	for child in players_container.get_children():
 		child.queue_free()
 	
@@ -48,44 +89,60 @@ func _on_server_disconnected():
 	multiplayer_chat.hide()
 	if inventory_ui:
 		inventory_ui.close_inventory()
+		inventory_ui.current_player = null
+	health_bar.hide()
 	
 	main_menu.show_menu()
 
 func _on_player_connected(peer_id, player_info):
-	_add_player(peer_id, player_info)
+	var player = _add_player(peer_id, player_info)
+	if multiplayer.is_server() and player:
+		player.call_deferred("_sync_inventory_to_owner")
 
 func _on_host_pressed(nickname: String, skin: String):
+	var error = Network.start_host(nickname, skin)
+	if error:
+		push_warning("Failed to host game. Error: " + str(error))
+		main_menu.show_menu()
+		return
 	main_menu.hide_menu()
-	Network.start_host(nickname, skin)
+	spawn_loot()
+
 
 func _on_join_pressed(nickname: String, skin: String, address: String):
-	main_menu.hide_menu()
-	Network.join_game(nickname, skin, address)
-
-func _add_player(id: int, player_info : Dictionary):
-	if DisplayServer.get_name() == "headless" and id == 1:
+	var error = Network.join_game(nickname, skin, address)
+	if error:
+		push_warning("Failed to join game. Error: " + str(error))
+		main_menu.show_menu()
 		return
+	main_menu.hide_menu()
+
+func _add_player(id: int, player_info : Dictionary) -> Character:
+	if DisplayServer.get_name() == "headless" and id == 1:
+		return null
 
 	if players_container.has_node(str(id)):
-		return
+		return players_container.get_node(str(id)) as Character
 
 	var player = player_scene.instantiate()
 	player.name = str(id)
-	player.position = get_spawn_point()
+	player.position = get_spawn_point(id)
 	players_container.add_child(player, true)
 
-	var nick = Network.players[id]["nick"]
+	var nick = Network.sanitize_nickname(str(player_info.get("nick", "")), "Player_" + str(id))
 	player.nickname.text = nick
 
-	var skin_enum = player_info["skin"]
+	var skin_enum = Network.sanitize_skin_value(player_info.get("skin", Character.SkinColor.BLUE))
 	player.set_player_skin(skin_enum)
+	return player
 
-func get_spawn_point() -> Vector3:
-	var spawn_point = Vector2.from_angle(randf() * 2 * PI) * 10 # spawn radius
+func get_spawn_point(id: int) -> Vector3:
+	var spawn_angle := fmod(float(id) * 2.399963229728653, 2.0 * PI)
+	var spawn_point := Vector2.from_angle(spawn_angle) * 10
 	return Vector3(spawn_point.x, 0, spawn_point.y)
 
 func _remove_player(id):
-	if not multiplayer.is_server() or not players_container.has_node(str(id)):
+	if not players_container.has_node(str(id)):
 		return
 	var player_node = players_container.get_node(str(id))
 	if player_node:
@@ -94,7 +151,6 @@ func _remove_player(id):
 func _on_quit_pressed() -> void:
 	get_tree().quit()
 
-# ---------- MULTIPLAYER CHAT ----------
 func toggle_chat():
 	if main_menu.is_menu_visible():
 		return
@@ -120,18 +176,40 @@ func _input(event):
 		_debug_print_inventory()
 
 func _on_chat_message_sent(message_text: String) -> void:
-	var trimmed_message = message_text.strip_edges()
-	if trimmed_message == "":
-		return # do not send empty messages
+	var trimmed_message = _sanitize_chat_message(message_text)
+	if trimmed_message.is_empty():
+		return
 
-	var nick = Network.players[multiplayer.get_unique_id()]["nick"]
-	rpc("msg_rpc", nick, trimmed_message)
+	if multiplayer.is_server():
+		_broadcast_chat_message(multiplayer.get_unique_id(), trimmed_message)
+	else:
+		submit_chat_message.rpc_id(1, trimmed_message)
 
-@rpc("any_peer", "call_local")
-func msg_rpc(nick, msg):
+@rpc("any_peer", "reliable")
+func submit_chat_message(message_text: String):
+	if not multiplayer.is_server():
+		return
+	var sender_id = multiplayer.get_remote_sender_id()
+	var trimmed_message = _sanitize_chat_message(message_text)
+	if trimmed_message.is_empty():
+		return
+	_broadcast_chat_message(sender_id, trimmed_message)
+
+func _broadcast_chat_message(sender_id: int, message_text: String):
+	var player_info = Network.players.get(sender_id, {})
+	var nick = Network.sanitize_nickname(str(player_info.get("nick", "")), "Player_" + str(sender_id))
+	show_chat_message.rpc(nick, message_text)
+
+@rpc("authority", "call_local", "reliable")
+func show_chat_message(nick: String, msg: String):
 	multiplayer_chat.add_message(nick, msg)
 
-# ---------- INVENTORY SYSTEM ----------
+func _sanitize_chat_message(message_text: String) -> String:
+	var clean = message_text.strip_edges()
+	if clean.length() > MAX_CHAT_MESSAGE_LENGTH:
+		clean = clean.substr(0, MAX_CHAT_MESSAGE_LENGTH)
+	return clean
+
 func toggle_inventory():
 	if main_menu.is_menu_visible():
 		return
@@ -149,22 +227,12 @@ func toggle_inventory():
 func is_inventory_visible() -> bool:
 	return inventory_visible
 
-# Additional helper for testing
-func _notification(what):
-	if what == NOTIFICATION_READY:
-		print("Inventory System Controls:")
-		print("  B - Toggle inventory")
-		print("  F1 - Add random test item (debug)")
-		print("  F2 - Print inventory contents (debug)")
-
 func _on_inventory_closed():
 	inventory_visible = false
 
 func update_local_inventory_display():
 	if inventory_ui:
-		# Always refresh if the UI exists, regardless of visibility
 		inventory_ui.refresh_display()
-		print("Debug: Inventory display updated from server sync")
 
 func _get_local_player() -> Character:
 	var local_player_id = multiplayer.get_unique_id()
@@ -172,16 +240,14 @@ func _get_local_player() -> Character:
 		return players_container.get_node(str(local_player_id)) as Character
 	return null
 
-# Debug functions for testing inventory system
 func _debug_add_item():
+	if not OS.is_debug_build() or not multiplayer.is_server():
+		return
 	var local_player = _get_local_player()
 	if local_player:
-		var test_items = ["iron_sword", "health_potion", "leather_armor", "magic_gem", "iron_pickaxe"]
+		var test_items = ["iron_sword", "health_potion", "viking_helmet", "magic_gem", "iron_pickaxe", "apple"]
 		var random_item = test_items[randi() % test_items.size()]
-		print("Debug: Requesting to add ", random_item, " to player ", local_player.name, " (authority: ", local_player.get_multiplayer_authority(), ")")
 		local_player.request_add_item.rpc_id(1, random_item, 1)
-	else:
-		print("Debug: No local player found!")
 
 func _debug_print_inventory():
 	var local_player = _get_local_player()

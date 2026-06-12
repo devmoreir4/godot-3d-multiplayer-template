@@ -1,12 +1,21 @@
 extends Control
 class_name InventorySlotUI
 
+enum TYPE { 
+	BACKPACK,
+	WEAPON,
+	ARMOR,
+}
+
 @onready var background: NinePatchRect = $Background
 @onready var item_icon: TextureRect = $ItemIcon
 @onready var quantity_label: Label = $QuantityLabel
 @onready var rarity_border: NinePatchRect = $RarityBorder
 
+
+
 var slot_index: int = 0
+var slot_type : TYPE = TYPE.BACKPACK
 var inventory_data: InventorySlot
 var parent_inventory: Control
 
@@ -92,9 +101,13 @@ func _can_drop_data(_position: Vector2, data) -> bool:
 	return data is Dictionary and data.has("slot_index") and data.has("inventory_type")
 
 func _drop_data(_position: Vector2, data):
-	if parent_inventory and parent_inventory.has_method("handle_item_drop"):
-		parent_inventory.handle_item_drop(data.slot_index, slot_index, data.inventory_type)
-
+	if parent_inventory and parent_inventory.has_method("handle_item_drop") and slot_type == TYPE.BACKPACK:
+		parent_inventory.handle_item_drop(data.slot_index, slot_index, data.item_id )
+	elif parent_inventory and parent_inventory.has_method("handle_weapon_equip") and slot_type == TYPE.WEAPON:
+		parent_inventory.handle_weapon_equip(data.slot_index, data)
+	elif parent_inventory and parent_inventory.has_method("handle_armor_equip") and slot_type == TYPE.ARMOR:
+		parent_inventory.handle_armor_equip(data.slot_index, data)
+		
 func _get_drag_data(_position: Vector2):
 	if not inventory_data or inventory_data.is_empty():
 		return null
@@ -119,7 +132,7 @@ func _get_drag_data(_position: Vector2):
 		"slot_index": slot_index,
 		"item_id": inventory_data.item_id,
 		"quantity": inventory_data.quantity,
-		"inventory_type": "player"  # Can be extended for different inventory types
+		"inventory_type": item.item_type
 	}
 
 func _notification(what):

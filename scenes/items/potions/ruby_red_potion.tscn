@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://ba8ffkgetdio6"]
+
+[ext_resource type="Script" uid="uid://cwg2jobkdry8n" path="res://scripts/items/potions/ruby_red_potion.gd" id="1_f8obb"]
+[ext_resource type="PackedScene" uid="uid://diwiw55xic2ms" path="res://assets/items/red_potion.glb" id="2_f8obb"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ah86n"]
+radius = 0.14746094
+height = 0.4976349
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_f8obb"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+
+[node name="RubyRedPotion" type="RigidBody3D" unique_id=1895628841]
+collision_layer = 4
+collision_mask = 7
+script = ExtResource("1_f8obb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=948879315]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25571442, 0)
+shape = SubResource("CapsuleShape3D_ah86n")
+
+[node name="RubyRedPotionModel" parent="." unique_id=179960160 instance=ExtResource("2_f8obb")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1885090080]
+replication_config = SubResource("SceneReplicationConfig_f8obb")

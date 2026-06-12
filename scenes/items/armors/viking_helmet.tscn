@@ -1,0 +1,33 @@
+[gd_scene format=4 uid="uid://c8xkx1htqjjid"]
+
+[ext_resource type="PackedScene" uid="uid://dy1rlgvw41cso" path="res://assets/items/viking_helmet.glb" id="1_grrj4"]
+[ext_resource type="Script" path="res://scripts/items/armor/viking_helmet.gd" id="1_i2w72"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_m0q2q"]
+height = 1.0444679
+radius = 0.38671875
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ewbxo"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+
+[node name="VikingHelmet" type="RigidBody3D" unique_id=1753633875]
+collision_layer = 4
+collision_mask = 7
+linear_damp = 1.0
+angular_damp = 1.0
+script = ExtResource("1_i2w72")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=823586425]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.1050946, -0.014389515, 0.67847335, -0.04261464)
+shape = SubResource("CylinderShape3D_m0q2q")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1459367149]
+replication_config = SubResource("SceneReplicationConfig_ewbxo")
+
+[node name="VikingHelmetModel" parent="." unique_id=1500656309 instance=ExtResource("1_grrj4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.0714645)
