@@ -255,11 +255,6 @@ func close_inventory():
 func refresh_display():
 	update_inventory_display()
 
-func _input(event):
-	if event is InputEventKey and event.pressed:
-		if event.keycode == KEY_ESCAPE and visible:
-			_on_close_pressed()
-
 func handle_weapon_equip(from_slot: int, item: Dictionary):
 	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.WEAPON:
 		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.WEAPON)

@@ -11,13 +11,10 @@ var player_info = {
 	"nick" : "host",
 	"skin" : Character.SkinColor.BLUE
 }
+var _session_active := false
 
 signal player_connected(peer_id, player_info)
 signal server_disconnected
-
-func _process(_delta):
-	if Input.is_action_just_pressed("quit"):
-		get_tree().quit(0)
 
 func _ready() -> void:
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
@@ -34,6 +31,7 @@ func start_host(nickname: String, skin_color_str: String):
 
 	peer.host.compress(ENetConnection.COMPRESS_RANGE_CODER)
 	multiplayer.multiplayer_peer = peer
+	_session_active = true
 
 	player_info["nick"] = sanitize_nickname(nickname, "Host_" + str(multiplayer.get_unique_id()))
 	player_info["skin"] = skin_str_to_e(skin_color_str)
@@ -56,6 +54,7 @@ func join_game(nickname: String, skin_color_str: String, address: String = SERVE
 
 	peer.host.compress(ENetConnection.COMPRESS_RANGE_CODER)
 	multiplayer.multiplayer_peer = peer
+	_session_active = true
 
 	player_info["nick"] = sanitize_nickname(nickname, "Player_" + str(multiplayer.get_unique_id()))
 	player_info["skin"] = skin_str_to_e(skin_color_str)
@@ -92,13 +91,24 @@ func _on_player_disconnected(id):
 	players.erase(id)
 
 func _on_connection_failed():
-	multiplayer.multiplayer_peer = null
-	server_disconnected.emit()
+	_finish_session()
 
 func _on_server_disconnected():
+	_finish_session()
+
+func leave_game() -> void:
+	var peer := multiplayer.multiplayer_peer
+	if peer:
+		peer.close()
+	_finish_session()
+
+func _finish_session() -> void:
+	var had_session := _session_active or multiplayer.multiplayer_peer != null or not players.is_empty()
+	_session_active = false
 	multiplayer.multiplayer_peer = null
 	players.clear()
-	server_disconnected.emit()
+	if had_session:
+		server_disconnected.emit()
 
 func skin_str_to_e(s):
 	match str(s).strip_edges().to_lower():
@@ -135,11 +145,32 @@ func sanitize_player_info(info: Dictionary, fallback_nick: String) -> Dictionary
 	}
 
 func sanitize_nickname(nickname: String, fallback: String) -> String:
-	var clean = nickname.strip_edges()
+	var clean := ""
+	var last_was_space := false
+	for i in range(nickname.length()):
+		var codepoint := nickname.unicode_at(i)
+		if codepoint <= 31 or codepoint == 127:
+			if not last_was_space:
+				clean += " "
+				last_was_space = true
+			continue
+
+		var character := nickname.substr(i, 1)
+		if character == " ":
+			if last_was_space:
+				continue
+			last_was_space = true
+		else:
+			last_was_space = false
+		clean += character
+
+	clean = clean.strip_edges()
 	if clean.is_empty():
-		clean = fallback
+		clean = fallback.strip_edges()
 	if clean.length() > MAX_NICK_LENGTH:
-		clean = clean.substr(0, MAX_NICK_LENGTH)
+		clean = clean.substr(0, MAX_NICK_LENGTH).strip_edges()
+	if clean.is_empty():
+		clean = "Player"
 	return clean
 
 func sanitize_address(address: String) -> String:

@@ -1,0 +1,103 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="FontFile" uid="uid://diapabmalpcrj" path="res://assets/fonts/Kurland.ttf" id="1_font"]
+[ext_resource type="Script" path="res://scripts/pause_menu_ui.gd" id="2_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.08, 0.08, 0.08, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.52, 0.32, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="PauseMenuUI" type="Control"]
+process_mode = 3
+z_index = 100
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("2_script")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Panel" type="PanelContainer" parent="Overlay"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -178.0
+offset_right = 180.0
+offset_bottom = 178.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 32
+
+[node name="Buttons" type="VBoxContainer" parent="Overlay/Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Title" type="Label" parent="Overlay/Panel/MarginContainer/Buttons"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 52
+text = "PAUSED"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="Overlay/Panel/MarginContainer/Buttons"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.25, 0.75, 0.35, 1)
+theme_override_colors/font_pressed_color = Color(0.25, 0.75, 0.35, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 32
+text = "RESUME"
+flat = true
+
+[node name="MainMenu" type="Button" parent="Overlay/Panel/MarginContainer/Buttons"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.25, 0.75, 0.35, 1)
+theme_override_colors/font_pressed_color = Color(0.25, 0.75, 0.35, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 32
+text = "MAIN MENU"
+flat = true
+
+[node name="Quit" type="Button" parent="Overlay/Panel/MarginContainer/Buttons"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.86, 0.1, 0.1, 1)
+theme_override_colors/font_pressed_color = Color(0.86, 0.1, 0.1, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 32
+text = "QUIT"
+flat = true
+
+[connection signal="pressed" from="Overlay/Panel/MarginContainer/Buttons/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Overlay/Panel/MarginContainer/Buttons/MainMenu" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="Overlay/Panel/MarginContainer/Buttons/Quit" to="." method="_on_quit_pressed"]

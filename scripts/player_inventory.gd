@@ -96,6 +96,9 @@ func remove_item(item_id: String, quantity: int = 1) -> int:
 	return removed
 
 func move_item(from_index: int, to_index: int, quantity: int = -1) -> bool:
+	return move_to_slot(from_index, to_index, quantity)
+
+func move_to_slot(from_index: int, to_index: int, quantity: int = -1) -> bool:
 	if from_index == to_index:
 		return false
 
@@ -105,31 +108,21 @@ func move_item(from_index: int, to_index: int, quantity: int = -1) -> bool:
 	if not from_slot or not to_slot or from_slot.is_empty():
 		return false
 
-	var move_amount = quantity if quantity > 0 else from_slot.quantity
+	if quantity == 0 or quantity < -1:
+		return false
+
+	var move_amount = from_slot.quantity if quantity == -1 else quantity
 	move_amount = min(move_amount, from_slot.quantity)
 
 	var item = ItemDatabase.get_item(from_slot.item_id)
 	if not item:
 		return false
 
-	if to_slot.can_add_item(item, move_amount):
-		from_slot.remove_item(move_amount)
-		to_slot.add_item(item, move_amount)
+	var remaining = to_slot.add_item(item, move_amount)
+	var moved_amount = move_amount - remaining
+	if moved_amount > 0:
+		from_slot.remove_item(moved_amount)
 		return true
-
-	if to_slot.is_empty():
-		from_slot.remove_item(move_amount)
-		to_slot.add_item(item, move_amount)
-		return true
-	else:
-		var remaining_after_stack = try_stack_item(item, move_amount, from_index)
-		if remaining_after_stack < move_amount:
-			var moved_amount = move_amount - remaining_after_stack
-			from_slot.remove_item(moved_amount)
-
-			if remaining_after_stack > 0:
-				to_slot.add_item(item, remaining_after_stack)
-			return true
 
 	return false
 

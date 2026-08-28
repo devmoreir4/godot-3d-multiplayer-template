@@ -7,21 +7,21 @@ extends Node3D
 @onready var multiplayer_chat: MultiplayerChatUI = $MultiplayerChatUI
 @onready var inventory_ui: InventoryUI = $InventoryUI
 @onready var health_bar: HealthBar = $HealthBar
+@onready var pause_menu: PauseMenuUI = $PauseMenuUI
 
-var chat_visible = false
-var inventory_visible = false
+var chat_visible := false
+var inventory_visible := false
 
 const MAX_CHAT_MESSAGE_LENGTH := 160
 
 func _ready():
-	
 	after_ready()
-	
+
 	if DisplayServer.get_name() == "headless":
 		Network.start_host("", "")
 		spawn_loot()
 
-	multiplayer_chat.hide()
+	pause_menu.hide_menu()
 	main_menu.show_menu()
 	health_bar.hide()
 	multiplayer_chat.set_process_input(true)
@@ -29,6 +29,9 @@ func _ready():
 	main_menu.host_pressed.connect(_on_host_pressed)
 	main_menu.join_pressed.connect(_on_join_pressed)
 	main_menu.quit_pressed.connect(_on_quit_pressed)
+	pause_menu.resume_pressed.connect(_on_pause_resume_pressed)
+	pause_menu.main_menu_pressed.connect(_on_pause_main_menu_pressed)
+	pause_menu.quit_pressed.connect(_on_pause_quit_pressed)
 
 	if inventory_ui:
 		inventory_ui.inventory_closed.connect(_on_inventory_closed)
@@ -39,60 +42,70 @@ func _ready():
 	Network.server_disconnected.connect(_on_server_disconnected)
 	Network.connect("player_connected", Callable(self, "_on_player_connected"))
 	multiplayer.peer_disconnected.connect(_remove_player)
-	
+	_update_mouse_mode()
+
 func after_ready():
-	var ip_address :String
+	var ip_address: String
 	if OS.has_feature("windows"):
 		if OS.has_environment("COMPUTERNAME"):
-			ip_address =  IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")),IP.TYPE_IPV4)
+			ip_address = IP.resolve_hostname(str(OS.get_environment("COMPUTERNAME")), IP.TYPE_IPV4)
 	elif OS.has_feature("x11"):
 		if OS.has_environment("HOSTNAME"):
-			ip_address =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),IP.TYPE_IPV4)
+			ip_address = IP.resolve_hostname(str(OS.get_environment("HOSTNAME")), IP.TYPE_IPV4)
 	elif OS.has_feature("OSX"):
 		if OS.has_environment("HOSTNAME"):
-			ip_address =  IP.resolve_hostname(str(OS.get_environment("HOSTNAME")),IP.TYPE_IPV4)
-	get_node("/root/Level/MainMenuUI/MainContainer/MainMenu/Option3/AddressInput").text = ip_address
-
+			ip_address = IP.resolve_hostname(str(OS.get_environment("HOSTNAME")), IP.TYPE_IPV4)
+	main_menu.address_input.text = ip_address
 
 func spawn_loot():
 	if multiplayer.is_server():
-		var lootRoot = get_node("Environment/ItemContainer")
-		
+		var loot_root = get_node("Environment/ItemContainer")
+
 		var magic_gem = load("res://scenes/items/gems/magic_gem.tscn")
 		var loot_item = magic_gem.instantiate()
-		loot_item.position = Vector3( -17.43, 0.025, 5.114 )
-		lootRoot.add_child(loot_item, true)
-		
+		loot_item.position = Vector3(-17.43, 0.025, 5.114)
+		loot_root.add_child(loot_item, true)
+
 		loot_item = magic_gem.instantiate()
-		loot_item.position = Vector3( 0, 1.276, 17.786 )
-		lootRoot.add_child(loot_item, true)
-		
+		loot_item.position = Vector3(0, 1.276, 17.786)
+		loot_root.add_child(loot_item, true)
+
 		loot_item = magic_gem.instantiate()
-		loot_item.position = Vector3( 12.454, 0, 0 )
-		lootRoot.add_child(loot_item, true)
-		
+		loot_item.position = Vector3(12.454, 0, 0)
+		loot_root.add_child(loot_item, true)
+
 		loot_item = magic_gem.instantiate()
-		loot_item.position = Vector3( 0, 0, -6.283 )
-		lootRoot.add_child(loot_item, true)
-	
+		loot_item.position = Vector3(0, 0, -6.283)
+		loot_root.add_child(loot_item, true)
+
 		var pickaxe = load("res://scenes/items/weapons/pickaxe.tscn")
 		loot_item = pickaxe.instantiate()
-		loot_item.position = Vector3( 1.2, 7.6, 4.7 )
-		lootRoot.add_child(loot_item, true)
-		
+		loot_item.position = Vector3(1.2, 7.6, 4.7)
+		loot_root.add_child(loot_item, true)
+
 func _on_server_disconnected():
+	_reset_session_ui()
+
+func _reset_session_ui() -> void:
 	for child in players_container.get_children():
 		child.queue_free()
-	
+
+	var loot_root := get_node_or_null("Environment/ItemContainer")
+	if loot_root:
+		for child in loot_root.get_children():
+			child.queue_free()
+
 	chat_visible = false
 	inventory_visible = false
-	multiplayer_chat.hide()
+	multiplayer_chat.close_chat()
+	multiplayer_chat.clear_chat()
 	if inventory_ui:
 		inventory_ui.close_inventory()
 		inventory_ui.current_player = null
 	health_bar.hide()
-	
+	_hide_pause_menu(false)
 	main_menu.show_menu()
+	_update_mouse_mode()
 
 func _on_player_connected(peer_id, player_info):
 	var player = _add_player(peer_id, player_info)
@@ -104,20 +117,23 @@ func _on_host_pressed(nickname: String, skin: String):
 	if error:
 		push_warning("Failed to host game. Error: " + str(error))
 		main_menu.show_menu()
+		_update_mouse_mode()
 		return
 	main_menu.hide_menu()
 	spawn_loot()
-
+	_update_mouse_mode()
 
 func _on_join_pressed(nickname: String, skin: String, address: String):
 	var error = Network.join_game(nickname, skin, address)
 	if error:
 		push_warning("Failed to join game. Error: " + str(error))
 		main_menu.show_menu()
+		_update_mouse_mode()
 		return
 	main_menu.hide_menu()
+	_update_mouse_mode()
 
-func _add_player(id: int, player_info : Dictionary) -> Character:
+func _add_player(id: int, player_info: Dictionary) -> Character:
 	if DisplayServer.get_name() == "headless" and id == 1:
 		return null
 
@@ -149,25 +165,33 @@ func _remove_player(id):
 		player_node.queue_free()
 
 func _on_quit_pressed() -> void:
+	Network.leave_game()
 	get_tree().quit()
 
 func toggle_chat():
-	if main_menu.is_menu_visible():
+	if main_menu.is_menu_visible() or is_gameplay_input_blocked():
 		return
 
 	multiplayer_chat.toggle_chat()
 	chat_visible = multiplayer_chat.is_chat_visible()
+	_update_mouse_mode()
 
 func is_chat_visible() -> bool:
 	return multiplayer_chat.is_chat_visible()
 
 func _input(event):
+	if event.is_action_pressed("pause"):
+		_handle_pause_action()
+		get_viewport().set_input_as_handled()
+		return
+
+	if is_gameplay_input_blocked():
+		return
+
 	if event.is_action_pressed("toggle_chat"):
 		toggle_chat()
 	elif chat_visible and multiplayer_chat.message.has_focus():
-		if event is InputEventKey and event.keycode == KEY_ENTER and event.pressed:
-			multiplayer_chat._on_send_pressed()
-			get_viewport().set_input_as_handled()
+		pass
 	elif event.is_action_pressed("inventory"):
 		toggle_inventory()
 	elif event is InputEventKey and event.pressed and event.keycode == KEY_F1:
@@ -176,6 +200,9 @@ func _input(event):
 		_debug_print_inventory()
 
 func _on_chat_message_sent(message_text: String) -> void:
+	chat_visible = multiplayer_chat.is_chat_visible()
+	_update_mouse_mode()
+
 	var trimmed_message = _sanitize_chat_message(message_text)
 	if trimmed_message.is_empty():
 		return
@@ -211,7 +238,7 @@ func _sanitize_chat_message(message_text: String) -> String:
 	return clean
 
 func toggle_inventory():
-	if main_menu.is_menu_visible():
+	if main_menu.is_menu_visible() or is_gameplay_input_blocked():
 		return
 
 	var local_player = _get_local_player()
@@ -223,12 +250,86 @@ func toggle_inventory():
 		inventory_ui.open_inventory(local_player)
 	else:
 		inventory_ui.close_inventory()
+	_update_mouse_mode()
 
 func is_inventory_visible() -> bool:
 	return inventory_visible
 
 func _on_inventory_closed():
 	inventory_visible = false
+	_update_mouse_mode()
+
+func is_gameplay_input_blocked() -> bool:
+	return pause_menu.is_menu_visible()
+
+func is_camera_input_blocked() -> bool:
+	return (
+		is_gameplay_input_blocked()
+		or inventory_visible
+		or multiplayer_chat.is_chat_visible()
+	)
+
+func _handle_pause_action() -> void:
+	if inventory_visible:
+		_close_inventory()
+		return
+	if multiplayer_chat.is_chat_visible():
+		_close_chat()
+		return
+	if pause_menu.is_menu_visible():
+		_hide_pause_menu()
+		return
+	if main_menu.is_menu_visible() or not multiplayer.has_multiplayer_peer():
+		return
+	_show_pause_menu()
+
+func _show_pause_menu() -> void:
+	pause_menu.show_menu()
+	_update_mouse_mode()
+
+func _hide_pause_menu(restore_mouse_mode: bool = true) -> void:
+	if not pause_menu.is_menu_visible():
+		return
+	pause_menu.hide_menu()
+	if restore_mouse_mode:
+		_update_mouse_mode()
+
+func _close_chat() -> void:
+	multiplayer_chat.close_chat()
+	chat_visible = false
+	_update_mouse_mode()
+
+func _close_inventory() -> void:
+	inventory_ui.close_inventory()
+	inventory_visible = false
+	_update_mouse_mode()
+
+func _update_mouse_mode() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	var ui_requires_cursor := (
+		main_menu.is_menu_visible()
+		or pause_menu.is_menu_visible()
+		or inventory_visible
+		or not multiplayer.has_multiplayer_peer()
+	)
+	if ui_requires_cursor:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _on_pause_resume_pressed() -> void:
+	_hide_pause_menu()
+
+func _on_pause_main_menu_pressed() -> void:
+	_hide_pause_menu(false)
+	Network.leave_game()
+	if not main_menu.is_menu_visible():
+		_reset_session_ui()
+
+func _on_pause_quit_pressed() -> void:
+	Network.leave_game()
+	get_tree().quit()
 
 func update_local_inventory_display():
 	if inventory_ui:

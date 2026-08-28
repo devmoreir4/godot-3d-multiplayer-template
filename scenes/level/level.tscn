@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bx7mq8t8hjn7q" path="res://scenes/ui/main_menu_ui.tscn" id="6_x9g3h"]
 [ext_resource type="PackedScene" uid="uid://cqbpmqh1kef3f" path="res://scenes/scenary/red_block.tscn" id="7_wcngd"]
 [ext_resource type="PackedScene" uid="uid://cmhutalglf0aa" path="res://scenes/ui/health_bar.tscn" id="7_xv074"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu_ui.tscn" id="8_pause"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_r5xs5"]
 size = Vector2(90, 90)
@@ -78,6 +79,9 @@ visible = false
 visible = false
 
 [node name="InventoryUI" parent="." unique_id=2001567843 instance=ExtResource("4_x8g2h")]
+visible = false
+
+[node name="PauseMenuUI" parent="." instance=ExtResource("8_pause")]
 visible = false
 
 [node name="HealthBar" parent="." unique_id=25732065 instance=ExtResource("7_xv074")]

@@ -121,7 +121,9 @@ func _physics_process(delta):
 	var current_scene = get_tree().get_current_scene()
 	var should_freeze = false
 	if current_scene:
-		if current_scene.has_method("is_chat_visible") and current_scene.is_chat_visible():
+		if current_scene.has_method("is_gameplay_input_blocked") and current_scene.is_gameplay_input_blocked():
+			should_freeze = true
+		elif current_scene.has_method("is_chat_visible") and current_scene.is_chat_visible():
 			should_freeze = true
 		elif current_scene.has_method("is_inventory_visible") and current_scene.is_inventory_visible():
 			should_freeze = true
@@ -136,11 +138,15 @@ func _physics_process(delta):
 	if is_collecting:
 		velocity.x = 0
 		velocity.z = 0
+		_apply_gravity(delta)
 		move_and_slide()
 		return
 
 	if should_freeze:
 		freeze()
+		_apply_gravity(delta)
+		move_and_slide()
+		_request_animation(_body.get_movement_animation(velocity))
 		return
 
 	if Input.is_action_just_pressed("pickup") and is_on_floor():
@@ -355,11 +361,6 @@ func respawn_player() -> void:
 	_death_animation_finished = false
 	weapon_disabled()
 
-@rpc("any_peer", "reliable")
-func change_nick(new_nick: String):
-	if nickname:
-		nickname.text = new_nick
-
 func get_texture_from_name(color: SkinColor) -> CompressedTexture2D:
 	match color:
 		SkinColor.BLUE:
@@ -437,6 +438,10 @@ func request_move_item(from_slot: int, to_slot: int, quantity: int = -1):
 
 	if from_slot < 0 or from_slot >= PlayerInventory.INVENTORY_SIZE or to_slot < 0 or to_slot >= PlayerInventory.INVENTORY_SIZE:
 		push_warning("Invalid slot indices: from=" + str(from_slot) + " to=" + str(to_slot))
+		return
+
+	if quantity != -1 and quantity <= 0:
+		push_warning("Invalid move quantity: " + str(quantity))
 		return
 
 	var success = false
