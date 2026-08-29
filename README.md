@@ -14,9 +14,7 @@ This template provides everything you need to kickstart your multiplayer game de
 * **Player Name Displayed:** Each player's nickname is shown above their character for easy identification.
 * **Player Skin Selection:** Players can choose from four skin options (red, green, blue, or yellow) to personalize their avatars.
 * **Global Multiplayer Chat:** An integrated chat system allows players to communicate in real-time with everyone in the game.
-* **Health and Respawn:** Players have 10 health points with a local health bar, synchronized damage and hurt/death animations, and an automatic respawn.
-* **Server-Authoritative Combat:** The server validates attack windows, equipped weapons, targets, hit distance, and duplicate hits.
-* **Multiplayer Inventory System:** Server-authoritative inventory management with a 20-slot backpack, drag-and-drop organization, item stacking, world-item collection and dropping, plus dedicated weapon and armor slots.
+* **Multiplayer Inventory System:** Server-authoritative inventory management with a 16-slot backpack, drag-and-drop organization, item stacking, world-item collection and dropping, plus dedicated hat, weapon, and armor slots.
 
 ## How to Run the Project
 
@@ -46,7 +44,7 @@ Ensure the script has execution permissions (`chmod +x run_headless_server.sh`) 
 * `<kbd>`W`</kbd>` `<kbd>`A`</kbd>` `<kbd>`S`</kbd>` `<kbd>`D`</kbd>` to move.
 * `<kbd>`Shift`</kbd>` to run.
 * `<kbd>`Space`</kbd>` to jump or double jump.
-* Left mouse button to attack.
+* Left mouse button to play the attack animation (visual only, without damage).
 * `<kbd>`E`</kbd>` to collect a nearby item.
 * `<kbd>`Esc`</kbd>` to quit.
 * `<kbd>`T`</kbd>` to hide/show chat.

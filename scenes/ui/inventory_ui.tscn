@@ -20,9 +20,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -145.0
-offset_top = -200.0
+offset_top = -170.0
 offset_right = 145.0
-offset_bottom = 200.0
+offset_bottom = 170.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -63,21 +63,71 @@ size_flags_horizontal = 4
 size_flags_vertical = 3
 columns = 4
 
+[node name="Hat" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -281.0
+offset_top = -170.0
+offset_right = -161.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Hat"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Hat/MarginContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="Label" type="Label" parent="Hat/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Hat"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Hat/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
 [node name="Weapon" type="Panel" parent="." unique_id=825838901]
-layout_mode = 0
-offset_left = 231.0
-offset_top = 160.0
-offset_right = 439.0
-offset_bottom = 316.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -281.0
+offset_top = 60.0
+offset_right = -161.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Weapon" unique_id=564424952]
-layout_mode = 0
-offset_right = 206.0
-offset_bottom = 155.0
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Weapon/MarginContainer" unique_id=741072650]
 clip_contents = true
@@ -94,22 +144,30 @@ horizontal_alignment = 1
 layout_mode = 2
 
 [node name="Armor" type="Panel" parent="." unique_id=79975516]
-layout_mode = 0
-offset_left = 233.0
-offset_top = 346.0
-offset_right = 441.0
-offset_bottom = 502.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -281.0
+offset_top = -55.0
+offset_right = -161.0
+offset_bottom = 55.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="Armor" unique_id=420675710]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 208.0
-offset_bottom = 152.0
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Armor/MarginContainer" unique_id=2065537359]
 layout_mode = 2

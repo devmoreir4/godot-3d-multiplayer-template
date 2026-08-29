@@ -31,18 +31,9 @@ func get_movement_animation(_velocity: Vector3) -> StringName:
 func play_animation_state(state: StringName, restart: bool = false) -> void:
 	if not animation_player:
 		return
-	var animation_name := state
-	if state == &"Death":
-		animation_name = &"Hurt"
-	elif state == &"Respawn":
-		animation_name = &"Idle"
-	if not animation_player.has_animation(animation_name):
+	if not animation_player.has_animation(state):
 		return
 	if not restart and _current_state == state and animation_player.is_playing():
 		return
 	_current_state = state
-	animation_player.play(animation_name)
-
-func pause_death_pose() -> void:
-	if animation_player and _current_state == &"Death":
-		animation_player.pause()
+	animation_player.play(state)

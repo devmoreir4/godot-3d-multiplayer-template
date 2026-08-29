@@ -5,8 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://bclq8vh1x2goy" path="res://scenes/ui/inventory_ui.tscn" id="4_x8g2h"]
 [ext_resource type="PackedScene" uid="uid://ccencq0lcd3ph" path="res://scenes/ui/multiplayer_chat_ui.tscn" id="5_x9g3h"]
 [ext_resource type="PackedScene" uid="uid://bx7mq8t8hjn7q" path="res://scenes/ui/main_menu_ui.tscn" id="6_x9g3h"]
-[ext_resource type="PackedScene" uid="uid://cqbpmqh1kef3f" path="res://scenes/scenary/red_block.tscn" id="7_wcngd"]
-[ext_resource type="PackedScene" uid="uid://cmhutalglf0aa" path="res://scenes/ui/health_bar.tscn" id="7_xv074"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu_ui.tscn" id="8_pause"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_r5xs5"]
@@ -27,27 +25,12 @@ player_scene = ExtResource("1_uvcbi")
 
 [node name="ItemMultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=150451317]
 unique_name_in_owner = true
-_spawnable_scenes = PackedStringArray("uid://c8xkx1htqjjid", "uid://cqi5eaqaobb3e", "uid://bpcrivjdy82nk", "uid://ba8ffkgetdio6", "uid://b3r8ojefaspnv", "uid://dixt7j41ak3ft")
+_spawnable_scenes = PackedStringArray("res://scenes/items/hats/bucket_hat.tscn", "res://scenes/items/hats/cowboy_hat.tscn", "res://scenes/items/hats/witch_hat.tscn", "res://scenes/items/armor/armor_golden.tscn", "res://scenes/items/armor/armor_metal.tscn", "res://scenes/items/weapons/sword.tscn", "res://scenes/items/weapons/sword_big.tscn", "res://scenes/items/misc/chicken_leg.tscn")
 spawn_path = NodePath("../Environment/ItemContainer")
 
 [node name="Environment" type="Node3D" parent="." unique_id=523076069]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2542782, 0)
-
-[node name="Block5" parent="Environment" unique_id=964236966 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1491866, 5.4978743, 4.769345)
-
-[node name="Block3" parent="Environment" unique_id=1305052694 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5386019, 2.5812874, 10.739042)
-
-[node name="Block2" parent="Environment" unique_id=1377452148 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.750885, -0.36214256, 9.532318)
-
-[node name="Block1" parent="Environment" unique_id=842897557 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8754425, -0.18107128, 4.766159)
-
-[node name="Block4" parent="Environment" unique_id=2030620387 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1332884, 5.4783096, 4.766159)
 
 [node name="Floor" type="StaticBody3D" parent="Environment" unique_id=1286358539]
 collision_layer = 2
@@ -77,11 +60,10 @@ visible = false
 
 [node name="MultiplayerChatUI" parent="." unique_id=1655363280 instance=ExtResource("5_x9g3h")]
 visible = false
+anchors_preset = -1
 
 [node name="InventoryUI" parent="." unique_id=2001567843 instance=ExtResource("4_x8g2h")]
 visible = false
 
-[node name="PauseMenuUI" parent="." instance=ExtResource("8_pause")]
+[node name="PauseMenuUI" parent="." unique_id=358154633 instance=ExtResource("8_pause")]
 visible = false
-
-[node name="HealthBar" parent="." unique_id=25732065 instance=ExtResource("7_xv074")]

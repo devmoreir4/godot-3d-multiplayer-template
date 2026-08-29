@@ -10,6 +10,7 @@ class_name InventoryUI
 
 const SLOT_INDEX_WEAPON := -1
 const SLOT_INDEX_ARMOR := -2
+const SLOT_INDEX_HAT := -3
 
 var current_player: Character
 var slot_ui_scene: PackedScene
@@ -18,6 +19,7 @@ var current_item : Item
 var current_slot_index : int
 var armor_slot_ui : InventorySlotUI
 var weapon_slot_ui : InventorySlotUI
+var hat_slot_ui : InventorySlotUI
 
 
 signal inventory_closed
@@ -28,8 +30,19 @@ func _ready():
 	close_button.pressed.connect(_on_close_pressed)
 	tooltip.visible = false
 	_create_slot_uis()
+	_create_hat_slot_ui()
 	_create_armor_slot_ui()
 	_create_weapon_slot_ui()
+
+func _create_hat_slot_ui():
+	hat_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
+	hat_slot_ui.custom_minimum_size = Vector2(64, 64)
+	hat_slot_ui.parent_inventory = self
+	hat_slot_ui.slot_type = InventorySlotUI.TYPE.HAT
+	hat_slot_ui.slot_clicked.connect(_on_slot_clicked)
+	hat_slot_ui.item_hovered.connect(_on_item_hovered)
+	hat_slot_ui.item_unhovered.connect(_on_item_unhovered)
+	get_node("Hat/MarginContainer/VBoxContainer").add_child(hat_slot_ui)
 
 func _create_armor_slot_ui():
 	armor_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
@@ -80,6 +93,7 @@ func update_inventory_display():
 			slot_uis[i].set_slot_data(player_inventory.get_slot(i), i)
 	weapon_slot_ui.set_slot_data(player_inventory.equipped_weapon, SLOT_INDEX_WEAPON)
 	armor_slot_ui.set_slot_data(player_inventory.equipped_armor, SLOT_INDEX_ARMOR)
+	hat_slot_ui.set_slot_data(player_inventory.equipped_hat, SLOT_INDEX_HAT)
 
 func _on_slot_clicked(slot_index: int, button: int):
 	match button:
@@ -99,6 +113,8 @@ func _handle_right_click(slot_index: int):
 		slot = player_inventory.equipped_weapon
 	elif slot_index == SLOT_INDEX_ARMOR:
 		slot = player_inventory.equipped_armor
+	elif slot_index == SLOT_INDEX_HAT:
+		slot = player_inventory.equipped_hat
 	else:
 		slot = player_inventory.get_slot(slot_index)
 	if slot and not slot.is_empty():
@@ -109,7 +125,7 @@ func _handle_right_click(slot_index: int):
 			menubar.add_child( context_menu )
 			context_menu.popup_hide.connect(context_menu.queue_free)
 			context_menu.id_pressed.connect( _on_item_selected )
-			if slot_index == SLOT_INDEX_WEAPON or slot_index == SLOT_INDEX_ARMOR:
+			if slot_index == SLOT_INDEX_WEAPON or slot_index == SLOT_INDEX_ARMOR or slot_index == SLOT_INDEX_HAT:
 				context_menu.add_item(_get_context_menu_string(Item.ContextOptions.UNEQUIP), Item.ContextOptions.UNEQUIP)
 			else:
 				for item_option in current_item.context_options:
@@ -123,26 +139,10 @@ func _on_item_selected(index: int):
 	if not current_player or not current_player.get_inventory():
 		return
 	 
-	if index == Item.ContextOptions.DRINK:
-		var result = current_item.context_callable[Item.ContextOptions.DRINK].call()
-		if result:
-			current_player.request_remove_item.rpc_id( 1,  current_item.id, 1 )
-			refresh_display()
-	elif index == Item.ContextOptions.EXAMINE:
-		current_item.context_callable[Item.ContextOptions.EXAMINE].call()
-	elif index == Item.ContextOptions.EAT:
-		var result = current_item.context_callable[Item.ContextOptions.EAT].call()
-		if result:
-			current_player.request_remove_item.rpc_id( 1,  current_item.id, 1 )
-			refresh_display()
-	elif index == Item.ContextOptions.EQUIP:
+	if index == Item.ContextOptions.EQUIP:
 		current_player.request_equip_item.rpc_id(1, current_slot_index, current_item.item_type)
 	elif index == Item.ContextOptions.UNEQUIP:
 		current_player.request_unequip_item.rpc_id(1, current_item.item_type)
-	elif index == Item.ContextOptions.THROW:
-		current_item.context_callable[Item.ContextOptions.THROW].call()
-	elif index == Item.ContextOptions.READ:
-		current_item.context_callable[Item.ContextOptions.READ].call()
 	elif index == Item.ContextOptions.DROP:
 		if current_item.scene_path.is_empty() or not ResourceLoader.exists(current_item.scene_path):
 			push_warning("Cannot drop item '" + current_item.id + "': invalid scene path '" + current_item.scene_path + "'")
@@ -203,6 +203,7 @@ func _get_item_type_string(type: Item.ItemType) -> String:
 	match type:
 		Item.ItemType.WEAPON: return "Weapon"
 		Item.ItemType.ARMOR: return "Armor"
+		Item.ItemType.HAT: return "Hat"
 		Item.ItemType.CONSUMABLE: return "Consumable"
 		Item.ItemType.TOOL: return "Tool"
 		Item.ItemType.MISC: return "Miscellaneous"
@@ -219,12 +220,8 @@ func _get_rarity_string(rarity: Item.ItemRarity) -> String:
 
 func _get_context_menu_string( context: Item.ContextOptions ) -> String:
 	match context:
-		Item.ContextOptions.DRINK: return "Drink"
-		Item.ContextOptions.EAT: return "Eat"
 		Item.ContextOptions.DROP: return "Drop"
 		Item.ContextOptions.EQUIP: return "Equip"
-		Item.ContextOptions.THROW: return "Throw"
-		Item.ContextOptions.READ: return "Read"
 		Item.ContextOptions.UNEQUIP: return "Unequip"
 		_: return "Unknown"
 
@@ -236,6 +233,8 @@ func handle_item_drop(from_slot: int, to_slot: int, _item_id: String):
 		current_player.request_unequip_item.rpc_id(1, Item.ItemType.WEAPON, to_slot)
 	elif from_slot == SLOT_INDEX_ARMOR:
 		current_player.request_unequip_item.rpc_id(1, Item.ItemType.ARMOR, to_slot)
+	elif from_slot == SLOT_INDEX_HAT:
+		current_player.request_unequip_item.rpc_id(1, Item.ItemType.HAT, to_slot)
 	else:
 		current_player.request_move_item.rpc_id(1, from_slot, to_slot)
 
@@ -262,3 +261,7 @@ func handle_weapon_equip(from_slot: int, item: Dictionary):
 func handle_armor_equip(from_slot: int, item: Dictionary):
 	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.ARMOR:
 		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.ARMOR)
+
+func handle_hat_equip(from_slot: int, item: Dictionary):
+	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.HAT:
+		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.HAT)

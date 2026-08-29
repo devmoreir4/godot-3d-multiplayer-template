@@ -16,7 +16,6 @@ extends Resource
 @export var rarity: ItemRarity = ItemRarity.COMMON
 @export var value: int = 0
 @export var context_options: Array[Item.ContextOptions] = []
-@export var context_callable: Dictionary
 
 @export var scene_path: String = ""
 
@@ -30,7 +29,8 @@ enum ItemType {
 	ARMOR,
 	CONSUMABLE,
 	TOOL,
-	MISC
+	MISC,
+	HAT
 }
 
 enum ItemRarity {
@@ -42,13 +42,8 @@ enum ItemRarity {
 }
 
 enum ContextOptions { 
-	DRINK,
-	EAT, 
 	DROP,
 	EQUIP,
-	THROW,
-	READ,
-	EXAMINE,
 	UNEQUIP,
 }
 
@@ -64,7 +59,6 @@ func to_dict() -> Dictionary:
 		"rarity": rarity,
 		"value": value,
 		"context_options": context_options,
-		"context_callable": context_callable,
 		"scene_path": scene_path
 	}
 
@@ -78,37 +72,8 @@ func from_dict(data: Dictionary) -> void:
 	item_type = data.get("item_type", ItemType.MISC)
 	rarity = data.get("rarity", ItemRarity.COMMON)
 	value = data.get("value", 0)
-	context_options = data.get("context_options", [ContextOptions.EXAMINE,ContextOptions.DROP])
-	context_callable = data.get("context_callable", {ContextOptions.EXAMINE:examine, ContextOptions.DROP:drop})
+	context_options.assign(data.get("context_options", [ContextOptions.DROP]))
 	scene_path = data.get("scene_path", "")
-	
- 
+
 func can_stack_with(other_item: Item) -> bool:
 	return stackable && other_item.stackable && id == other_item.id
-
-static func examine():
-	pass
-	
-static func drop():
-	pass
-
-static func equip():
-	pass
-
-static func throw():
-	pass
-
-static func read():
-	pass
-	
-static func drink() -> bool:
-	return false
-	
-static func static_drop():
-	pass
-		
-func set_context_options( val : Array[Item.ContextOptions]):
-	context_options = val
-	
-func set_context_callable( val : Dictionary):
-	context_callable = val

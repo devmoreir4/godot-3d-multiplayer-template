@@ -1,10 +1,11 @@
 class_name PlayerInventory
 extends RefCounted
 
-const INVENTORY_SIZE = 20
+const INVENTORY_SIZE = 16
 var slots: Array[InventorySlot] = []
 var equipped_weapon: InventorySlot = InventorySlot.new()
 var equipped_armor: InventorySlot = InventorySlot.new()
+var equipped_hat: InventorySlot = InventorySlot.new()
 
 func _init():
 	_initialize_slots()
@@ -25,6 +26,8 @@ func get_equipped_slot(item_type: Item.ItemType) -> InventorySlot:
 			return equipped_weapon
 		Item.ItemType.ARMOR:
 			return equipped_armor
+		Item.ItemType.HAT:
+			return equipped_hat
 		_:
 			return null
 
@@ -38,16 +41,14 @@ func equip_from_slot(index: int, item_type: Item.ItemType) -> bool:
 	if not item or item.item_type != item_type:
 		return false
 
-	var previous_item_id: String = equipped_slot.item_id
-	var previous_quantity: int = equipped_slot.quantity
-	equipped_slot.item_id = backpack_slot.item_id
-	equipped_slot.quantity = 1
-
-	if previous_item_id.is_empty():
-		backpack_slot.remove_item(1)
-	else:
-		backpack_slot.item_id = previous_item_id
-		backpack_slot.quantity = previous_quantity
+	var new_item_id: String = backpack_slot.item_id
+	var new_quantity: int = backpack_slot.quantity
+	backpack_slot.item_id = equipped_slot.item_id
+	backpack_slot.quantity = equipped_slot.quantity
+	equipped_slot.item_id = new_item_id
+	equipped_slot.quantity = new_quantity
+	if backpack_slot.is_empty():
+		backpack_slot.clear()
 	return true
 
 func unequip_to_slot(item_type: Item.ItemType, destination_index: int = -1) -> bool:
@@ -177,20 +178,6 @@ func get_first_empty_slot() -> int:
 			return i
 	return -1
 
-func get_free_space_for_item(item: Item) -> int:
-	var free_space = 0
-
-	if item.stackable:
-		for slot in slots:
-			if slot.item_id == item.id:
-				free_space += item.max_stack - slot.quantity
-
-	for slot in slots:
-		if slot.is_empty():
-			free_space += item.max_stack if item.stackable else 1
-
-	return free_space
-
 func try_stack_item(item: Item, quantity: int, exclude_slot: int = -1) -> int:
 	if not item.stackable:
 		return quantity
@@ -220,7 +207,8 @@ func to_dict() -> Dictionary:
 	return {
 		"slots": data,
 		"equipped_weapon": equipped_weapon.to_dict(),
-		"equipped_armor": equipped_armor.to_dict()
+		"equipped_armor": equipped_armor.to_dict(),
+		"equipped_hat": equipped_hat.to_dict()
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -231,3 +219,4 @@ func from_dict(data: Dictionary) -> void:
 		slots[i].clear()
 	equipped_weapon.from_dict(data.get("equipped_weapon", {}))
 	equipped_armor.from_dict(data.get("equipped_armor", {}))
+	equipped_hat.from_dict(data.get("equipped_hat", {}))

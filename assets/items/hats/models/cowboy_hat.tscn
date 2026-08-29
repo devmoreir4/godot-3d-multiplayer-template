@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://b170lx2cmhe3c"]
+
+[ext_resource type="PackedScene" uid="uid://bb12wj3dry06u" path="res://assets/items/hats/FBX/cowboyHat.fbx" id="1_e1jw0"]
+[ext_resource type="Texture2D" uid="uid://b0fyyxh3j4u6a" path="res://assets/items/hats/Textures/hat_diff.png" id="2_ipgpn"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0264"]
+albedo_texture = ExtResource("2_ipgpn")
+
+[node name="cowboyHat" unique_id=1238950900 instance=ExtResource("1_e1jw0")]
+
+[node name="cowboyHat" parent="." index="0" unique_id=1718931718]
+material_override = SubResource("StandardMaterial3D_y0264")

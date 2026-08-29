@@ -6,7 +6,6 @@ extends Node3D
 
 @onready var multiplayer_chat: MultiplayerChatUI = $MultiplayerChatUI
 @onready var inventory_ui: InventoryUI = $InventoryUI
-@onready var health_bar: HealthBar = $HealthBar
 @onready var pause_menu: PauseMenuUI = $PauseMenuUI
 
 var chat_visible := false
@@ -19,11 +18,9 @@ func _ready():
 
 	if DisplayServer.get_name() == "headless":
 		Network.start_host("", "")
-		spawn_loot()
 
 	pause_menu.hide_menu()
 	main_menu.show_menu()
-	health_bar.hide()
 	multiplayer_chat.set_process_input(true)
 
 	main_menu.host_pressed.connect(_on_host_pressed)
@@ -57,32 +54,6 @@ func after_ready():
 			ip_address = IP.resolve_hostname(str(OS.get_environment("HOSTNAME")), IP.TYPE_IPV4)
 	main_menu.address_input.text = ip_address
 
-func spawn_loot():
-	if multiplayer.is_server():
-		var loot_root = get_node("Environment/ItemContainer")
-
-		var magic_gem = load("res://scenes/items/gems/magic_gem.tscn")
-		var loot_item = magic_gem.instantiate()
-		loot_item.position = Vector3(-17.43, 0.025, 5.114)
-		loot_root.add_child(loot_item, true)
-
-		loot_item = magic_gem.instantiate()
-		loot_item.position = Vector3(0, 1.276, 17.786)
-		loot_root.add_child(loot_item, true)
-
-		loot_item = magic_gem.instantiate()
-		loot_item.position = Vector3(12.454, 0, 0)
-		loot_root.add_child(loot_item, true)
-
-		loot_item = magic_gem.instantiate()
-		loot_item.position = Vector3(0, 0, -6.283)
-		loot_root.add_child(loot_item, true)
-
-		var pickaxe = load("res://scenes/items/weapons/pickaxe.tscn")
-		loot_item = pickaxe.instantiate()
-		loot_item.position = Vector3(1.2, 7.6, 4.7)
-		loot_root.add_child(loot_item, true)
-
 func _on_server_disconnected():
 	_reset_session_ui()
 
@@ -102,7 +73,6 @@ func _reset_session_ui() -> void:
 	if inventory_ui:
 		inventory_ui.close_inventory()
 		inventory_ui.current_player = null
-	health_bar.hide()
 	_hide_pause_menu(false)
 	main_menu.show_menu()
 	_update_mouse_mode()
@@ -120,7 +90,6 @@ func _on_host_pressed(nickname: String, skin: String):
 		_update_mouse_mode()
 		return
 	main_menu.hide_menu()
-	spawn_loot()
 	_update_mouse_mode()
 
 func _on_join_pressed(nickname: String, skin: String, address: String):
@@ -346,7 +315,11 @@ func _debug_add_item():
 		return
 	var local_player = _get_local_player()
 	if local_player:
-		var test_items = ["iron_sword", "health_potion", "viking_helmet", "magic_gem", "iron_pickaxe", "apple"]
+		var test_items: Array[String] = []
+		for item_id in ItemDatabase.get_all_items():
+			test_items.append(str(item_id))
+		if test_items.is_empty():
+			return
 		var random_item = test_items[randi() % test_items.size()]
 		local_player.request_add_item.rpc_id(1, random_item, 1)
 

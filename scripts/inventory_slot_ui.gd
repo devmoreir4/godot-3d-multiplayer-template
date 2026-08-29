@@ -5,6 +5,7 @@ enum TYPE {
 	BACKPACK,
 	WEAPON,
 	ARMOR,
+	HAT,
 }
 
 @onready var background: NinePatchRect = $Background
@@ -107,6 +108,8 @@ func _drop_data(_position: Vector2, data):
 		parent_inventory.handle_weapon_equip(data.slot_index, data)
 	elif parent_inventory and parent_inventory.has_method("handle_armor_equip") and slot_type == TYPE.ARMOR:
 		parent_inventory.handle_armor_equip(data.slot_index, data)
+	elif parent_inventory and parent_inventory.has_method("handle_hat_equip") and slot_type == TYPE.HAT:
+		parent_inventory.handle_hat_equip(data.slot_index, data)
 		
 func _get_drag_data(_position: Vector2):
 	if not inventory_data or inventory_data.is_empty():

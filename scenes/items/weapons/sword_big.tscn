@@ -1,10 +1,10 @@
 [gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://assets/items/weapons/models/sword.fbx" id="1_model"]
+[ext_resource type="PackedScene" path="res://assets/items/weapons/models/sword_big.fbx" id="1_model"]
 [ext_resource type="Script" path="res://scripts/items/item_rigid_body_3d.gd" id="2_script"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_item"]
-radius = 0.45
+radius = 0.55
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_item"]
 properties/0/path = NodePath(".:position")
@@ -14,19 +14,19 @@ properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
-[node name="Sword" type="RigidBody3D"]
+[node name="SwordBig" type="RigidBody3D"]
 collision_layer = 4
 collision_mask = 7
 linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource("2_script")
-item_id = "sword"
+item_id = "sword_big"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_item")
 
 [node name="Model" parent="." instance=ExtResource("1_model")]
-transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, 0, 0)
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
 replication_config = SubResource("SceneReplicationConfig_item")
