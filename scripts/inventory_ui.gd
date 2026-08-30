@@ -1,25 +1,25 @@
 extends Control
 class_name InventoryUI
 
-@onready var grid_container: GridContainer = $Panel/MarginContainer/VBoxContainer/GridContainer
-@onready var title_label: Label = $Panel/MarginContainer/VBoxContainer/TitleBar/Title
-@onready var close_button: Button = $Panel/MarginContainer/VBoxContainer/TitleBar/CloseButton
+@onready var grid_container: GridContainer = $SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/GridContainer
+@onready var title_label: Label = $SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar/Title
+@onready var close_button: Button = $SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar/CloseButton
 @onready var tooltip: Control = $ItemTooltip
 @onready var tooltip_label: RichTextLabel = $ItemTooltip/Panel/MarginContainer/TooltipText
 @onready var menubar: MenuBar = $MenuBar
 
 const SLOT_INDEX_WEAPON := -1
-const SLOT_INDEX_ARMOR := -2
-const SLOT_INDEX_HAT := -3
+const SLOT_INDEX_HAT := -2
+const SLOT_INDEX_BACKPACK := -3
 
 var current_player: Character
 var slot_ui_scene: PackedScene
 var slot_uis: Array[InventorySlotUI] = []
 var current_item : Item
 var current_slot_index : int
-var armor_slot_ui : InventorySlotUI
 var weapon_slot_ui : InventorySlotUI
 var hat_slot_ui : InventorySlotUI
+var backpack_slot_ui: InventorySlotUI
 
 
 signal inventory_closed
@@ -31,8 +31,8 @@ func _ready():
 	tooltip.visible = false
 	_create_slot_uis()
 	_create_hat_slot_ui()
-	_create_armor_slot_ui()
 	_create_weapon_slot_ui()
+	_create_backpack_slot_ui()
 
 func _create_hat_slot_ui():
 	hat_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
@@ -42,18 +42,8 @@ func _create_hat_slot_ui():
 	hat_slot_ui.slot_clicked.connect(_on_slot_clicked)
 	hat_slot_ui.item_hovered.connect(_on_item_hovered)
 	hat_slot_ui.item_unhovered.connect(_on_item_unhovered)
-	get_node("Hat/MarginContainer/VBoxContainer").add_child(hat_slot_ui)
+	get_node("SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/HatSlotContainer").add_child(hat_slot_ui)
 
-func _create_armor_slot_ui():
-	armor_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
-	armor_slot_ui.custom_minimum_size = Vector2(64, 64)
-	armor_slot_ui.parent_inventory = self
-	armor_slot_ui.slot_type = armor_slot_ui.TYPE.ARMOR
-	armor_slot_ui.slot_clicked.connect(_on_slot_clicked)
-	armor_slot_ui.item_hovered.connect(_on_item_hovered)
-	armor_slot_ui.item_unhovered.connect(_on_item_unhovered)
-	get_node( "Armor/MarginContainer/VBoxContainer" ).add_child( armor_slot_ui )
-	
 func _create_weapon_slot_ui():
 	weapon_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
 	weapon_slot_ui.custom_minimum_size = Vector2(64, 64)
@@ -62,19 +52,31 @@ func _create_weapon_slot_ui():
 	weapon_slot_ui.slot_clicked.connect(_on_slot_clicked)
 	weapon_slot_ui.item_hovered.connect(_on_item_hovered)
 	weapon_slot_ui.item_unhovered.connect(_on_item_unhovered)
-	get_node( "Weapon/MarginContainer/VBoxContainer" ).add_child( weapon_slot_ui )
+	get_node("SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/WeaponSlotContainer").add_child(weapon_slot_ui)
+
+func _create_backpack_slot_ui() -> void:
+	backpack_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
+	backpack_slot_ui.custom_minimum_size = Vector2(64, 64)
+	backpack_slot_ui.parent_inventory = self
+	backpack_slot_ui.slot_type = InventorySlotUI.TYPE.BACKPACK
+	backpack_slot_ui.slot_clicked.connect(_on_slot_clicked)
+	backpack_slot_ui.item_hovered.connect(_on_item_hovered)
+	backpack_slot_ui.item_unhovered.connect(_on_item_unhovered)
+	get_node("SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/BackpackSlotContainer").add_child(backpack_slot_ui)
 
 func _create_slot_uis():
 	for child in grid_container.get_children():
 		child.queue_free()
 	slot_uis.clear()
 
-	for i in range(PlayerInventory.INVENTORY_SIZE):
+	for i in range(PlayerInventory.MAX_INVENTORY_SIZE):
 		var slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
 		slot_ui.custom_minimum_size = Vector2(64, 64)
 		slot_ui.parent_inventory = self
+		slot_ui.visible = i < PlayerInventory.BASE_INVENTORY_SIZE
 
 		slot_ui.slot_clicked.connect(_on_slot_clicked)
+		slot_ui.slot_double_clicked.connect(_on_slot_double_clicked)
 		slot_ui.item_hovered.connect(_on_item_hovered)
 		slot_ui.item_unhovered.connect(_on_item_unhovered)
 
@@ -88,12 +90,16 @@ func update_inventory_display():
 		return
 
 	var player_inventory = current_player.get_inventory()
+	var active_slot_count := player_inventory.get_active_slot_count()
 	for i in range(slot_uis.size()):
-		if i < PlayerInventory.INVENTORY_SIZE:
+		slot_uis[i].visible = i < active_slot_count
+		if i < active_slot_count:
 			slot_uis[i].set_slot_data(player_inventory.get_slot(i), i)
+		else:
+			slot_uis[i].set_slot_data(null, i)
 	weapon_slot_ui.set_slot_data(player_inventory.equipped_weapon, SLOT_INDEX_WEAPON)
-	armor_slot_ui.set_slot_data(player_inventory.equipped_armor, SLOT_INDEX_ARMOR)
 	hat_slot_ui.set_slot_data(player_inventory.equipped_hat, SLOT_INDEX_HAT)
+	backpack_slot_ui.set_slot_data(player_inventory.equipped_backpack, SLOT_INDEX_BACKPACK)
 
 func _on_slot_clicked(slot_index: int, button: int):
 	match button:
@@ -101,6 +107,28 @@ func _on_slot_clicked(slot_index: int, button: int):
 			pass
 		MOUSE_BUTTON_RIGHT:
 			_handle_right_click(slot_index)
+
+func _on_slot_double_clicked(slot_index: int) -> void:
+	if not current_player or not current_player.get_inventory():
+		return
+	if slot_index < 0 or not current_player.get_inventory().is_slot_active(slot_index):
+		return
+
+	var slot := current_player.get_inventory().get_slot(slot_index)
+	if not slot or slot.is_empty():
+		return
+
+	var item := ItemDatabase.get_item(slot.item_id)
+	if not item or not item.context_options.has(Item.ContextOptions.EQUIP):
+		return
+	if (
+		item.item_type != Item.ItemType.WEAPON
+		and item.item_type != Item.ItemType.HAT
+		and item.item_type != Item.ItemType.BACKPACK
+	):
+		return
+
+	current_player.request_equip_item.rpc_id(1, slot_index, item.item_type)
 
 func _handle_right_click(slot_index: int):
 	if not current_player or not current_player.get_inventory():
@@ -111,10 +139,10 @@ func _handle_right_click(slot_index: int):
 	var slot: InventorySlot
 	if slot_index == SLOT_INDEX_WEAPON:
 		slot = player_inventory.equipped_weapon
-	elif slot_index == SLOT_INDEX_ARMOR:
-		slot = player_inventory.equipped_armor
 	elif slot_index == SLOT_INDEX_HAT:
 		slot = player_inventory.equipped_hat
+	elif slot_index == SLOT_INDEX_BACKPACK:
+		slot = player_inventory.equipped_backpack
 	else:
 		slot = player_inventory.get_slot(slot_index)
 	if slot and not slot.is_empty():
@@ -125,7 +153,7 @@ func _handle_right_click(slot_index: int):
 			menubar.add_child( context_menu )
 			context_menu.popup_hide.connect(context_menu.queue_free)
 			context_menu.id_pressed.connect( _on_item_selected )
-			if slot_index == SLOT_INDEX_WEAPON or slot_index == SLOT_INDEX_ARMOR or slot_index == SLOT_INDEX_HAT:
+			if slot_index == SLOT_INDEX_WEAPON or slot_index == SLOT_INDEX_HAT or slot_index == SLOT_INDEX_BACKPACK:
 				context_menu.add_item(_get_context_menu_string(Item.ContextOptions.UNEQUIP), Item.ContextOptions.UNEQUIP)
 			else:
 				for item_option in current_item.context_options:
@@ -202,8 +230,8 @@ func _position_tooltip_smartly():
 func _get_item_type_string(type: Item.ItemType) -> String:
 	match type:
 		Item.ItemType.WEAPON: return "Weapon"
-		Item.ItemType.ARMOR: return "Armor"
 		Item.ItemType.HAT: return "Hat"
+		Item.ItemType.BACKPACK: return "Backpack"
 		Item.ItemType.CONSUMABLE: return "Consumable"
 		Item.ItemType.TOOL: return "Tool"
 		Item.ItemType.MISC: return "Miscellaneous"
@@ -231,10 +259,10 @@ func handle_item_drop(from_slot: int, to_slot: int, _item_id: String):
 		return
 	if from_slot == SLOT_INDEX_WEAPON:
 		current_player.request_unequip_item.rpc_id(1, Item.ItemType.WEAPON, to_slot)
-	elif from_slot == SLOT_INDEX_ARMOR:
-		current_player.request_unequip_item.rpc_id(1, Item.ItemType.ARMOR, to_slot)
 	elif from_slot == SLOT_INDEX_HAT:
 		current_player.request_unequip_item.rpc_id(1, Item.ItemType.HAT, to_slot)
+	elif from_slot == SLOT_INDEX_BACKPACK:
+		current_player.request_unequip_item.rpc_id(1, Item.ItemType.BACKPACK, to_slot)
 	else:
 		current_player.request_move_item.rpc_id(1, from_slot, to_slot)
 
@@ -258,10 +286,10 @@ func handle_weapon_equip(from_slot: int, item: Dictionary):
 	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.WEAPON:
 		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.WEAPON)
 
-func handle_armor_equip(from_slot: int, item: Dictionary):
-	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.ARMOR:
-		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.ARMOR)
-
 func handle_hat_equip(from_slot: int, item: Dictionary):
 	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.HAT:
 		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.HAT)
+
+func handle_backpack_equip(from_slot: int, item: Dictionary) -> void:
+	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.BACKPACK:
+		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.BACKPACK)

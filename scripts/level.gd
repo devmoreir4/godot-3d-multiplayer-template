@@ -6,12 +6,19 @@ extends Node3D
 
 @onready var multiplayer_chat: MultiplayerChatUI = $MultiplayerChatUI
 @onready var inventory_ui: InventoryUI = $InventoryUI
+@onready var player_list_ui: PlayerListUI = $PlayerListUI
 @onready var pause_menu: PauseMenuUI = $PauseMenuUI
 
 var chat_visible := false
 var inventory_visible := false
+var player_list_visible := false
+var _player_nickname_heights: Dictionary = {}
+var _nickname_heights_requested := false
+var _nickname_height_requesters: Dictionary = {}
 
 const MAX_CHAT_MESSAGE_LENGTH := 160
+const MIN_NICKNAME_HEIGHT := 2.0
+const MAX_NICKNAME_HEIGHT := 8.0
 
 func _ready():
 	after_ready()
@@ -41,6 +48,18 @@ func _ready():
 	multiplayer.peer_disconnected.connect(_remove_player)
 	_update_mouse_mode()
 
+func _process(_delta: float) -> void:
+	var can_show_player_list := (
+		not main_menu.is_menu_visible()
+		and not pause_menu.is_menu_visible()
+		and multiplayer.has_multiplayer_peer()
+	)
+	if Input.is_key_pressed(KEY_TAB) and can_show_player_list:
+		if not player_list_visible:
+			_show_player_list()
+	elif player_list_visible:
+		_hide_player_list()
+
 func after_ready():
 	var ip_address: String
 	if OS.has_feature("windows"):
@@ -68,6 +87,10 @@ func _reset_session_ui() -> void:
 
 	chat_visible = false
 	inventory_visible = false
+	_hide_player_list()
+	_player_nickname_heights.clear()
+	_nickname_heights_requested = false
+	_nickname_height_requesters.clear()
 	multiplayer_chat.close_chat()
 	multiplayer_chat.clear_chat()
 	if inventory_ui:
@@ -81,6 +104,13 @@ func _on_player_connected(peer_id, player_info):
 	var player = _add_player(peer_id, player_info)
 	if multiplayer.is_server() and player:
 		player.call_deferred("_sync_inventory_to_owner")
+	if multiplayer.is_server():
+		if peer_id != 1:
+			call_deferred("_sync_nickname_heights_to_peer", peer_id)
+	elif not _nickname_heights_requested:
+		_nickname_heights_requested = true
+		call_deferred("_request_nickname_heights")
+	_refresh_player_list()
 
 func _on_host_pressed(nickname: String, skin: String):
 	var error = Network.start_host(nickname, skin)
@@ -119,6 +149,7 @@ func _add_player(id: int, player_info: Dictionary) -> Character:
 
 	var skin_enum = Network.sanitize_skin_value(player_info.get("skin", Character.SkinColor.BLUE))
 	player.set_player_skin(skin_enum)
+	_apply_player_nickname_height(id)
 	return player
 
 func get_spawn_point(id: int) -> Vector3:
@@ -127,11 +158,14 @@ func get_spawn_point(id: int) -> Vector3:
 	return Vector3(spawn_point.x, 0, spawn_point.y)
 
 func _remove_player(id):
+	_player_nickname_heights.erase(id)
 	if not players_container.has_node(str(id)):
+		call_deferred("_refresh_player_list")
 		return
 	var player_node = players_container.get_node(str(id))
 	if player_node:
 		player_node.queue_free()
+	call_deferred("_refresh_player_list")
 
 func _on_quit_pressed() -> void:
 	Network.leave_game()
@@ -149,6 +183,16 @@ func is_chat_visible() -> bool:
 	return multiplayer_chat.is_chat_visible()
 
 func _input(event):
+	if event is InputEventKey:
+		var key_event := event as InputEventKey
+		if key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB:
+			if key_event.pressed and not key_event.echo:
+				_show_player_list()
+			elif not key_event.pressed:
+				_hide_player_list()
+			get_viewport().set_input_as_handled()
+			return
+
 	if event.is_action_pressed("pause"):
 		_handle_pause_action()
 		get_viewport().set_input_as_handled()
@@ -223,6 +267,89 @@ func toggle_inventory():
 
 func is_inventory_visible() -> bool:
 	return inventory_visible
+
+func _show_player_list() -> void:
+	if (
+		main_menu.is_menu_visible()
+		or pause_menu.is_menu_visible()
+		or not multiplayer.has_multiplayer_peer()
+	):
+		return
+	player_list_visible = true
+	player_list_ui.show_players(Network.players, multiplayer.get_unique_id())
+
+func _hide_player_list() -> void:
+	player_list_visible = false
+	if player_list_ui:
+		player_list_ui.hide_players()
+
+func _refresh_player_list() -> void:
+	if player_list_visible and player_list_ui:
+		player_list_ui.refresh_players(Network.players, multiplayer.get_unique_id())
+
+func register_player_nickname_height(player_id: int, height: float) -> void:
+	if not multiplayer.is_server() or player_id <= 0:
+		return
+	var normalized_height := _normalize_nickname_height(height)
+	_store_and_apply_player_nickname_height(player_id, normalized_height)
+	sync_player_nickname_height.rpc(player_id, normalized_height)
+
+@rpc("authority", "reliable")
+func sync_player_nickname_height(player_id: int, height: float) -> void:
+	if multiplayer.get_remote_sender_id() != 1:
+		return
+	_store_and_apply_player_nickname_height(player_id, _normalize_nickname_height(height))
+
+func _request_nickname_heights() -> void:
+	if multiplayer.is_server() or not multiplayer.has_multiplayer_peer():
+		return
+	request_nickname_heights.rpc_id(1)
+
+@rpc("any_peer", "reliable")
+func request_nickname_heights() -> void:
+	if not multiplayer.is_server():
+		return
+	var requester_id := multiplayer.get_remote_sender_id()
+	if requester_id <= 0 or _nickname_height_requesters.has(requester_id):
+		return
+	_nickname_height_requesters[requester_id] = true
+	_sync_nickname_heights_to_peer(requester_id)
+
+func _sync_nickname_heights_to_peer(peer_id: int) -> void:
+	if not multiplayer.is_server() or peer_id <= 0:
+		return
+	for child in players_container.get_children():
+		var player := child as Character
+		if not player:
+			continue
+		var player_id := str(player.name).to_int()
+		var height := float(_player_nickname_heights.get(
+			player_id,
+			player.get_current_nickname_height()
+		))
+		sync_player_nickname_height.rpc_id(
+			peer_id,
+			player_id,
+			_normalize_nickname_height(height)
+		)
+
+func _store_and_apply_player_nickname_height(player_id: int, height: float) -> void:
+	if player_id <= 0:
+		return
+	_player_nickname_heights[player_id] = height
+	_apply_player_nickname_height(player_id)
+
+func _apply_player_nickname_height(player_id: int) -> void:
+	if not _player_nickname_heights.has(player_id):
+		return
+	var player := players_container.get_node_or_null(str(player_id)) as Character
+	if player:
+		player.apply_synced_nickname_height(float(_player_nickname_heights[player_id]))
+
+func _normalize_nickname_height(height: float) -> float:
+	if height != height or height <= -INF or height >= INF:
+		return MIN_NICKNAME_HEIGHT
+	return clampf(height, MIN_NICKNAME_HEIGHT, MAX_NICKNAME_HEIGHT)
 
 func _on_inventory_closed():
 	inventory_visible = false

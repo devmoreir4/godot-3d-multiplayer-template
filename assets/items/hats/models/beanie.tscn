@@ -1,0 +1,12 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/items/hats/FBX/beanie.fbx" id="1_model"]
+[ext_resource type="Texture2D" path="res://assets/items/hats/Textures/hat_diff.png" id="2_texture"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hat"]
+albedo_texture = ExtResource("2_texture")
+
+[node name="beanie" instance=ExtResource("1_model")]
+
+[node name="beanie" parent="." index="0"]
+material_override = SubResource("StandardMaterial3D_hat")

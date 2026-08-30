@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cw4l537aet5km"
-path="res://.godot/imported/armor_golden.fbx-29309f11e1260a96dd8f53acd60861ad.scn"
+uid="uid://deg1rygdirpe3"
+path="res://.godot/imported/bone.fbx-5aa4b9b1b3a9af9df1294cbf20fc9c47.scn"
 
 [deps]
 
-source_file="res://assets/items/armor/models/armor_golden.fbx"
-dest_files=["res://.godot/imported/armor_golden.fbx-29309f11e1260a96dd8f53acd60861ad.scn"]
+source_file="res://assets/items/misc/models/bone.fbx"
+dest_files=["res://.godot/imported/bone.fbx-5aa4b9b1b3a9af9df1294cbf20fc9c47.scn"]
 
 [params]
 

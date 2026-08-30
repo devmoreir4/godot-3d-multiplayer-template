@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dved0xc78qxvx"
-path="res://.godot/imported/armor_golden.png-95742a49356aefb458c67cb6f8764345.ctex"
+uid="uid://c3cn1r74r6np3"
+path="res://.godot/imported/bone.png-bae71026f86dcbaa67d4c19cb3aa8366.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/items/armor/icons/armor_golden.png"
-dest_files=["res://.godot/imported/armor_golden.png-95742a49356aefb458c67cb6f8764345.ctex"]
+source_file="res://assets/items/misc/icons/bone.png"
+dest_files=["res://.godot/imported/bone.png-bae71026f86dcbaa67d4c19cb3aa8366.ctex"]
 
 [params]
 

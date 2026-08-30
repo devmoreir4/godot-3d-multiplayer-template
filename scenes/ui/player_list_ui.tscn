@@ -1,0 +1,104 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="FontFile" uid="uid://diapabmalpcrj" path="res://assets/fonts/Kurland.ttf" id="1_font"]
+[ext_resource type="Script" path="res://scripts/player_list_ui.gd" id="2_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.025, 0.035, 0.03, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.31, 0.65, 0.4, 0.82)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="PlayerListUI" type="Control"]
+z_index = 80
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_script")
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+mouse_filter = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="SafeArea"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="SafeArea/CenterContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SafeArea/CenterContainer/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 20
+mouse_filter = 2
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/CenterContainer/Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="SafeArea/CenterContainer/Panel/MarginContainer/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.98, 0.93, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 26
+text = "ONLINE PLAYERS"
+horizontal_alignment = 1
+
+[node name="Count" type="Label" parent="SafeArea/CenterContainer/Panel/MarginContainer/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.64, 0.72, 0.67, 1)
+theme_override_font_sizes/font_size = 15
+text = "0 online"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="SafeArea/CenterContainer/Panel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="PlayerScroll" type="ScrollContainer" parent="SafeArea/CenterContainer/Panel/MarginContainer/Content"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+mouse_filter = 0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="Players" type="RichTextLabel" parent="SafeArea/CenterContainer/Panel/MarginContainer/Content/PlayerScroll"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.92, 0.95, 0.93, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+fit_content = true
+scroll_active = false

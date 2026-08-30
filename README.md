@@ -14,7 +14,7 @@ This template provides everything you need to kickstart your multiplayer game de
 * **Player Name Displayed:** Each player's nickname is shown above their character for easy identification.
 * **Player Skin Selection:** Players can choose from four skin options (red, green, blue, or yellow) to personalize their avatars.
 * **Global Multiplayer Chat:** An integrated chat system allows players to communicate in real-time with everyone in the game.
-* **Multiplayer Inventory System:** Server-authoritative inventory management with a 16-slot backpack, drag-and-drop organization, item stacking, world-item collection and dropping, plus dedicated hat, weapon, and armor slots.
+* **Multiplayer Inventory System:** Server-authoritative inventory management with 16 base slots plus 4 slots unlocked by an equipped backpack, drag-and-drop organization, item stacking, world-item collection and dropping, plus dedicated hat, weapon, and backpack slots.
 
 ## How to Run the Project
 
@@ -49,6 +49,7 @@ Ensure the script has execution permissions (`chmod +x run_headless_server.sh`) 
 * `<kbd>`Esc`</kbd>` to quit.
 * `<kbd>`T`</kbd>` to hide/show chat.
 * `<kbd>`I`</kbd>` to toggle inventory.
+* Hold `<kbd>`Tab`</kbd>` to show the online player list.
 * `<kbd>`F1`</kbd>` to add random test item (debug).
 * `<kbd>`F2`</kbd>` to print inventory contents (debug).
 

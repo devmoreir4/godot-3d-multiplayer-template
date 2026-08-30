@@ -1,19 +1,27 @@
 class_name PlayerInventory
 extends RefCounted
 
-const INVENTORY_SIZE = 16
+const BASE_INVENTORY_SIZE := 16
+const BACKPACK_BONUS_SLOTS := 4
+const MAX_INVENTORY_SIZE := BASE_INVENTORY_SIZE + BACKPACK_BONUS_SLOTS
 var slots: Array[InventorySlot] = []
 var equipped_weapon: InventorySlot = InventorySlot.new()
-var equipped_armor: InventorySlot = InventorySlot.new()
 var equipped_hat: InventorySlot = InventorySlot.new()
+var equipped_backpack: InventorySlot = InventorySlot.new()
 
 func _init():
 	_initialize_slots()
 
 func _initialize_slots():
 	slots.clear()
-	for i in range(INVENTORY_SIZE):
+	for i in range(MAX_INVENTORY_SIZE):
 		slots.append(InventorySlot.new())
+
+func get_active_slot_count() -> int:
+	return MAX_INVENTORY_SIZE if not equipped_backpack.is_empty() else BASE_INVENTORY_SIZE
+
+func is_slot_active(index: int) -> bool:
+	return index >= 0 and index < get_active_slot_count()
 
 func get_slot(index: int) -> InventorySlot:
 	if index >= 0 and index < slots.size():
@@ -24,14 +32,17 @@ func get_equipped_slot(item_type: Item.ItemType) -> InventorySlot:
 	match item_type:
 		Item.ItemType.WEAPON:
 			return equipped_weapon
-		Item.ItemType.ARMOR:
-			return equipped_armor
 		Item.ItemType.HAT:
 			return equipped_hat
+		Item.ItemType.BACKPACK:
+			return equipped_backpack
 		_:
 			return null
 
 func equip_from_slot(index: int, item_type: Item.ItemType) -> bool:
+	if not is_slot_active(index):
+		return false
+
 	var backpack_slot: InventorySlot = get_slot(index)
 	var equipped_slot: InventorySlot = get_equipped_slot(item_type)
 	if not backpack_slot or backpack_slot.is_empty() or not equipped_slot:
@@ -55,9 +66,13 @@ func unequip_to_slot(item_type: Item.ItemType, destination_index: int = -1) -> b
 	var equipped_slot: InventorySlot = get_equipped_slot(item_type)
 	if not equipped_slot or equipped_slot.is_empty():
 		return false
+	if item_type == Item.ItemType.BACKPACK:
+		return _unequip_backpack_to_slot(equipped_slot, destination_index)
 
 	if destination_index < 0:
 		destination_index = get_first_empty_slot()
+	if not is_slot_active(destination_index):
+		return false
 	var destination: InventorySlot = get_slot(destination_index)
 	if not destination or not destination.is_empty():
 		return false
@@ -67,18 +82,61 @@ func unequip_to_slot(item_type: Item.ItemType, destination_index: int = -1) -> b
 	equipped_slot.clear()
 	return true
 
+func _unequip_backpack_to_slot(equipped_slot: InventorySlot, destination_index: int) -> bool:
+	if destination_index < 0:
+		destination_index = _get_first_empty_base_slot()
+	if destination_index < 0 or destination_index >= BASE_INVENTORY_SIZE:
+		return false
+
+	var destination := get_slot(destination_index)
+	if not destination or not destination.is_empty():
+		return false
+
+	var occupied_bonus_slots: Array[int] = []
+	for i in range(BASE_INVENTORY_SIZE, MAX_INVENTORY_SIZE):
+		if not slots[i].is_empty():
+			occupied_bonus_slots.append(i)
+
+	var available_base_slots: Array[int] = []
+	for i in range(BASE_INVENTORY_SIZE):
+		if i != destination_index and slots[i].is_empty():
+			available_base_slots.append(i)
+	if occupied_bonus_slots.size() > available_base_slots.size():
+		return false
+
+	for i in range(occupied_bonus_slots.size()):
+		var source := slots[occupied_bonus_slots[i]]
+		var target := slots[available_base_slots[i]]
+		target.item_id = source.item_id
+		target.quantity = source.quantity
+		source.clear()
+
+	destination.item_id = equipped_slot.item_id
+	destination.quantity = equipped_slot.quantity
+	equipped_slot.clear()
+	return true
+
+func _get_first_empty_base_slot() -> int:
+	for i in range(BASE_INVENTORY_SIZE):
+		if slots[i].is_empty():
+			return i
+	return -1
+
 func add_item(item: Item, quantity: int = 1) -> int:
 	var remaining = quantity
+	var active_slot_count := get_active_slot_count()
 
 	if item.stackable:
-		for slot in slots:
+		for i in range(active_slot_count):
+			var slot := slots[i]
 			if slot.item_id == item.id:
 				remaining = slot.add_item(item, remaining)
 				if remaining <= 0:
 					break
 
 	if remaining > 0:
-		for slot in slots:
+		for i in range(active_slot_count):
+			var slot := slots[i]
 			if slot.is_empty():
 				remaining = slot.add_item(item, remaining)
 				if remaining <= 0:
@@ -88,7 +146,8 @@ func add_item(item: Item, quantity: int = 1) -> int:
 
 func remove_item(item_id: String, quantity: int = 1) -> int:
 	var removed = 0
-	for slot in slots:
+	for i in range(get_active_slot_count()):
+		var slot := slots[i]
 		if slot.item_id == item_id:
 			var slot_removed = slot.remove_item(quantity - removed)
 			removed += slot_removed
@@ -101,6 +160,8 @@ func move_item(from_index: int, to_index: int, quantity: int = -1) -> bool:
 
 func move_to_slot(from_index: int, to_index: int, quantity: int = -1) -> bool:
 	if from_index == to_index:
+		return false
+	if not is_slot_active(from_index) or not is_slot_active(to_index):
 		return false
 
 	var from_slot = get_slot(from_index)
@@ -128,6 +189,9 @@ func move_to_slot(from_index: int, to_index: int, quantity: int = -1) -> bool:
 	return false
 
 func swap_items(from_index: int, to_index: int) -> bool:
+	if not is_slot_active(from_index) or not is_slot_active(to_index):
+		return false
+
 	var from_slot = get_slot(from_index)
 	var to_slot = get_slot(to_index)
 
@@ -164,7 +228,8 @@ func swap_items(from_index: int, to_index: int) -> bool:
 
 func get_item_count(item_id: String) -> int:
 	var total = 0
-	for slot in slots:
+	for i in range(get_active_slot_count()):
+		var slot := slots[i]
 		if slot.item_id == item_id:
 			total += slot.quantity
 	return total
@@ -173,7 +238,7 @@ func has_item(item_id: String, quantity: int = 1) -> bool:
 	return get_item_count(item_id) >= quantity
 
 func get_first_empty_slot() -> int:
-	for i in range(slots.size()):
+	for i in range(get_active_slot_count()):
 		if slots[i].is_empty():
 			return i
 	return -1
@@ -184,7 +249,7 @@ func try_stack_item(item: Item, quantity: int, exclude_slot: int = -1) -> int:
 
 	var remaining = quantity
 
-	for i in range(slots.size()):
+	for i in range(get_active_slot_count()):
 		if i == exclude_slot:
 			continue
 
@@ -207,8 +272,8 @@ func to_dict() -> Dictionary:
 	return {
 		"slots": data,
 		"equipped_weapon": equipped_weapon.to_dict(),
-		"equipped_armor": equipped_armor.to_dict(),
-		"equipped_hat": equipped_hat.to_dict()
+		"equipped_hat": equipped_hat.to_dict(),
+		"equipped_backpack": equipped_backpack.to_dict()
 	}
 
 func from_dict(data: Dictionary) -> void:
@@ -218,5 +283,5 @@ func from_dict(data: Dictionary) -> void:
 	for i in range(slots_data.size(), slots.size()):
 		slots[i].clear()
 	equipped_weapon.from_dict(data.get("equipped_weapon", {}))
-	equipped_armor.from_dict(data.get("equipped_armor", {}))
 	equipped_hat.from_dict(data.get("equipped_hat", {}))
+	equipped_backpack.from_dict(data.get("equipped_backpack", {}))

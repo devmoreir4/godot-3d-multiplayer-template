@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cpysnn1ecrl28"
-path="res://.godot/imported/armor_metal.fbx-4fe2fe9603e7149af9108843d568dda8.scn"
+uid="uid://cc8gkp6u5tr2e"
+path="res://.godot/imported/backpack.fbx-38899ad32ee1cca0c49a1ac759278fed.scn"
 
 [deps]
 
-source_file="res://assets/items/armor/models/armor_metal.fbx"
-dest_files=["res://.godot/imported/armor_metal.fbx-4fe2fe9603e7149af9108843d568dda8.scn"]
+source_file="res://assets/items/backpacks/models/backpack.fbx"
+dest_files=["res://.godot/imported/backpack.fbx-38899ad32ee1cca0c49a1ac759278fed.scn"]
 
 [params]
 

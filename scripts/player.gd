@@ -19,11 +19,19 @@ const ALLOWED_ANIMATION_STATES := {
 const HAT_NODES_BY_ITEM := {
 	"bucket_hat": "BucketHat",
 	"cowboy_hat": "CowboyHat",
-	"witch_hat": "WitchHat"
+	"witch_hat": "WitchHat",
+	"beanie": "Beanie"
+}
+const WEAPON_NODES_BY_ITEM := {
+	"sword": "Sword",
+	"sword_big": "SwordBig"
+}
+const BACKPACK_NODES_BY_ITEM := {
+	"backpack": "Backpack"
 }
 const HEAD_EQUIPMENT_PATH := "GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/"
-const BODY_EQUIPMENT_PATH := "GodotRobot3D/RobotArmature/Skeleton3D/EquipmentAttach/"
 const HAND_EQUIPMENT_PATH := "GodotRobot3D/RobotArmature/Skeleton3D/LeftHandAttach/"
+const BACK_EQUIPMENT_PATH := "GodotRobot3D/RobotArmature/Skeleton3D/BackAttach/"
 
 enum SkinColor { BLUE, YELLOW, GREEN, RED }
 
@@ -61,6 +69,7 @@ var is_collecting := false
 var _animation_sequence := 0
 var _last_applied_animation_sequence := 0
 var _last_requested_animation: StringName = &""
+var _appearance_sync_requesters: Dictionary = {}
 
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
@@ -70,6 +79,7 @@ func _ready():
 	if multiplayer.is_server():
 		player_inventory = PlayerInventory.new()
 		_add_starting_items()
+		call_deferred("_sync_equipment_appearance")
 		if not is_multiplayer_authority():
 			call_deferred("_sync_inventory_to_owner")
 
@@ -81,6 +91,8 @@ func _ready():
 	nickname.visible = true
 	_set_nickname_height(BASE_NICKNAME_HEIGHT)
 	call_deferred("_update_nickname_height")
+	if not multiplayer.is_server():
+		call_deferred("_request_equipment_appearance")
 
 func _physics_process(delta):
 	if not multiplayer.has_multiplayer_peer(): return
@@ -346,7 +358,7 @@ func request_move_item(from_slot: int, to_slot: int, quantity: int = -1):
 	if not player_inventory:
 		return
 
-	if from_slot < 0 or from_slot >= PlayerInventory.INVENTORY_SIZE or to_slot < 0 or to_slot >= PlayerInventory.INVENTORY_SIZE:
+	if not player_inventory.is_slot_active(from_slot) or not player_inventory.is_slot_active(to_slot):
 		push_warning("Invalid slot indices: from=" + str(from_slot) + " to=" + str(to_slot))
 		return
 
@@ -469,9 +481,9 @@ func _sync_inventory_to_owner() -> void:
 func request_equip_item(from_slot: int, item_type: Item.ItemType) -> void:
 	if not multiplayer.is_server() or not _is_owner_request():
 		return
-	if not player_inventory or from_slot < 0 or from_slot >= PlayerInventory.INVENTORY_SIZE:
+	if not player_inventory or not player_inventory.is_slot_active(from_slot):
 		return
-	if item_type != Item.ItemType.WEAPON and item_type != Item.ItemType.ARMOR and item_type != Item.ItemType.HAT:
+	if item_type != Item.ItemType.WEAPON and item_type != Item.ItemType.HAT and item_type != Item.ItemType.BACKPACK:
 		return
 	if player_inventory.equip_from_slot(from_slot, item_type):
 		_sync_inventory_to_owner()
@@ -483,9 +495,11 @@ func request_unequip_item(item_type: Item.ItemType, destination_slot: int = -1) 
 		return
 	if not player_inventory:
 		return
-	if item_type != Item.ItemType.WEAPON and item_type != Item.ItemType.ARMOR and item_type != Item.ItemType.HAT:
+	if item_type != Item.ItemType.WEAPON and item_type != Item.ItemType.HAT and item_type != Item.ItemType.BACKPACK:
 		return
-	if destination_slot < -1 or destination_slot >= PlayerInventory.INVENTORY_SIZE:
+	if destination_slot < -1 or destination_slot >= PlayerInventory.MAX_INVENTORY_SIZE:
+		return
+	if destination_slot >= 0 and not player_inventory.is_slot_active(destination_slot):
 		return
 	if player_inventory.unequip_to_slot(item_type, destination_slot):
 		_sync_inventory_to_owner()
@@ -499,34 +513,69 @@ func _sync_equipment_appearance() -> void:
 	if not multiplayer.is_server() or not player_inventory:
 		return
 	var weapon_id := player_inventory.equipped_weapon.item_id
-	var armor_id := player_inventory.equipped_armor.item_id
 	var hat_id := player_inventory.equipped_hat.item_id
-	sync_equipment_appearance.rpc(weapon_id, armor_id, hat_id)
-	sync_equipment_appearance(weapon_id, armor_id, hat_id)
+	var backpack_id := player_inventory.equipped_backpack.item_id
+	var nickname_height := _calculate_nickname_height(hat_id)
+	_broadcast_nickname_height(nickname_height)
+	sync_equipment_appearance.rpc(weapon_id, hat_id, backpack_id)
+	sync_equipment_appearance(weapon_id, hat_id, backpack_id)
+
+func _request_equipment_appearance() -> void:
+	if multiplayer.is_server() or not multiplayer.has_multiplayer_peer():
+		return
+	request_equipment_appearance.rpc_id(1)
 
 @rpc("any_peer", "reliable")
-func sync_equipment_appearance(weapon_id: String, armor_id: String, hat_id: String) -> void:
+func request_equipment_appearance() -> void:
+	if not multiplayer.is_server() or not player_inventory:
+		return
+	var requester_id := multiplayer.get_remote_sender_id()
+	if requester_id <= 0:
+		return
+	if _appearance_sync_requesters.has(requester_id):
+		return
+	_appearance_sync_requesters[requester_id] = true
+	_sync_equipment_appearance_to_peer(requester_id)
+
+func _sync_equipment_appearance_to_peer(peer_id: int) -> void:
+	if not multiplayer.is_server() or not player_inventory or peer_id <= 0:
+		return
+	var weapon_id := player_inventory.equipped_weapon.item_id
+	var hat_id := player_inventory.equipped_hat.item_id
+	var backpack_id := player_inventory.equipped_backpack.item_id
+	sync_equipment_appearance.rpc_id(
+		peer_id,
+		weapon_id,
+		hat_id,
+		backpack_id
+	)
+
+@rpc("any_peer", "reliable")
+func sync_equipment_appearance(
+	weapon_id: String,
+	hat_id: String,
+	backpack_id: String
+) -> void:
 	var sender := multiplayer.get_remote_sender_id()
 	if sender != 1 and not (sender == 0 and multiplayer.is_server()):
 		return
-	_set_equipment_visibility(weapon_id, armor_id, hat_id)
+	_set_equipment_visibility(weapon_id, hat_id, backpack_id)
 
-func _set_equipment_visibility(weapon_id: String, armor_id: String, hat_id: String) -> void:
-	var armor_nodes := {
-		"armor_golden": "ArmorGolden",
-		"armor_metal": "ArmorMetal"
-	}
-	var weapon_nodes := {
-		"sword": "Sword",
-		"sword_big": "SwordBig"
-	}
+func _set_equipment_visibility(
+	weapon_id: String,
+	hat_id: String,
+	backpack_id: String
+) -> void:
 	_set_equipment_nodes_visibility(HEAD_EQUIPMENT_PATH, HAT_NODES_BY_ITEM, hat_id)
-	_set_equipment_nodes_visibility(BODY_EQUIPMENT_PATH, armor_nodes, armor_id)
-	_set_equipment_nodes_visibility(HAND_EQUIPMENT_PATH, weapon_nodes, weapon_id)
-	var has_equipped_armor := armor_nodes.has(armor_id)
-	_chest_mesh.visible = not has_equipped_armor
-	_bottom_mesh.visible = not has_equipped_armor
-	call_deferred("_update_nickname_height", hat_id)
+	_set_equipment_nodes_visibility(HAND_EQUIPMENT_PATH, WEAPON_NODES_BY_ITEM, weapon_id)
+	_set_equipment_nodes_visibility(BACK_EQUIPMENT_PATH, BACKPACK_NODES_BY_ITEM, backpack_id)
+
+func _broadcast_nickname_height(height: float) -> void:
+	if not multiplayer.is_server():
+		return
+	var level_scene := get_tree().get_current_scene()
+	if level_scene and level_scene.has_method("register_player_nickname_height"):
+		level_scene.register_player_nickname_height(get_multiplayer_authority(), height)
 
 func _set_equipment_nodes_visibility(
 	parent_path: String,
@@ -542,32 +591,40 @@ func _update_nickname_height(hat_id: String = "") -> void:
 	if not nickname:
 		return
 	nickname.visible = true
+	_set_nickname_height(_calculate_nickname_height(hat_id))
 
+func _calculate_nickname_height(hat_id: String) -> float:
 	var target_height := BASE_NICKNAME_HEIGHT
 	var equipped_hat := _get_hat_node(hat_id)
 	if equipped_hat:
 		var hat_top := _get_visual_top(equipped_hat)
 		if hat_top > -INF and hat_top < INF:
 			target_height = max(BASE_NICKNAME_HEIGHT, hat_top + nickname_clearance)
-	_set_nickname_height(target_height)
+	return target_height
 
 func _set_nickname_height(height: float) -> void:
 	var nickname_position := nickname.position
 	nickname_position.y = height
 	nickname.position = nickname_position
 
+func apply_synced_nickname_height(height: float) -> void:
+	if not nickname:
+		return
+	nickname.visible = true
+	if height > -INF and height < INF:
+		_set_nickname_height(maxf(BASE_NICKNAME_HEIGHT, height))
+	else:
+		_set_nickname_height(BASE_NICKNAME_HEIGHT)
+
+func get_current_nickname_height() -> float:
+	return nickname.position.y if nickname else BASE_NICKNAME_HEIGHT
+
 func _get_hat_node(hat_id: String) -> Node3D:
 	if HAT_NODES_BY_ITEM.has(hat_id):
 		var requested_hat_path := HEAD_EQUIPMENT_PATH + str(HAT_NODES_BY_ITEM[hat_id])
 		var requested_hat := get_node_or_null(requested_hat_path) as Node3D
-		if requested_hat and requested_hat.visible:
+		if requested_hat:
 			return requested_hat
-
-	for item_id in HAT_NODES_BY_ITEM:
-		var hat_path := HEAD_EQUIPMENT_PATH + str(HAT_NODES_BY_ITEM[item_id])
-		var hat := get_node_or_null(hat_path) as Node3D
-		if hat and hat.visible:
-			return hat
 	return null
 
 func _get_visual_top(root: Node3D) -> float:
@@ -593,10 +650,14 @@ func _add_starting_items():
 	if not player_inventory:
 		return
 
+	var backpack := ItemDatabase.get_item("backpack")
+	if backpack:
+		player_inventory.add_item(backpack, 1)
+
 	var starting_item_ids: Array[String] = [
-		"bucket_hat", "cowboy_hat", "witch_hat",
-		"armor_golden", "armor_metal",
-		"sword", "sword_big", "chicken_leg"
+		"bucket_hat", "cowboy_hat", "witch_hat", "beanie",
+		"sword", "sword_big",
+		"chicken_leg", "bone", "chalice"
 	]
 
 	for item_id in starting_item_ids:

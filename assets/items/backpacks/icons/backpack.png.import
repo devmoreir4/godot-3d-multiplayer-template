@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://boh4oaau2x15c"
-path="res://.godot/imported/armor_metal.png-fa5ee6ebaa3082c2e335f1e9aef9b491.ctex"
+uid="uid://mtwe8ayrubi8"
+path="res://.godot/imported/backpack.png-f81b6361a20bd805df400b77fae207f7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/items/armor/icons/armor_metal.png"
-dest_files=["res://.godot/imported/armor_metal.png-fa5ee6ebaa3082c2e335f1e9aef9b491.ctex"]
+source_file="res://assets/items/backpacks/icons/backpack.png"
+dest_files=["res://.godot/imported/backpack.png-f81b6361a20bd805df400b77fae207f7.ctex"]
 
 [params]
 

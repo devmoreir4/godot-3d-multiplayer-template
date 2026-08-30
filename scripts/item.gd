@@ -26,11 +26,11 @@ enum Blessed {
 }
 enum ItemType {
 	WEAPON,
-	ARMOR,
 	CONSUMABLE,
 	TOOL,
 	MISC,
-	HAT
+	HAT,
+	BACKPACK
 }
 
 enum ItemRarity {

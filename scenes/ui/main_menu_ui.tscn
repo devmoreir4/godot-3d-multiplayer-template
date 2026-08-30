@@ -26,12 +26,13 @@ color = Color(0.0901961, 0.0901961, 0.0901961, 1)
 
 [node name="MainContainer" type="VBoxContainer" parent="." unique_id=473263213]
 layout_mode = 1
-anchors_preset = 14
-anchor_top = 0.5
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -257.0
-offset_bottom = 257.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
