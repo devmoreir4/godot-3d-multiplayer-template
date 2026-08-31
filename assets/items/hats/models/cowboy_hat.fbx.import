@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bb12wj3dry06u"
-path="res://.godot/imported/cowboyHat.fbx-ee8c9fc371e173709110a16be7bbb4b6.scn"
+uid="uid://dhig6btkd02pl"
+path="res://.godot/imported/cowboy_hat.fbx-3741582b23b741f7b1e0d3f2a2029402.scn"
 
 [deps]
 
-source_file="res://assets/items/hats/FBX/cowboyHat.fbx"
-dest_files=["res://.godot/imported/cowboyHat.fbx-ee8c9fc371e173709110a16be7bbb4b6.scn"]
+source_file="res://assets/items/hats/models/cowboy_hat.fbx"
+dest_files=["res://.godot/imported/cowboy_hat.fbx-3741582b23b741f7b1e0d3f2a2029402.scn"]
 
 [params]
 

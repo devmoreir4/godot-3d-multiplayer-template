@@ -2,11 +2,13 @@ extends Control
 class_name InventoryUI
 
 @onready var grid_container: GridContainer = $SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/GridContainer
-@onready var title_label: Label = $SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar/Title
 @onready var close_button: Button = $SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar/CloseButton
 @onready var tooltip: Control = $ItemTooltip
 @onready var tooltip_label: RichTextLabel = $ItemTooltip/Panel/MarginContainer/TooltipText
-@onready var menubar: MenuBar = $MenuBar
+@onready var inventory_panels: HBoxContainer = $SafeArea/CenterContainer/InventoryPanels
+
+const SAFE_AREA_MARGIN := 16.0
+const DEFAULT_TOOLTIP_SIZE := Vector2(280.0, 180.0)
 
 const SLOT_INDEX_WEAPON := -1
 const SLOT_INDEX_HAT := -2
@@ -33,6 +35,8 @@ func _ready():
 	_create_hat_slot_ui()
 	_create_weapon_slot_ui()
 	_create_backpack_slot_ui()
+	resized.connect(_update_responsive_layout)
+	call_deferred("_update_responsive_layout")
 
 func _create_hat_slot_ui():
 	hat_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
@@ -100,13 +104,11 @@ func update_inventory_display():
 	weapon_slot_ui.set_slot_data(player_inventory.equipped_weapon, SLOT_INDEX_WEAPON)
 	hat_slot_ui.set_slot_data(player_inventory.equipped_hat, SLOT_INDEX_HAT)
 	backpack_slot_ui.set_slot_data(player_inventory.equipped_backpack, SLOT_INDEX_BACKPACK)
+	call_deferred("_update_responsive_layout")
 
 func _on_slot_clicked(slot_index: int, button: int):
-	match button:
-		MOUSE_BUTTON_LEFT:
-			pass
-		MOUSE_BUTTON_RIGHT:
-			_handle_right_click(slot_index)
+	if button == MOUSE_BUTTON_RIGHT:
+		_handle_right_click(slot_index)
 
 func _on_slot_double_clicked(slot_index: int) -> void:
 	if not current_player or not current_player.get_inventory():
@@ -150,7 +152,7 @@ func _handle_right_click(slot_index: int):
 		if current_item:
 			_hide_tooltip()
 			var context_menu = PopupMenu.new()
-			menubar.add_child( context_menu )
+			add_child(context_menu)
 			context_menu.popup_hide.connect(context_menu.queue_free)
 			context_menu.id_pressed.connect( _on_item_selected )
 			if slot_index == SLOT_INDEX_WEAPON or slot_index == SLOT_INDEX_HAT or slot_index == SLOT_INDEX_BACKPACK:
@@ -158,7 +160,7 @@ func _handle_right_click(slot_index: int):
 			else:
 				for item_option in current_item.context_options:
 					context_menu.add_item( _get_context_menu_string(item_option), item_option )
-			
+
 			context_menu.set_position( get_viewport().get_mouse_position() )
 			context_menu.popup()
 
@@ -166,7 +168,7 @@ func _handle_right_click(slot_index: int):
 func _on_item_selected(index: int):
 	if not current_player or not current_player.get_inventory():
 		return
-	 
+
 	if index == Item.ContextOptions.EQUIP:
 		current_player.request_equip_item.rpc_id(1, current_slot_index, current_item.item_type)
 	elif index == Item.ContextOptions.UNEQUIP:
@@ -212,20 +214,40 @@ func _position_tooltip_smartly():
 
 	var viewport_size = get_viewport().get_visible_rect().size
 	var tooltip_pos = mouse_pos + Vector2(10, 10)
+	if tooltip_pos.x + tooltip_size.x > viewport_size.x - 10.0:
+		tooltip_pos.x = mouse_pos.x - tooltip_size.x - 10.0
+	if tooltip_pos.y + tooltip_size.y > viewport_size.y - 10.0:
+		tooltip_pos.y = mouse_pos.y - tooltip_size.y - 10.0
 
-	if tooltip_pos.x + tooltip_size.x > viewport_size.x:
-		tooltip_pos.x = mouse_pos.x - tooltip_size.x - 10
-
-	if tooltip_pos.y + tooltip_size.y > viewport_size.y:
-		tooltip_pos.y = mouse_pos.y - tooltip_size.y - 10
-
-	if tooltip_pos.x < 0:
-		tooltip_pos.x = 10
-
-	if tooltip_pos.y < 0:
-		tooltip_pos.y = 10
+	var max_x := maxf(10.0, viewport_size.x - tooltip_size.x - 10.0)
+	var max_y := maxf(10.0, viewport_size.y - tooltip_size.y - 10.0)
+	tooltip_pos.x = clampf(tooltip_pos.x, 10.0, max_x)
+	tooltip_pos.y = clampf(tooltip_pos.y, 10.0, max_y)
 
 	tooltip.global_position = tooltip_pos
+
+func _update_responsive_layout() -> void:
+	if not inventory_panels or not tooltip:
+		return
+	var available_size := Vector2(
+		maxf(1.0, size.x - SAFE_AREA_MARGIN * 2.0),
+		maxf(1.0, size.y - SAFE_AREA_MARGIN * 2.0)
+	)
+	var content_size := inventory_panels.size
+	if content_size.x > 0.0 and content_size.y > 0.0:
+		var scale_factor := minf(
+			1.0,
+			minf(available_size.x / content_size.x, available_size.y / content_size.y)
+		)
+		inventory_panels.pivot_offset = content_size * 0.5
+		inventory_panels.scale = Vector2.ONE * scale_factor
+
+	tooltip.size = Vector2(
+		minf(DEFAULT_TOOLTIP_SIZE.x, maxf(1.0, size.x - 20.0)),
+		minf(DEFAULT_TOOLTIP_SIZE.y, maxf(1.0, size.y - 20.0))
+	)
+	if tooltip.visible:
+		_position_tooltip_smartly()
 
 func _get_item_type_string(type: Item.ItemType) -> String:
 	match type:
@@ -254,7 +276,7 @@ func _get_context_menu_string( context: Item.ContextOptions ) -> String:
 		_: return "Unknown"
 
 
-func handle_item_drop(from_slot: int, to_slot: int, _item_id: String):
+func handle_item_drop(from_slot: int, to_slot: int):
 	if not current_player:
 		return
 	if from_slot == SLOT_INDEX_WEAPON:

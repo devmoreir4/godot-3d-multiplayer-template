@@ -167,12 +167,6 @@ theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4
 columns = 4
 
-[node name="MenuBar" type="MenuBar" parent="." unique_id=534801660]
-visible = false
-layout_mode = 0
-offset_right = 242.0
-offset_bottom = 252.0
-
 [node name="ItemTooltip" type="Control" parent="." unique_id=1254507357]
 visible = false
 layout_mode = 1

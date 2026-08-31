@@ -7,13 +7,14 @@
 [ext_resource type="ArrayMesh" uid="uid://bt25tokyr00xs" path="res://assets/characters/player/meshes/godot_robot_bottom.tres" id="3_hbshb"]
 [ext_resource type="ArrayMesh" uid="uid://b3f7h1naq4w6e" path="res://assets/characters/player/meshes/godot_robot_limbs_and_head.tres" id="3_limbs"]
 [ext_resource type="Script" uid="uid://bj7yrijm7bppq" path="res://scripts/spring_arm_offset.gd" id="4_ygggd"]
-[ext_resource type="PackedScene" uid="uid://d2lp0eaho86mt" path="res://assets/items/hats/models/bucket_hat.tscn" id="8_pnmcy"]
-[ext_resource type="PackedScene" uid="uid://b170lx2cmhe3c" path="res://assets/items/hats/models/cowboy_hat.tscn" id="9_d2uvk"]
-[ext_resource type="PackedScene" uid="uid://k2ievx5ghl4n" path="res://assets/items/hats/models/witch_hat.tscn" id="11_jn51r"]
+[ext_resource type="PackedScene" path="res://scenes/items/hats/visuals/bucket_hat_visual.tscn" id="8_pnmcy"]
+[ext_resource type="PackedScene" path="res://scenes/items/hats/visuals/cowboy_hat_visual.tscn" id="9_d2uvk"]
+[ext_resource type="PackedScene" path="res://scenes/items/hats/visuals/witch_hat_visual.tscn" id="11_jn51r"]
 [ext_resource type="PackedScene" uid="uid://difodi4a2r6vc" path="res://assets/items/weapons/models/sword.fbx" id="16_sword"]
 [ext_resource type="PackedScene" uid="uid://dj7318sc4o37l" path="res://assets/items/weapons/models/sword_big.fbx" id="17_sword_big"]
-[ext_resource type="PackedScene" path="res://assets/items/hats/models/beanie.tscn" id="18_beanie"]
+[ext_resource type="PackedScene" path="res://scenes/items/hats/visuals/beanie_visual.tscn" id="18_beanie"]
 [ext_resource type="PackedScene" uid="uid://cc8gkp6u5tr2e" path="res://assets/items/backpacks/models/backpack.fbx" id="27_backpack"]
+[ext_resource type="PackedScene" uid="uid://dghg7ospl0imy" path="res://assets/items/weapons/models/axe.fbx" id="28_axe"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_bkbtv"]
 load_path = "res://.godot/imported/GodotPalette.png-a2d735eec81ad2647941b719336144cd.s3tc.ctex"
@@ -4520,6 +4521,9 @@ properties/8/replication_mode = 2
 properties/9/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/BackAttach/Backpack:visible")
 properties/9/spawn = true
 properties/9/replication_mode = 2
+properties/10/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/LeftHandAttach/Axe:visible")
+properties/10/spawn = true
+properties/10/replication_mode = 2
 
 [node name="Player" type="CharacterBody3D" unique_id=1972894128 node_paths=PackedStringArray("_body", "_spring_arm_offset")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
@@ -4762,6 +4766,9 @@ visible = false
 [node name="SwordBig" parent="GodotRobot3D/RobotArmature/Skeleton3D/LeftHandAttach" unique_id=778398978 instance=ExtResource("17_sword_big")]
 transform = Transform3D(0.55, -7.450581e-09, -2.8405339e-08, 2.6251655e-08, -1.8626451e-09, -0.55, 0, 0.55, 5.5879354e-09, -0.0023369193, 0.21792626, 0.025737152)
 visible = false
+
+[node name="Axe" parent="GodotRobot3D/RobotArmature/Skeleton3D/LeftHandAttach" unique_id=352347370 instance=ExtResource("28_axe")]
+transform = Transform3D(0.75, -1.1175871e-08, 1.0128133e-08, -1.3154931e-08, 0, -0.7499999, -7.450581e-09, 0.7499998, 1.8626451e-09, 0.013932824, 0.23088384, 0.3978039)
 
 [node name="BackAttach" type="BoneAttachment3D" parent="GodotRobot3D/RobotArmature/Skeleton3D" unique_id=1338054728]
 transform = Transform3D(1, 7.1054274e-15, -2.3841851e-07, 4.3943693e-09, 0.99983, 0.01843132, 2.3837801e-07, -0.018431328, 0.9998302, -2.2003666e-16, 1.2942743, 0.05275946)

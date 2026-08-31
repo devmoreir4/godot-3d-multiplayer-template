@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bn1ritrt8pnl5"
-path="res://.godot/imported/beanie.fbx-cf3fcfc5b63005add5d011cb109d9c20.scn"
+uid="uid://ded0f2ji0r05l"
+path="res://.godot/imported/witch_hat.fbx-7c56d8abd0597e3f38b657d12a37dd0b.scn"
 
 [deps]
 
-source_file="res://assets/items/hats/FBX/beanie.fbx"
-dest_files=["res://.godot/imported/beanie.fbx-cf3fcfc5b63005add5d011cb109d9c20.scn"]
+source_file="res://assets/items/hats/models/witch_hat.fbx"
+dest_files=["res://.godot/imported/witch_hat.fbx-7c56d8abd0597e3f38b657d12a37dd0b.scn"]
 
 [params]
 

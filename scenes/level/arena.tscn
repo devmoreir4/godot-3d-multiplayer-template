@@ -1,0 +1,247 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/environment/textures/prototype_dark.png" id="1_floor"]
+[ext_resource type="Texture2D" path="res://assets/environment/textures/prototype_orange.png" id="2_orange"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_texture = ExtResource("1_floor")
+roughness = 0.85
+uv1_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_orange"]
+albedo_texture = ExtResource("2_orange")
+roughness = 0.78
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+material = SubResource("StandardMaterial3D_floor")
+size = Vector3(120, 0.4, 120)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(120, 0.4, 120)
+
+[sub_resource type="BoxMesh" id="BoxMesh_boundary"]
+material = SubResource("StandardMaterial3D_orange")
+size = Vector3(120, 3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_boundary"]
+size = Vector3(120, 3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_diagonal_wall"]
+material = SubResource("StandardMaterial3D_orange")
+size = Vector3(9, 2.5, 1.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_diagonal_wall"]
+size = Vector3(9, 2.5, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_low_cover"]
+material = SubResource("StandardMaterial3D_orange")
+size = Vector3(6, 1.4, 2.4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_low_cover"]
+size = Vector3(6, 1.4, 2.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pillar"]
+material = SubResource("StandardMaterial3D_orange")
+size = Vector3(3, 4.5, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pillar"]
+size = Vector3(3, 4.5, 3)
+
+[node name="Arena" type="Node3D"]
+
+[node name="Geometry" type="StaticBody3D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="GroundMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(0, -0.2, 0)
+mesh = SubResource("BoxMesh_floor")
+
+[node name="GroundCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(0, -0.2, 0)
+shape = SubResource("BoxShape3D_floor")
+
+[node name="BoundaryNorthMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(0, 1.5, -59.5)
+mesh = SubResource("BoxMesh_boundary")
+
+[node name="BoundaryNorthCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(0, 1.5, -59.5)
+shape = SubResource("BoxShape3D_boundary")
+
+[node name="BoundarySouthMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(0, 1.5, 59.5)
+mesh = SubResource("BoxMesh_boundary")
+
+[node name="BoundarySouthCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(0, 1.5, 59.5)
+shape = SubResource("BoxShape3D_boundary")
+
+[node name="BoundaryEastMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(59.5, 1.5, 0)
+rotation = Vector3(0, 1.5707963, 0)
+mesh = SubResource("BoxMesh_boundary")
+
+[node name="BoundaryEastCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(59.5, 1.5, 0)
+rotation = Vector3(0, 1.5707963, 0)
+shape = SubResource("BoxShape3D_boundary")
+
+[node name="BoundaryWestMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(-59.5, 1.5, 0)
+rotation = Vector3(0, 1.5707963, 0)
+mesh = SubResource("BoxMesh_boundary")
+
+[node name="BoundaryWestCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(-59.5, 1.5, 0)
+rotation = Vector3(0, 1.5707963, 0)
+shape = SubResource("BoxShape3D_boundary")
+
+[node name="DiagonalNortheastMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(16, 1.25, -16)
+rotation = Vector3(0, 0.7853982, 0)
+mesh = SubResource("BoxMesh_diagonal_wall")
+
+[node name="DiagonalNortheastCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(16, 1.25, -16)
+rotation = Vector3(0, 0.7853982, 0)
+shape = SubResource("BoxShape3D_diagonal_wall")
+
+[node name="DiagonalNorthwestMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(-16, 1.25, -16)
+rotation = Vector3(0, -0.7853982, 0)
+mesh = SubResource("BoxMesh_diagonal_wall")
+
+[node name="DiagonalNorthwestCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(-16, 1.25, -16)
+rotation = Vector3(0, -0.7853982, 0)
+shape = SubResource("BoxShape3D_diagonal_wall")
+
+[node name="DiagonalSoutheastMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(16, 1.25, 16)
+rotation = Vector3(0, -0.7853982, 0)
+mesh = SubResource("BoxMesh_diagonal_wall")
+
+[node name="DiagonalSoutheastCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(16, 1.25, 16)
+rotation = Vector3(0, -0.7853982, 0)
+shape = SubResource("BoxShape3D_diagonal_wall")
+
+[node name="DiagonalSouthwestMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(-16, 1.25, 16)
+rotation = Vector3(0, 0.7853982, 0)
+mesh = SubResource("BoxMesh_diagonal_wall")
+
+[node name="DiagonalSouthwestCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(-16, 1.25, 16)
+rotation = Vector3(0, 0.7853982, 0)
+shape = SubResource("BoxShape3D_diagonal_wall")
+
+[node name="OuterDiagonalNortheastMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(34, 1.25, -22)
+rotation = Vector3(0, -0.7853982, 0)
+mesh = SubResource("BoxMesh_diagonal_wall")
+
+[node name="OuterDiagonalNortheastCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(34, 1.25, -22)
+rotation = Vector3(0, -0.7853982, 0)
+shape = SubResource("BoxShape3D_diagonal_wall")
+
+[node name="OuterDiagonalNorthwestMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(-34, 1.25, -22)
+rotation = Vector3(0, 0.7853982, 0)
+mesh = SubResource("BoxMesh_diagonal_wall")
+
+[node name="OuterDiagonalNorthwestCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(-34, 1.25, -22)
+rotation = Vector3(0, 0.7853982, 0)
+shape = SubResource("BoxShape3D_diagonal_wall")
+
+[node name="OuterDiagonalSoutheastMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(34, 1.25, 22)
+rotation = Vector3(0, 0.7853982, 0)
+mesh = SubResource("BoxMesh_diagonal_wall")
+
+[node name="OuterDiagonalSoutheastCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(34, 1.25, 22)
+rotation = Vector3(0, 0.7853982, 0)
+shape = SubResource("BoxShape3D_diagonal_wall")
+
+[node name="OuterDiagonalSouthwestMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(-34, 1.25, 22)
+rotation = Vector3(0, -0.7853982, 0)
+mesh = SubResource("BoxMesh_diagonal_wall")
+
+[node name="OuterDiagonalSouthwestCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(-34, 1.25, 22)
+rotation = Vector3(0, -0.7853982, 0)
+shape = SubResource("BoxShape3D_diagonal_wall")
+
+[node name="LowCoverNorthMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(0, 0.7, -32)
+mesh = SubResource("BoxMesh_low_cover")
+
+[node name="LowCoverNorthCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(0, 0.7, -32)
+shape = SubResource("BoxShape3D_low_cover")
+
+[node name="LowCoverSouthMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(0, 0.7, 32)
+mesh = SubResource("BoxMesh_low_cover")
+
+[node name="LowCoverSouthCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(0, 0.7, 32)
+shape = SubResource("BoxShape3D_low_cover")
+
+[node name="LowCoverEastMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(32, 0.7, 0)
+rotation = Vector3(0, 1.5707963, 0)
+mesh = SubResource("BoxMesh_low_cover")
+
+[node name="LowCoverEastCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(32, 0.7, 0)
+rotation = Vector3(0, 1.5707963, 0)
+shape = SubResource("BoxShape3D_low_cover")
+
+[node name="LowCoverWestMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(-32, 0.7, 0)
+rotation = Vector3(0, 1.5707963, 0)
+mesh = SubResource("BoxMesh_low_cover")
+
+[node name="LowCoverWestCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(-32, 0.7, 0)
+rotation = Vector3(0, 1.5707963, 0)
+shape = SubResource("BoxShape3D_low_cover")
+
+[node name="PillarNortheastMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(46, 2.25, -46)
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="PillarNortheastCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(46, 2.25, -46)
+shape = SubResource("BoxShape3D_pillar")
+
+[node name="PillarNorthwestMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(-46, 2.25, -46)
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="PillarNorthwestCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(-46, 2.25, -46)
+shape = SubResource("BoxShape3D_pillar")
+
+[node name="PillarSoutheastMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(46, 2.25, 46)
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="PillarSoutheastCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(46, 2.25, 46)
+shape = SubResource("BoxShape3D_pillar")
+
+[node name="PillarSouthwestMesh" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(-46, 2.25, 46)
+mesh = SubResource("BoxMesh_pillar")
+
+[node name="PillarSouthwestCollision" type="CollisionShape3D" parent="Geometry"]
+position = Vector3(-46, 2.25, 46)
+shape = SubResource("BoxShape3D_pillar")

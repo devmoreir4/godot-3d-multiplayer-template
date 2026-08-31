@@ -1,7 +1,7 @@
-[gd_scene format=3]
+[gd_scene load_steps=5 format=3]
 
-[ext_resource type="PackedScene" uid="uid://d2lp0eaho86mt" path="res://assets/items/hats/models/bucket_hat.tscn" id="1_model"]
-[ext_resource type="Script" path="res://scripts/items/hats/hat_rigid_body_3d.gd" id="2_script"]
+[ext_resource type="PackedScene" path="res://scenes/items/hats/visuals/bucket_hat_visual.tscn" id="1_model"]
+[ext_resource type="Script" path="res://scripts/items/item_rigid_body_3d.gd" id="2_script"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_hat"]
 radius = 0.5

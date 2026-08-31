@@ -118,16 +118,6 @@ func skin_str_to_e(s):
 		"red": return Character.SkinColor.RED
 		_: return Character.SkinColor.BLUE
 
-func getPlayer() -> Character:
-	var result = null
-	var rPlayers = get_tree().get_nodes_in_group("Players")
-	if rPlayers && rPlayers.size() > 0:
-		var node_array = rPlayers[0].get_children()
-		for tmp in node_array:
-			if tmp.is_multiplayer_authority():
-				result = tmp
-	return result
-
 @rpc("authority", "reliable")
 func _sync_registered_player(peer_id: int, registered_player_info: Dictionary):
 	if multiplayer.is_server():

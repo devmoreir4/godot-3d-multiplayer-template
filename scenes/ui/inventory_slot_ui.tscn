@@ -10,8 +10,6 @@ gradient = SubResource("Gradient_x57yu")
 fill_from = Vector2(0.51282054, 0.97863245)
 fill_to = Vector2(0.47008547, 0.025641026)
 
-[sub_resource type="ImageTexture" id="ImageTexture_r7xw6"]
-
 [node name="InventorySlotUI" type="Control" unique_id=1288455076]
 layout_mode = 3
 anchors_preset = 0
@@ -27,17 +25,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_bpgql")
-
-[node name="RarityBorder" type="NinePatchRect" parent="." unique_id=1060419128]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = SubResource("ImageTexture_r7xw6")
-region_rect = Rect2(4, 4, 56, 56)
 
 [node name="ItemIcon" type="TextureRect" parent="." unique_id=1347257846]
 layout_mode = 1

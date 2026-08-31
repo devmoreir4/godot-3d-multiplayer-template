@@ -183,16 +183,6 @@ func is_chat_visible() -> bool:
 	return multiplayer_chat.is_chat_visible()
 
 func _input(event):
-	if event is InputEventKey:
-		var key_event := event as InputEventKey
-		if key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB:
-			if key_event.pressed and not key_event.echo:
-				_show_player_list()
-			elif not key_event.pressed:
-				_hide_player_list()
-			get_viewport().set_input_as_handled()
-			return
-
 	if event.is_action_pressed("pause"):
 		_handle_pause_action()
 		get_viewport().set_input_as_handled()

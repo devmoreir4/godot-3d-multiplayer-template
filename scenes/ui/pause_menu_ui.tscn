@@ -1,19 +1,38 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="FontFile" uid="uid://diapabmalpcrj" path="res://assets/fonts/Kurland.ttf" id="1_font"]
 [ext_resource type="Script" path="res://scripts/pause_menu_ui.gd" id="2_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.08, 0.08, 0.08, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.25, 0.52, 0.32, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+bg_color = Color(0.055, 0.06, 0.07, 0.82)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.22, 0.25, 0.29, 0.92)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.14, 0.16, 0.19, 0.96)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button_focus"]
 
 [node name="PauseMenuUI" type="Control"]
 process_mode = 3
@@ -34,7 +53,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.72)
+color = Color(0, 0, 0, 0.58)
 
 [node name="Panel" type="PanelContainer" parent="Overlay"]
 custom_minimum_size = Vector2(360, 0)
@@ -73,28 +92,38 @@ horizontal_alignment = 1
 
 [node name="Resume" type="Button" parent="Overlay/Panel/MarginContainer/Buttons"]
 layout_mode = 2
-theme_override_colors/font_hover_color = Color(0.25, 0.75, 0.35, 1)
-theme_override_colors/font_pressed_color = Color(0.25, 0.75, 0.35, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.55, 0.75, 0.95, 1)
+theme_override_colors/font_pressed_color = Color(0.42, 0.62, 0.82, 1)
 theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 32
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button_focus")
 text = "RESUME"
 flat = true
 
 [node name="MainMenu" type="Button" parent="Overlay/Panel/MarginContainer/Buttons"]
 layout_mode = 2
-theme_override_colors/font_hover_color = Color(0.25, 0.75, 0.35, 1)
-theme_override_colors/font_pressed_color = Color(0.25, 0.75, 0.35, 1)
+mouse_default_cursor_shape = 2
+theme_override_colors/font_hover_color = Color(0.55, 0.75, 0.95, 1)
+theme_override_colors/font_pressed_color = Color(0.42, 0.62, 0.82, 1)
 theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 32
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button_focus")
 text = "MAIN MENU"
 flat = true
 
 [node name="Quit" type="Button" parent="Overlay/Panel/MarginContainer/Buttons"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_colors/font_hover_color = Color(0.86, 0.1, 0.1, 1)
 theme_override_colors/font_pressed_color = Color(0.86, 0.1, 0.1, 1)
 theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 32
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button_focus")
 text = "QUIT"
 flat = true
 

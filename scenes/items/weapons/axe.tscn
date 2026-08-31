@@ -1,12 +1,12 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/items/hats/visuals/witch_hat_visual.tscn" id="1_model"]
+[ext_resource type="PackedScene" uid="uid://dghg7ospl0imy" path="res://assets/items/weapons/models/axe.fbx" id="1_model"]
 [ext_resource type="Script" path="res://scripts/items/item_rigid_body_3d.gd" id="2_script"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_hat"]
-radius = 0.6
+[sub_resource type="SphereShape3D" id="SphereShape3D_item"]
+radius = 0.45
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_hat"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_item"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 2
@@ -14,19 +14,19 @@ properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
-[node name="WitchHat" type="RigidBody3D"]
+[node name="Axe" type="RigidBody3D"]
 collision_layer = 4
 collision_mask = 7
 linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource("2_script")
-item_id = "witch_hat"
+item_id = "axe"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("SphereShape3D_hat")
+shape = SubResource("SphereShape3D_item")
 
 [node name="Model" parent="." instance=ExtResource("1_model")]
-transform = Transform3D(0.42, 0, 0, 0, 0.42, 0, 0, 0, 0.42, 0, 0, 0)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_hat")
+replication_config = SubResource("SceneReplicationConfig_item")

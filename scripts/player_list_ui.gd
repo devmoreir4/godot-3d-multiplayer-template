@@ -4,6 +4,7 @@ class_name PlayerListUI
 const PLAYER_ROW_HEIGHT := 28.0
 const MAX_VISIBLE_ROWS := 8
 const RESERVED_VERTICAL_SPACE := 190.0
+const SAFE_AREA_MARGIN := 16.0
 
 @onready var panel: PanelContainer = $SafeArea/CenterContainer/Panel
 @onready var count_label: Label = $SafeArea/CenterContainer/Panel/MarginContainer/Content/Count
@@ -17,10 +18,22 @@ func _ready() -> void:
 	_update_layout()
 	hide()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or not (event is InputEventMouseButton):
+		return
+	var mouse_event := event as InputEventMouseButton
+	if not mouse_event.pressed:
+		return
+	if mouse_event.button_index == MOUSE_BUTTON_WHEEL_UP:
+		player_scroll.scroll_vertical -= int(PLAYER_ROW_HEIGHT)
+	elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		player_scroll.scroll_vertical += int(PLAYER_ROW_HEIGHT)
+
 func show_players(players: Dictionary, local_peer_id: int) -> void:
 	refresh_players(players, local_peer_id)
 	player_scroll.scroll_vertical = 0
 	show()
+	call_deferred("_apply_panel_scale")
 
 func hide_players() -> void:
 	hide()
@@ -43,9 +56,9 @@ func refresh_players(players: Dictionary, local_peer_id: int) -> void:
 			str(player_info.get("nick", "")),
 			"Player_" + str(peer_id)
 		)
-		var local_marker := " [color=#8fdb9d](you)[/color]" if peer_id == local_peer_id else ""
+		var local_marker := " [color=#c7ccd4](you)[/color]" if peer_id == local_peer_id else ""
 		players_label.append_text(
-			"[color=#77d28b]>[/color] [b]%s[/b]%s [color=#9aa6a0]#%d[/color]"
+			"[color=#a8adb5]>[/color] [b]%s[/b]%s [color=#9aa0a8]#%d[/color]"
 			% [_escape_bbcode(nickname), local_marker, peer_id]
 		)
 		if index < peer_ids.size() - 1:
@@ -69,6 +82,24 @@ func _update_layout() -> void:
 	var players_minimum_size := players_label.custom_minimum_size
 	players_minimum_size.y = float(maxi(1, _player_count)) * PLAYER_ROW_HEIGHT
 	players_label.custom_minimum_size = players_minimum_size
+	call_deferred("_apply_panel_scale")
+
+func _apply_panel_scale() -> void:
+	if not panel:
+		return
+	var available_size := Vector2(
+		maxf(1.0, size.x - SAFE_AREA_MARGIN * 2.0),
+		maxf(1.0, size.y - SAFE_AREA_MARGIN * 2.0)
+	)
+	var panel_size := panel.size
+	if panel_size.x <= 0.0 or panel_size.y <= 0.0:
+		return
+	var scale_factor := minf(
+		1.0,
+		minf(available_size.x / panel_size.x, available_size.y / panel_size.y)
+	)
+	panel.pivot_offset = panel_size * 0.5
+	panel.scale = Vector2.ONE * scale_factor
 
 func _escape_bbcode(text: String) -> String:
 	return text.replace("[", "[lb]")

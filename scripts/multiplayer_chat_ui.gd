@@ -11,6 +11,10 @@ const MAX_CHAT_MESSAGES: int = 100
 const MAX_VISIBLE_MESSAGES: int = 8
 const FEED_VISIBLE_SECONDS: float = 6.0
 const FEED_FADE_SECONDS: float = 0.35
+const SAFE_AREA_MARGIN := 16.0
+const MIN_CHAT_WIDTH := 280.0
+const MAX_CHAT_WIDTH := 480.0
+const MAX_CHAT_HEIGHT := 268.0
 
 var chat_visible: bool = false
 var chat_history: Array[String] = []
@@ -20,8 +24,29 @@ func _ready() -> void:
 	message.text_submitted.connect(_on_message_submitted)
 	feed_timer.timeout.connect(_on_feed_timer_timeout)
 	feed_timer.wait_time = FEED_VISIBLE_SECONDS
+	get_viewport().size_changed.connect(_update_responsive_layout)
+	_update_responsive_layout()
 	show()
 	clear_chat()
+
+func _update_responsive_layout() -> void:
+	var viewport_size := get_viewport().get_visible_rect().size
+	var available_width := maxf(1.0, viewport_size.x - SAFE_AREA_MARGIN * 2.0)
+	var preferred_width := clampf(
+		viewport_size.x * 0.42,
+		MIN_CHAT_WIDTH,
+		MAX_CHAT_WIDTH
+	)
+	var target_width := minf(available_width, preferred_width)
+	var target_height := minf(
+		MAX_CHAT_HEIGHT,
+		maxf(1.0, viewport_size.y - SAFE_AREA_MARGIN * 2.0)
+	)
+
+	offset_left = SAFE_AREA_MARGIN
+	offset_right = SAFE_AREA_MARGIN + target_width
+	offset_bottom = -SAFE_AREA_MARGIN
+	offset_top = -SAFE_AREA_MARGIN - target_height
 
 func toggle_chat() -> void:
 	if chat_visible:

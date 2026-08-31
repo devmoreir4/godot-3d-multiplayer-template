@@ -156,9 +156,6 @@ func remove_item(item_id: String, quantity: int = 1) -> int:
 	return removed
 
 func move_item(from_index: int, to_index: int, quantity: int = -1) -> bool:
-	return move_to_slot(from_index, to_index, quantity)
-
-func move_to_slot(from_index: int, to_index: int, quantity: int = -1) -> bool:
 	if from_index == to_index:
 		return false
 	if not is_slot_active(from_index) or not is_slot_active(to_index):
@@ -225,45 +222,11 @@ func swap_items(from_index: int, to_index: int) -> bool:
 	to_slot.quantity = temp_quantity
 
 	return true
-
-func get_item_count(item_id: String) -> int:
-	var total = 0
-	for i in range(get_active_slot_count()):
-		var slot := slots[i]
-		if slot.item_id == item_id:
-			total += slot.quantity
-	return total
-
-func has_item(item_id: String, quantity: int = 1) -> bool:
-	return get_item_count(item_id) >= quantity
-
 func get_first_empty_slot() -> int:
 	for i in range(get_active_slot_count()):
 		if slots[i].is_empty():
 			return i
 	return -1
-
-func try_stack_item(item: Item, quantity: int, exclude_slot: int = -1) -> int:
-	if not item.stackable:
-		return quantity
-
-	var remaining = quantity
-
-	for i in range(get_active_slot_count()):
-		if i == exclude_slot:
-			continue
-
-		var slot = slots[i]
-		if slot.item_id == item.id and not slot.is_empty():
-			var space_available = item.max_stack - slot.quantity
-			if space_available > 0:
-				var amount_to_stack = min(remaining, space_available)
-				slot.quantity += amount_to_stack
-				remaining -= amount_to_stack
-				if remaining <= 0:
-					break
-
-	return remaining
 
 func to_dict() -> Dictionary:
 	var data = []

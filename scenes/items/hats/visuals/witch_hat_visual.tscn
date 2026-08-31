@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" uid="uid://ded0f2ji0r05l" path="res://assets/items/hats/models/witch_hat.fbx" id="1_model"]
+[ext_resource type="Material" path="res://assets/items/hats/materials/hat_material.tres" id="2_material"]
+
+[node name="WitchHatVisual" instance=ExtResource("1_model")]
+
+[node name="witchHat" parent="." index="0"]
+material_override = ExtResource("2_material")

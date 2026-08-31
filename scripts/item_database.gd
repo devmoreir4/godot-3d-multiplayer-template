@@ -7,6 +7,7 @@ const BEANIE_ICON: Texture2D = preload("res://assets/items/hats/icons/beanie.png
 const BACKPACK_ICON: Texture2D = preload("res://assets/items/backpacks/icons/backpack.png")
 const SWORD_ICON: Texture2D = preload("res://assets/items/weapons/icons/sword.png")
 const SWORD_BIG_ICON: Texture2D = preload("res://assets/items/weapons/icons/sword_big.png")
+const AXE_ICON: Texture2D = preload("res://assets/items/weapons/icons/axe.png")
 const CHICKEN_LEG_ICON: Texture2D = preload("res://assets/items/misc/icons/chicken_leg.png")
 const BONE_ICON: Texture2D = preload("res://assets/items/misc/icons/bone.png")
 const CHALICE_ICON: Texture2D = preload("res://assets/items/misc/icons/chalice.png")
@@ -14,19 +15,13 @@ const CHALICE_ICON: Texture2D = preload("res://assets/items/misc/icons/chalice.p
 var items: Dictionary = {}
 
 func _ready():
-	_load_items()
+	_create_sample_items()
 
 func get_item(item_id: String) -> Item:
 	return items.get(item_id)
 
-func has_item(item_id: String) -> bool:
-	return items.has(item_id)
-
 func get_all_items() -> Dictionary:
 	return items
-
-func _load_items():
-	_create_sample_items()
 
 func _create_sample_items():
 	_create_hat_item("bucket_hat", "Bucket Hat", "A casual bucket hat.", "res://scenes/items/hats/bucket_hat.tscn", BUCKET_HAT_ICON)
@@ -36,6 +31,7 @@ func _create_sample_items():
 	_create_item("backpack", "Backpack", "A sturdy backpack worn on the back.", Item.ItemType.BACKPACK, "res://scenes/items/backpacks/backpack.tscn", BACKPACK_ICON, true, 60)
 	_create_item("sword", "Sword", "A balanced hand sword.", Item.ItemType.WEAPON, "res://scenes/items/weapons/sword.tscn", SWORD_ICON, true, 80)
 	_create_item("sword_big", "Big Sword", "A large two-handed sword.", Item.ItemType.WEAPON, "res://scenes/items/weapons/sword_big.tscn", SWORD_BIG_ICON, true, 120)
+	_create_item("axe", "Small Axe", "A compact axe with a sharp steel head.", Item.ItemType.WEAPON, "res://scenes/items/weapons/axe.tscn", AXE_ICON, true, 95)
 	_create_item("chicken_leg", "Chicken Leg", "A cooked chicken leg.", Item.ItemType.MISC, "res://scenes/items/misc/chicken_leg.tscn", CHICKEN_LEG_ICON, false, 5)
 	_create_item("bone", "Bone", "A weathered bone.", Item.ItemType.MISC, "res://scenes/items/misc/bone.tscn", BONE_ICON, false, 2)
 	_create_item("chalice", "Chalice", "A decorative golden chalice.", Item.ItemType.MISC, "res://scenes/items/misc/chalice.tscn", CHALICE_ICON, false, 35)

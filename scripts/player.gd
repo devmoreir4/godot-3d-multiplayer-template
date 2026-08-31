@@ -24,7 +24,8 @@ const HAT_NODES_BY_ITEM := {
 }
 const WEAPON_NODES_BY_ITEM := {
 	"sword": "Sword",
-	"sword_big": "SwordBig"
+	"sword_big": "SwordBig",
+	"axe": "Axe"
 }
 const BACKPACK_NODES_BY_ITEM := {
 	"backpack": "Backpack"
@@ -158,7 +159,7 @@ func _physics_process(delta):
 	_move()
 	var collided = move_and_slide()
 	if collided:
-		collision()
+		_push_collided_items()
 
 	_request_animation(_body.get_movement_animation(velocity))
 
@@ -228,11 +229,11 @@ func sync_animation_state(state: StringName, sequence: int) -> void:
 	_body.play_animation_state(state, true)
 
 
-func collision():
+func _push_collided_items() -> void:
 	for i in get_slide_collision_count():
 		var c = get_slide_collision(i)
 		if c.get_collider() is RigidBody3D:
-			applyForceToServerObject.rpc_id( 1, c.get_collider().name, -1 * c.get_normal() )
+			apply_force_to_server_object.rpc_id(1, c.get_collider().name, -c.get_normal())
 
 func _process(_delta):
 	if not multiplayer.has_multiplayer_peer(): return
@@ -310,19 +311,6 @@ func set_mesh_texture(mesh_instance: MeshInstance3D, texture: CompressedTexture2
 		mesh_instance.set_surface_override_material(0, new_material)
 
 @rpc("any_peer", "call_local", "reliable")
-func request_inventory_sync():
-	if not multiplayer.is_server():
-		return
-
-	var requesting_client = multiplayer.get_remote_sender_id()
-	if not _is_owner_request():
-		push_warning("Client " + str(requesting_client) + " tried to request inventory for player " + str(get_multiplayer_authority()))
-		return
-
-	if player_inventory:
-		_sync_inventory_to_owner()
-
-@rpc("any_peer", "call_local", "reliable")
 func sync_inventory_to_owner(inventory_data: Dictionary):
 	var sender_id = multiplayer.get_remote_sender_id()
 	if sender_id != 1 and not (sender_id == 0 and multiplayer.is_server()):
@@ -336,14 +324,12 @@ func sync_inventory_to_owner(inventory_data: Dictionary):
 	player_inventory.from_dict(inventory_data)
 
 	var level_scene = get_tree().get_current_scene()
-	if level_scene:
-		if is_multiplayer_authority() or get_multiplayer_authority() == multiplayer.get_unique_id():
-			if level_scene.has_method("update_local_inventory_display"):
-				level_scene.update_local_inventory_display()
-			if level_scene.has_node("InventoryUI"):
-				var inventory_ui = level_scene.get_node("InventoryUI")
-				if inventory_ui.visible and inventory_ui.has_method("refresh_display"):
-					inventory_ui.refresh_display()
+	if (
+		level_scene
+		and get_multiplayer_authority() == multiplayer.get_unique_id()
+		and level_scene.has_method("update_local_inventory_display")
+	):
+		level_scene.update_local_inventory_display()
 
 @rpc("any_peer", "call_local", "reliable")
 func request_move_item(from_slot: int, to_slot: int, quantity: int = -1):
@@ -656,7 +642,7 @@ func _add_starting_items():
 
 	var starting_item_ids: Array[String] = [
 		"bucket_hat", "cowboy_hat", "witch_hat", "beanie",
-		"sword", "sword_big",
+		"sword", "sword_big", "axe",
 		"chicken_leg", "bone", "chalice"
 	]
 
@@ -689,19 +675,12 @@ func _server_pickup() -> void:
 					item.queue_free()
 
 
-@rpc("authority", "call_local", "reliable")
-func delete_node_on_all(node_path: NodePath) -> void:
-	var node = get_node_or_null(node_path)
-	if node:
-		node.queue_free()
-
-
 @rpc("any_peer", "call_local", "reliable")
-func applyForceToServerObject(nameOfObject: String, normal: Vector3):
+func apply_force_to_server_object(object_name: String, normal: Vector3) -> void:
 	var object_node = get_node_or_null("/root/Level/Environment/ItemContainer")
 	if object_node:
 		for n in object_node.get_children():
-			if n.name == nameOfObject:
+			if n.name == object_name and n is RigidBody3D:
 				n.apply_force(normal * 100)
 
 func _is_grounded_on_server() -> bool:
@@ -714,4 +693,3 @@ func _is_grounded_on_server() -> bool:
 	query.exclude = [get_rid()]
 	query.collide_with_areas = false
 	return not get_world_3d().direct_space_state.intersect_ray(query).is_empty()
-	

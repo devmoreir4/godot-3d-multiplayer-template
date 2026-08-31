@@ -7,21 +7,13 @@ var quantity: int = 0
 func is_empty() -> bool:
 	return item_id.is_empty() or quantity <= 0
 
-func can_add_item(item: Item, amount: int = 1) -> bool:
-	var max_quantity = item.max_stack if item.stackable else 1
-	if is_empty():
-		return amount <= max_quantity
-	if item_id == item.id and item.stackable:
-		return quantity + amount <= item.max_stack
-	return false
-
 func add_item(item: Item, amount: int = 1) -> int:
 	var max_quantity = item.max_stack if item.stackable else 1
 	if is_empty():
 		item_id = item.id
 		quantity = min(amount, max_quantity)
 		return amount - quantity
-	elif item_id == item.id and item.stackable:
+	if item_id == item.id and item.stackable:
 		var space_available = item.max_stack - quantity
 		var amount_to_add = min(amount, space_available)
 		quantity += amount_to_add

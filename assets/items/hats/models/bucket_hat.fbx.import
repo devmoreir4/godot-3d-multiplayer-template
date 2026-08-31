@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://csktq3xmxi5yn"
-path="res://.godot/imported/bucketHat.fbx-7b68b25f9582ed625b19a7a77fe951bd.scn"
+uid="uid://du5pheo3d8nae"
+path="res://.godot/imported/bucket_hat.fbx-b88edd818a88028cd4393ab983e5d45a.scn"
 
 [deps]
 
-source_file="res://assets/items/hats/FBX/bucketHat.fbx"
-dest_files=["res://.godot/imported/bucketHat.fbx-7b68b25f9582ed625b19a7a77fe951bd.scn"]
+source_file="res://assets/items/hats/models/bucket_hat.fbx"
+dest_files=["res://.godot/imported/bucket_hat.fbx-b88edd818a88028cd4393ab983e5d45a.scn"]
 
 [params]
 
