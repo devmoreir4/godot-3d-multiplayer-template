@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" path="res://assets/items/backpacks/models/backpack.fbx" id="1_model"]
 [ext_resource type="Script" path="res://scripts/items/item_rigid_body_3d.gd" id="2_script"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_item"]
-radius = 0.55
+[sub_resource type="BoxShape3D" id="BoxShape3D_item"]
+size = Vector3(0.48024, 0.42777, 0.36171)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_item"]
 properties/0/path = NodePath(".:position")
@@ -23,7 +23,7 @@ script = ExtResource("2_script")
 item_id = "backpack"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("SphereShape3D_item")
+shape = SubResource("BoxShape3D_item")
 
 [node name="Model" parent="." instance=ExtResource("1_model")]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0, 0)

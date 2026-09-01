@@ -6,10 +6,10 @@ const MAX_VISIBLE_ROWS := 8
 const RESERVED_VERTICAL_SPACE := 190.0
 const SAFE_AREA_MARGIN := 16.0
 
-@onready var panel: PanelContainer = $SafeArea/CenterContainer/Panel
-@onready var count_label: Label = $SafeArea/CenterContainer/Panel/MarginContainer/Content/Count
-@onready var player_scroll: ScrollContainer = $SafeArea/CenterContainer/Panel/MarginContainer/Content/PlayerScroll
-@onready var players_label: RichTextLabel = $SafeArea/CenterContainer/Panel/MarginContainer/Content/PlayerScroll/Players
+@onready var panel: PanelContainer = $SafeArea/PositionContainer/Panel
+@onready var count_label: Label = $SafeArea/PositionContainer/Panel/MarginContainer/Content/Count
+@onready var player_scroll: ScrollContainer = $SafeArea/PositionContainer/Panel/MarginContainer/Content/PlayerScroll
+@onready var players_label: RichTextLabel = $SafeArea/PositionContainer/Panel/MarginContainer/Content/PlayerScroll/Players
 
 var _player_count := 0
 

@@ -1,9 +1,0 @@
-[gd_scene load_steps=3 format=3]
-
-[ext_resource type="PackedScene" uid="uid://dhig6btkd02pl" path="res://assets/items/hats/models/cowboy_hat.fbx" id="1_model"]
-[ext_resource type="Material" path="res://assets/items/hats/materials/hat_material.tres" id="2_material"]
-
-[node name="CowboyHatVisual" instance=ExtResource("1_model")]
-
-[node name="cowboyHat" parent="." index="0"]
-material_override = ExtResource("2_material")

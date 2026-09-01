@@ -1,9 +1,12 @@
 extends Node
 
-const BUCKET_HAT_ICON: Texture2D = preload("res://assets/items/hats/icons/bucket_hat.png")
-const COWBOY_HAT_ICON: Texture2D = preload("res://assets/items/hats/icons/cowboy_hat.png")
-const WITCH_HAT_ICON: Texture2D = preload("res://assets/items/hats/icons/witch_hat.png")
-const BEANIE_ICON: Texture2D = preload("res://assets/items/hats/icons/beanie.png")
+const FEDORA_ICON: Texture2D = preload("res://assets/items/hats/icons/google_poly/fedora.png")
+const GRADUATION_CAP_ICON: Texture2D = preload("res://assets/items/hats/icons/google_poly/graduation_cap.png")
+const HEADPHONES_ICON: Texture2D = preload("res://assets/items/hats/icons/google_poly/headphones.png")
+const PIRATE_HAT_ICON: Texture2D = preload("res://assets/items/hats/icons/google_poly/pirate_hat.png")
+const SHERIFF_HAT_ICON: Texture2D = preload("res://assets/items/hats/icons/google_poly/sheriff_hat.png")
+const SOMBRERO_ICON: Texture2D = preload("res://assets/items/hats/icons/google_poly/sombrero.png")
+const WIZARD_HAT_ICON: Texture2D = preload("res://assets/items/hats/icons/google_poly/wizard_hat.png")
 const BACKPACK_ICON: Texture2D = preload("res://assets/items/backpacks/icons/backpack.png")
 const SWORD_ICON: Texture2D = preload("res://assets/items/weapons/icons/sword.png")
 const SWORD_BIG_ICON: Texture2D = preload("res://assets/items/weapons/icons/sword_big.png")
@@ -24,10 +27,13 @@ func get_all_items() -> Dictionary:
 	return items
 
 func _create_sample_items():
-	_create_hat_item("bucket_hat", "Bucket Hat", "A casual bucket hat.", "res://scenes/items/hats/bucket_hat.tscn", BUCKET_HAT_ICON)
-	_create_hat_item("cowboy_hat", "Cowboy Hat", "A wide-brimmed cowboy hat.", "res://scenes/items/hats/cowboy_hat.tscn", COWBOY_HAT_ICON)
-	_create_hat_item("witch_hat", "Witch Hat", "A pointed witch hat.", "res://scenes/items/hats/witch_hat.tscn", WITCH_HAT_ICON)
-	_create_hat_item("beanie", "Beanie", "A warm knitted beanie.", "res://scenes/items/hats/beanie.tscn", BEANIE_ICON)
+	_create_hat_item("fedora", "Fedora", "A timeless felt fedora.", "res://scenes/items/hats/fedora.tscn", FEDORA_ICON)
+	_create_hat_item("graduation_cap", "Graduation Cap", "A cap for celebrating academic success.", "res://scenes/items/hats/graduation_cap.tscn", GRADUATION_CAP_ICON)
+	_create_hat_item("headphones", "Headphones", "Comfortable over-ear headphones.", "res://scenes/items/hats/headphones.tscn", HEADPHONES_ICON)
+	_create_hat_item("pirate_hat", "Pirate Hat", "A weathered hat for a daring pirate.", "res://scenes/items/hats/pirate_hat.tscn", PIRATE_HAT_ICON)
+	_create_hat_item("sheriff_hat", "Sheriff Hat", "A frontier hat with a sheriff badge.", "res://scenes/items/hats/sheriff_hat.tscn", SHERIFF_HAT_ICON)
+	_create_hat_item("sombrero", "Sombrero", "A broad and colorful sombrero.", "res://scenes/items/hats/sombrero.tscn", SOMBRERO_ICON)
+	_create_hat_item("wizard_hat", "Wizard Hat", "A pointed hat filled with arcane style.", "res://scenes/items/hats/wizard_hat.tscn", WIZARD_HAT_ICON)
 	_create_item("backpack", "Backpack", "A sturdy backpack worn on the back.", Item.ItemType.BACKPACK, "res://scenes/items/backpacks/backpack.tscn", BACKPACK_ICON, true, 60)
 	_create_item("sword", "Sword", "A balanced hand sword.", Item.ItemType.WEAPON, "res://scenes/items/weapons/sword.tscn", SWORD_ICON, true, 80)
 	_create_item("sword_big", "Big Sword", "A large two-handed sword.", Item.ItemType.WEAPON, "res://scenes/items/weapons/sword_big.tscn", SWORD_BIG_ICON, true, 120)

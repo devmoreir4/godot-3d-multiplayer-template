@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://dghg7ospl0imy" path="res://assets/items/weapons/models/axe.fbx" id="1_model"]
 [ext_resource type="Script" path="res://scripts/items/item_rigid_body_3d.gd" id="2_script"]
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_item"]
-radius = 0.45
+[sub_resource type="BoxShape3D" id="BoxShape3D_item"]
+size = Vector3(0.31175, 0.78725, 0.08)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_item"]
 properties/0/path = NodePath(".:position")
@@ -23,7 +23,8 @@ script = ExtResource("2_script")
 item_id = "axe"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("SphereShape3D_item")
+position = Vector3(0.119475, 0.065875, 0)
+shape = SubResource("BoxShape3D_item")
 
 [node name="Model" parent="." instance=ExtResource("1_model")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)

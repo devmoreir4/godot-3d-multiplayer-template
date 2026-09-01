@@ -1,0 +1,19 @@
+GOOGLE POLY HATS
+
+Models by Poly by Google, distributed through Poly Pizza under CC BY 3.0.
+License: https://creativecommons.org/licenses/by/3.0/
+
+The inventory icons are rendered derivatives of the corresponding models and
+remain covered by the same attribution.
+
+Assets:
+- Fedora: https://poly.pizza/m/8TpZrCG3aRf
+- Graduation cap: https://poly.pizza/m/6bFfEY7M9qP
+- Headphones: https://poly.pizza/m/4QQ-QHSQhOI
+- Pirate hat: https://poly.pizza/m/9QEds6cYAy6
+- Sheriff hat: https://poly.pizza/m/ayNYjI4jcW4
+- Sombrero: https://poly.pizza/m/7fGDqHvHap1
+- Wizard hat: https://poly.pizza/m/7VVumyY7L_u
+
+Project modifications: files were renamed and their scene scale/position was
+normalized for use as inventory items and character equipment.

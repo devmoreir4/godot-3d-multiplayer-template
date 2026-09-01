@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://bx7mq8t8hjn7q"]
 
-[ext_resource type="FontFile" uid="uid://diapabmalpcrj" path="res://assets/fonts/Kurland.ttf" id="1_font"]
 [ext_resource type="Script" uid="uid://wfj6b11wkwx2" path="res://scripts/main_menu_ui.gd" id="2_script"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_npnbc"]
@@ -72,7 +71,6 @@ alignment = 1
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 70
 text = "Multiplayer Template"
 
@@ -98,13 +96,11 @@ alignment = 1
 [node name="Label" type="Label" parent="MainContainer/MainMenu/Option1" unique_id=848326644]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 text = "Nickname : "
 
 [node name="NickInput" type="LineEdit" parent="MainContainer/MainMenu/Option1" unique_id=1087637066]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 placeholder_text = "YourNick"
 max_length = 20
@@ -118,14 +114,12 @@ alignment = 1
 [node name="Label" type="Label" parent="MainContainer/MainMenu/Option2" unique_id=1101934130]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 text = "Player Skin : "
 
 [node name="SkinInput" type="OptionButton" parent="MainContainer/MainMenu/Option2" unique_id=2039868006]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 
 [node name="Option3" type="HBoxContainer" parent="MainContainer/MainMenu" unique_id=1469914367]
@@ -137,13 +131,11 @@ alignment = 1
 [node name="Label" type="Label" parent="MainContainer/MainMenu/Option3" unique_id=492922165]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 text = "IP Address : "
 
 [node name="AddressInput" type="LineEdit" parent="MainContainer/MainMenu/Option3" unique_id=2119648065]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 placeholder_text = "127.0.0.1"
 alignment = 1
@@ -164,7 +156,6 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_pressed_color = Color(0.42, 0.62, 0.82, 1)
 theme_override_colors/font_hover_color = Color(0.55, 0.75, 0.95, 1)
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxEmpty_button_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
@@ -178,7 +169,6 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_pressed_color = Color(0.42, 0.62, 0.82, 1)
 theme_override_colors/font_hover_color = Color(0.55, 0.75, 0.95, 1)
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxEmpty_button_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
@@ -198,7 +188,6 @@ layout_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_pressed_color = Color(0.858824, 0, 0, 0.862745)
 theme_override_colors/font_hover_color = Color(0.858807, 4.71681e-06, 1.15514e-06, 0.862745)
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 theme_override_styles/focus = SubResource("StyleBoxEmpty_button_focus")
 text = "QUIT"

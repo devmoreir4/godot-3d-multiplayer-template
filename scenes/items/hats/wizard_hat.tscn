@@ -1,12 +1,12 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="PackedScene" path="res://assets/items/misc/models/chalice.fbx" id="1_model"]
+[ext_resource type="PackedScene" path="res://assets/items/hats/models/google_poly/wizard_hat.glb" id="1_model"]
 [ext_resource type="Script" path="res://scripts/items/item_rigid_body_3d.gd" id="2_script"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_item"]
-size = Vector3(0.218565, 0.33606, 0.21852)
+[sub_resource type="BoxShape3D" id="BoxShape3D_hat"]
+size = Vector3(0.582189, 0.382592, 0.585)
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_item"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_hat"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 2
@@ -14,20 +14,20 @@ properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
-[node name="Chalice" type="RigidBody3D"]
+[node name="WizardHat" type="RigidBody3D"]
 collision_layer = 4
 collision_mask = 7
 linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource("2_script")
-item_id = "chalice"
+item_id = "wizard_hat"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-position = Vector3(-0.001463, 0.16605, 0)
-shape = SubResource("BoxShape3D_item")
+position = Vector3(0, 0.191296, 0)
+shape = SubResource("BoxShape3D_hat")
 
 [node name="Model" parent="." instance=ExtResource("1_model")]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0, 0)
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_item")
+replication_config = SubResource("SceneReplicationConfig_hat")

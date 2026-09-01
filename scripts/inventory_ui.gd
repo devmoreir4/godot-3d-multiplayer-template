@@ -8,7 +8,11 @@ class_name InventoryUI
 @onready var inventory_panels: HBoxContainer = $SafeArea/CenterContainer/InventoryPanels
 
 const SAFE_AREA_MARGIN := 16.0
-const DEFAULT_TOOLTIP_SIZE := Vector2(280.0, 180.0)
+const TOOLTIP_MAX_WIDTH := 280.0
+const TOOLTIP_MAX_HEIGHT := 240.0
+const TOOLTIP_SCREEN_MARGIN := 10.0
+const TOOLTIP_HORIZONTAL_PADDING := 16.0
+const TOOLTIP_VERTICAL_PADDING := 16.0
 
 const SLOT_INDEX_WEAPON := -1
 const SLOT_INDEX_HAT := -2
@@ -22,6 +26,8 @@ var current_slot_index : int
 var weapon_slot_ui : InventorySlotUI
 var hat_slot_ui : InventorySlotUI
 var backpack_slot_ui: InventorySlotUI
+var _tooltip_layout_request := 0
+var _tooltip_should_be_visible := false
 
 
 signal inventory_closed
@@ -191,8 +197,8 @@ func _show_tooltip(item: Item):
 	if not item:
 		return
 
-	var tooltip_content = "[b][color=#FFD700]" + item.name + "[/color][/b]\n"
-	tooltip_content += "[color=#CCCCCC]" + item.description + "[/color]\n\n"
+	var tooltip_content = "[font_size=18][b][color=#FFD700]" + item.name + "[/color][/b][/font_size]\n"
+	tooltip_content += "[color=#CCCCCC]" + item.description + "[/color]\n"
 	tooltip_content += "[color=#87CEEB]Type:[/color] " + _get_item_type_string(item.item_type) + "\n"
 	tooltip_content += "[color=#FF69B4]Rarity:[/color] " + _get_rarity_string(item.rarity) + "\n"
 	tooltip_content += "[color=#FFD700]Value:[/color] " + str(item.value) + " gold"
@@ -201,28 +207,73 @@ func _show_tooltip(item: Item):
 		tooltip_content += "\n[color=#98FB98]Max Stack:[/color] " + str(item.max_stack)
 
 	tooltip_label.text = tooltip_content
-	tooltip.visible = true
-
-	_position_tooltip_smartly()
+	_tooltip_should_be_visible = true
+	_queue_tooltip_layout()
 
 func _hide_tooltip():
+	_tooltip_should_be_visible = false
+	_tooltip_layout_request += 1
 	tooltip.visible = false
+	tooltip.modulate = Color.WHITE
+
+func _queue_tooltip_layout() -> void:
+	_set_tooltip_width()
+	_tooltip_layout_request += 1
+	var request_id := _tooltip_layout_request
+	tooltip.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	tooltip.visible = true
+	_apply_tooltip_layout_after_frame(request_id)
+
+func _apply_tooltip_layout_after_frame(request_id: int) -> void:
+	await get_tree().process_frame
+	if (
+		request_id != _tooltip_layout_request
+		or not _tooltip_should_be_visible
+		or not tooltip
+		or not tooltip_label
+	):
+		return
+
+	var tooltip_size := tooltip.size
+	var available_height := minf(
+		TOOLTIP_MAX_HEIGHT,
+		maxf(1.0, size.y - TOOLTIP_SCREEN_MARGIN * 2.0)
+	)
+	tooltip_size.y = minf(
+		float(tooltip_label.get_content_height()) + TOOLTIP_VERTICAL_PADDING,
+		available_height
+	)
+	tooltip.size = tooltip_size
+	_position_tooltip_smartly()
+	tooltip.modulate = Color.WHITE
+
+func _set_tooltip_width() -> void:
+	var tooltip_size := tooltip.size
+	var available_width := maxf(1.0, size.x - TOOLTIP_SCREEN_MARGIN * 2.0)
+	tooltip_size.x = minf(TOOLTIP_MAX_WIDTH, available_width)
+	tooltip.size = tooltip_size
+	var label_minimum_size := tooltip_label.custom_minimum_size
+	label_minimum_size.x = maxf(1.0, tooltip_size.x - TOOLTIP_HORIZONTAL_PADDING)
+	tooltip_label.custom_minimum_size = label_minimum_size
+	var label_size := tooltip_label.size
+	label_size.x = label_minimum_size.x
+	tooltip_label.size = label_size
 
 func _position_tooltip_smartly():
 	var mouse_pos = get_global_mouse_position()
 	var tooltip_size = tooltip.size
 
 	var viewport_size = get_viewport().get_visible_rect().size
-	var tooltip_pos = mouse_pos + Vector2(10, 10)
-	if tooltip_pos.x + tooltip_size.x > viewport_size.x - 10.0:
-		tooltip_pos.x = mouse_pos.x - tooltip_size.x - 10.0
-	if tooltip_pos.y + tooltip_size.y > viewport_size.y - 10.0:
-		tooltip_pos.y = mouse_pos.y - tooltip_size.y - 10.0
+	var tooltip_pos = mouse_pos + Vector2.ONE * TOOLTIP_SCREEN_MARGIN
+	if tooltip_pos.x + tooltip_size.x > viewport_size.x - TOOLTIP_SCREEN_MARGIN:
+		tooltip_pos.x = mouse_pos.x - tooltip_size.x - TOOLTIP_SCREEN_MARGIN
+	if tooltip_pos.y + tooltip_size.y > viewport_size.y - TOOLTIP_SCREEN_MARGIN:
+		tooltip_pos.y = mouse_pos.y - tooltip_size.y - TOOLTIP_SCREEN_MARGIN
 
-	var max_x := maxf(10.0, viewport_size.x - tooltip_size.x - 10.0)
-	var max_y := maxf(10.0, viewport_size.y - tooltip_size.y - 10.0)
-	tooltip_pos.x = clampf(tooltip_pos.x, 10.0, max_x)
-	tooltip_pos.y = clampf(tooltip_pos.y, 10.0, max_y)
+	var max_x := maxf(TOOLTIP_SCREEN_MARGIN, viewport_size.x - tooltip_size.x - TOOLTIP_SCREEN_MARGIN)
+	var max_y := maxf(TOOLTIP_SCREEN_MARGIN, viewport_size.y - tooltip_size.y - TOOLTIP_SCREEN_MARGIN)
+	tooltip_pos.x = clampf(tooltip_pos.x, TOOLTIP_SCREEN_MARGIN, max_x)
+	tooltip_pos.y = clampf(tooltip_pos.y, TOOLTIP_SCREEN_MARGIN, max_y)
 
 	tooltip.global_position = tooltip_pos
 
@@ -242,12 +293,9 @@ func _update_responsive_layout() -> void:
 		inventory_panels.pivot_offset = content_size * 0.5
 		inventory_panels.scale = Vector2.ONE * scale_factor
 
-	tooltip.size = Vector2(
-		minf(DEFAULT_TOOLTIP_SIZE.x, maxf(1.0, size.x - 20.0)),
-		minf(DEFAULT_TOOLTIP_SIZE.y, maxf(1.0, size.y - 20.0))
-	)
-	if tooltip.visible:
-		_position_tooltip_smartly()
+	_set_tooltip_width()
+	if _tooltip_should_be_visible:
+		_queue_tooltip_layout()
 
 func _get_item_type_string(type: Item.ItemType) -> String:
 	match type:
@@ -289,16 +337,19 @@ func handle_item_drop(from_slot: int, to_slot: int):
 		current_player.request_move_item.rpc_id(1, from_slot, to_slot)
 
 func _on_close_pressed():
+	_hide_tooltip()
 	inventory_closed.emit()
 	visible = false
 
 func open_inventory(player: Character = null):
+	_hide_tooltip()
 	if player:
 		current_player = player
 		update_inventory_display()
 	visible = true
 
 func close_inventory():
+	_hide_tooltip()
 	visible = false
 
 func refresh_display():

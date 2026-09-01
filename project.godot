@@ -41,6 +41,10 @@ import/blender/enabled=false
 
 Players="A group containing all of the player nodes"
 
+[gui]
+
+theme/custom_font="res://assets/fonts/Kurland.ttf"
+
 [input]
 
 move_left={

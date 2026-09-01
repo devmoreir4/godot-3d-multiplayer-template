@@ -6,6 +6,11 @@ const SPRINT_SPEED = 10.0
 const JUMP_VELOCITY = 7.5
 const FALL_GRAVITY_MULTIPLIER = 1.6
 const BASE_NICKNAME_HEIGHT := 2.0
+const SERVER_ANIMATION_REQUESTS_PER_SECOND := 10.0
+const SERVER_ANIMATION_REQUEST_BURST := 6.0
+const PICKUP_ANIMATION_DELAY_MSEC := 1000
+const PICKUP_ANIMATION_WINDOW_MSEC := 2500
+const PICKUP_REQUEST_COOLDOWN_MSEC := 1000
 const ALLOWED_ANIMATION_STATES := {
 	&"Idle": true,
 	&"Run": true,
@@ -17,10 +22,13 @@ const ALLOWED_ANIMATION_STATES := {
 	&"Emote2": true
 }
 const HAT_NODES_BY_ITEM := {
-	"bucket_hat": "BucketHat",
-	"cowboy_hat": "CowboyHat",
-	"witch_hat": "WitchHat",
-	"beanie": "Beanie"
+	"fedora": "Fedora",
+	"graduation_cap": "GraduationCap",
+	"headphones": "Headphones",
+	"pirate_hat": "PirateHat",
+	"sheriff_hat": "SheriffHat",
+	"sombrero": "Sombrero",
+	"wizard_hat": "WizardHat"
 }
 const WEAPON_NODES_BY_ITEM := {
 	"sword": "Sword",
@@ -71,6 +79,10 @@ var _animation_sequence := 0
 var _last_applied_animation_sequence := 0
 var _last_requested_animation: StringName = &""
 var _appearance_sync_requesters: Dictionary = {}
+var _server_animation_request_tokens := SERVER_ANIMATION_REQUEST_BURST
+var _last_server_animation_token_update_msec := 0
+var _server_pickup_animation_started_msec := -1
+var _last_server_pickup_request_msec := -PICKUP_REQUEST_COOLDOWN_MSEC
 
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
@@ -130,7 +142,11 @@ func _physics_process(delta):
 		_request_animation(_body.get_movement_animation(velocity))
 		return
 
-	if Input.is_action_just_pressed("pickup") and is_on_floor():
+	if (
+		Input.is_action_just_pressed("pickup")
+		and is_on_floor()
+		and _has_collectible_item_in_front()
+	):
 		is_collecting = true
 		_request_animation(&"Emote2", true)
 		return
@@ -202,7 +218,32 @@ func request_animation_state(state: StringName) -> void:
 		return
 	if not ALLOWED_ANIMATION_STATES.has(state):
 		return
+	if not _server_consume_animation_request_token():
+		return
+	if state == &"Emote2":
+		if not _is_grounded_on_server() or not _has_collectible_item_in_front():
+			return
+		_server_pickup_animation_started_msec = Time.get_ticks_msec()
+	else:
+		_server_pickup_animation_started_msec = -1
 	_server_publish_animation(state)
+
+func _server_consume_animation_request_token() -> bool:
+	var now := Time.get_ticks_msec()
+	if _last_server_animation_token_update_msec == 0:
+		_last_server_animation_token_update_msec = now
+	else:
+		var elapsed_seconds := (now - _last_server_animation_token_update_msec) / 1000.0
+		_server_animation_request_tokens = minf(
+			SERVER_ANIMATION_REQUEST_BURST,
+			_server_animation_request_tokens + elapsed_seconds * SERVER_ANIMATION_REQUESTS_PER_SECOND
+		)
+		_last_server_animation_token_update_msec = now
+
+	if _server_animation_request_tokens < 1.0:
+		return false
+	_server_animation_request_tokens -= 1.0
+	return true
 
 func _server_publish_animation(state: StringName) -> void:
 	if not multiplayer.is_server():
@@ -641,7 +682,9 @@ func _add_starting_items():
 		player_inventory.add_item(backpack, 1)
 
 	var starting_item_ids: Array[String] = [
-		"bucket_hat", "cowboy_hat", "witch_hat", "beanie",
+		"fedora", "graduation_cap",
+		"headphones", "pirate_hat", "sheriff_hat",
+		"sombrero", "wizard_hat",
 		"sword", "sword_big", "axe",
 		"chicken_leg", "bone", "chalice"
 	]
@@ -651,9 +694,9 @@ func _add_starting_items():
 		if item:
 			player_inventory.add_item(item, 1)
 
-func pickup():
+func pickup() -> void:
 	if multiplayer.is_server():
-		_server_pickup()
+		request_pickup()
 	else:
 		request_pickup.rpc_id(1)
 
@@ -661,18 +704,45 @@ func pickup():
 func request_pickup() -> void:
 	if not multiplayer.is_server() or not _is_owner_request():
 		return
+	var now := Time.get_ticks_msec()
+	if now - _last_server_pickup_request_msec < PICKUP_REQUEST_COOLDOWN_MSEC:
+		return
+	_last_server_pickup_request_msec = now
+
+	var animation_elapsed := now - _server_pickup_animation_started_msec
+	if (
+		_server_pickup_animation_started_msec < 0
+		or animation_elapsed < PICKUP_ANIMATION_DELAY_MSEC
+		or animation_elapsed > PICKUP_ANIMATION_WINDOW_MSEC
+	):
+		return
 	if not _is_grounded_on_server():
 		return
+	if not _has_collectible_item_in_front():
+		return
+	_server_pickup_animation_started_msec = -1
 	_server_pickup()
 
 func _server_pickup() -> void:
-	var array_of_items = get_node("GodotRobot3D/InfrontArea3D").get_overlapping_bodies()
-	for item in array_of_items:
-		if item.get("item_id") != null:
-			var result = request_add_single_item(item.get("item_id"))
-			if result:
-				if item.is_inside_tree():
-					item.queue_free()
+	for item in _get_collectible_items_in_front():
+		var result := request_add_single_item(item.item_id)
+		if result and item.is_inside_tree():
+			item.queue_free()
+
+func _has_collectible_item_in_front() -> bool:
+	return not _get_collectible_items_in_front().is_empty()
+
+func _get_collectible_items_in_front() -> Array[ItemRigidBody3D]:
+	var collectible_items: Array[ItemRigidBody3D] = []
+	var pickup_area := get_node_or_null("GodotRobot3D/InfrontArea3D") as Area3D
+	if not pickup_area:
+		return collectible_items
+
+	for body in pickup_area.get_overlapping_bodies():
+		var item := body as ItemRigidBody3D
+		if item and not item.item_id.is_empty() and ItemDatabase.get_item(item.item_id):
+			collectible_items.append(item)
+	return collectible_items
 
 
 @rpc("any_peer", "call_local", "reliable")
