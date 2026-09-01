@@ -1,0 +1,55 @@
+name: Godot CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+concurrency:
+  group: godot-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: 4.6-stable
+
+jobs:
+  godot-headless-check:
+    name: Godot headless check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Godot binary
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/godot
+          key: godot-${{ env.GODOT_VERSION }}-linux-x86_64
+
+      - name: Install Godot ${{ env.GODOT_VERSION }}
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          ARCHIVE="Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          BINARY="Godot_v${GODOT_VERSION}_linux.x86_64"
+          curl --fail --location --retry 3 \
+            --output "${RUNNER_TEMP}/${ARCHIVE}" \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/${ARCHIVE}"
+          unzip -q "${RUNNER_TEMP}/${ARCHIVE}" -d "${RUNNER_TEMP}/godot"
+          chmod +x "${RUNNER_TEMP}/godot/${BINARY}"
+
+      - name: Add Godot to PATH
+        run: echo "${{ runner.temp }}/godot" >> "${GITHUB_PATH}"
+
+      - name: Import and validate project
+        run: "Godot_v${GODOT_VERSION}_linux.x86_64 --headless --path . --import"
