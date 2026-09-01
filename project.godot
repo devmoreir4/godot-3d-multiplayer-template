@@ -23,8 +23,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Network="*res://scripts/network.gd"
-ItemDatabase="*res://scripts/item_database.gd"
+Network="*res://scripts/autoload/network.gd"
+ItemDatabase="*res://scripts/autoload/item_database.gd"
 
 [display]
 

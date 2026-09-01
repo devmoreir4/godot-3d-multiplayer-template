@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3]
 
-[ext_resource type="PackedScene" path="res://assets/items/hats/models/google_poly/fedora.glb" id="1_model"]
+[ext_resource type="PackedScene" path="res://assets/items/hats/models/fedora.glb" id="1_model"]
 [ext_resource type="Script" path="res://scripts/items/item_rigid_body_3d.gd" id="2_script"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hat"]

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bx7mq8t8hjn7q"]
 
-[ext_resource type="Script" uid="uid://wfj6b11wkwx2" path="res://scripts/main_menu_ui.gd" id="2_script"]
+[ext_resource type="Script" uid="uid://c9x8y7z6a5b4c3d2" path="res://scripts/ui/main_menu_ui.gd" id="2_script"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_npnbc"]
 color = Color(0, 0, 0, 0)

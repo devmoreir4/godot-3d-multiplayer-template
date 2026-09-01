@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bclq8vh1x2goy"]
 
-[ext_resource type="Script" uid="uid://c2w12kgcvtww4" path="res://scripts/inventory_ui.gd" id="1_h7x4v"]
+[ext_resource type="Script" uid="uid://c2w12kgcvtww4" path="res://scripts/ui/inventory_ui.gd" id="1_h7x4v"]
 [ext_resource type="Texture2D" path="res://assets/ui/close.svg" id="2_close"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
@@ -47,18 +47,13 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="EquipmentPanel" type="Panel" parent="SafeArea/CenterContainer/InventoryPanels"]
-custom_minimum_size = Vector2(132, 432)
+[node name="EquipmentPanel" type="PanelContainer" parent="SafeArea/CenterContainer/InventoryPanels"]
+custom_minimum_size = Vector2(132, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
@@ -89,6 +84,7 @@ horizontal_alignment = 1
 [node name="HatSlotContainer" type="CenterContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="WeaponLabel" type="Label" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -99,6 +95,7 @@ horizontal_alignment = 1
 [node name="WeaponSlotContainer" type="CenterContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="BackpackLabel" type="Label" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -109,19 +106,15 @@ horizontal_alignment = 1
 [node name="BackpackSlotContainer" type="CenterContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="InventoryPanel" type="Panel" parent="SafeArea/CenterContainer/InventoryPanels" unique_id=486763135]
-custom_minimum_size = Vector2(292, 432)
+[node name="InventoryPanel" type="PanelContainer" parent="SafeArea/CenterContainer/InventoryPanels" unique_id=486763135]
+custom_minimum_size = Vector2(296, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel" unique_id=1913204593]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
@@ -168,8 +161,8 @@ theme_override_styles/separator = SubResource("StyleBoxLine_separator")
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
-theme_override_constants/h_separation = 4
-theme_override_constants/v_separation = 4
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
 columns = 4
 
 [node name="ItemTooltip" type="Control" parent="." unique_id=1254507357]
