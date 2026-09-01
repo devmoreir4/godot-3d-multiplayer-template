@@ -23,7 +23,6 @@ const ALLOWED_ANIMATION_STATES := {
 }
 const HAT_NODES_BY_ITEM := {
 	"fedora": "Fedora",
-	"graduation_cap": "GraduationCap",
 	"headphones": "Headphones",
 	"pirate_hat": "PirateHat",
 	"sheriff_hat": "SheriffHat",
@@ -41,6 +40,7 @@ const BACKPACK_NODES_BY_ITEM := {
 const HEAD_EQUIPMENT_PATH := "GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/"
 const HAND_EQUIPMENT_PATH := "GodotRobot3D/RobotArmature/Skeleton3D/LeftHandAttach/"
 const BACK_EQUIPMENT_PATH := "GodotRobot3D/RobotArmature/Skeleton3D/BackAttach/"
+const FIRST_PERSON_HIDDEN_BONES: Array[StringName] = [&"Head", &"HeadTop"]
 
 enum SkinColor { BLUE, YELLOW, GREEN, RED }
 
@@ -54,7 +54,7 @@ var player_inventory: PlayerInventory
 
 @export_category("Objects")
 @export var _body: Node3D = null
-@export var _spring_arm_offset: Node3D = null
+@export var _spring_arm_offset: SpringArmCharacter = null
 
 @export_category("Skin Colors")
 @export var blue_texture : CompressedTexture2D
@@ -66,6 +66,9 @@ var player_inventory: PlayerInventory
 @onready var _chest_mesh: MeshInstance3D = get_node("GodotRobot3D/RobotArmature/Skeleton3D/Chest")
 @onready var _face_mesh: MeshInstance3D = get_node("GodotRobot3D/RobotArmature/Skeleton3D/Face")
 @onready var _limbs_head_mesh: MeshInstance3D = get_node("GodotRobot3D/RobotArmature/Skeleton3D/LimbsAndHead")
+@onready var _skeleton: Skeleton3D = get_node("GodotRobot3D/RobotArmature/Skeleton3D")
+@onready var _pickup_area: Area3D = $GodotRobot3D/InfrontArea3D
+@onready var _first_person_hud: CanvasLayer = $FirstPersonHUD
 
 var _current_speed: float
 var _spawn_point = Vector3(0, 5, 0)
@@ -83,6 +86,8 @@ var _server_animation_request_tokens := SERVER_ANIMATION_REQUEST_BURST
 var _last_server_animation_token_update_msec := 0
 var _server_pickup_animation_started_msec := -1
 var _last_server_pickup_request_msec := -PICKUP_REQUEST_COOLDOWN_MSEC
+var _pickup_area_camera_yaw_offset := 0.0
+var _equipped_hat_visual_id := ""
 
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
@@ -106,6 +111,55 @@ func _ready():
 	call_deferred("_update_nickname_height")
 	if not multiplayer.is_server():
 		call_deferred("_request_equipment_appearance")
+	if is_multiplayer_authority() and _spring_arm_offset:
+		_pickup_area_camera_yaw_offset = wrapf(
+			_pickup_area.global_rotation.y - _spring_arm_offset.global_rotation.y,
+			-PI,
+			PI
+		)
+		_spring_arm_offset.perspective_changed.connect(_on_camera_perspective_changed)
+		_on_camera_perspective_changed(_spring_arm_offset.is_first_person)
+
+func _on_camera_perspective_changed(first_person: bool) -> void:
+	if not is_multiplayer_authority():
+		return
+	_body.visible = true
+	_bottom_mesh.visible = not first_person
+	_chest_mesh.visible = not first_person
+	_face_mesh.visible = not first_person
+	_limbs_head_mesh.visible = true
+	nickname.visible = not first_person
+	_first_person_hud.visible = first_person
+	for bone_name in FIRST_PERSON_HIDDEN_BONES:
+		var bone_index := _skeleton.find_bone(bone_name)
+		if bone_index >= 0:
+			_skeleton.set_bone_pose_scale(
+				bone_index,
+				Vector3.ZERO if first_person else Vector3.ONE
+			)
+	if first_person:
+		_align_pickup_area_with_camera()
+	else:
+		_pickup_area.rotation = Vector3.ZERO
+		call_deferred("_refresh_nickname_height_after_perspective_change")
+
+func _refresh_nickname_height_after_perspective_change() -> void:
+	if not is_multiplayer_authority() or _is_local_first_person():
+		return
+	var height := _calculate_nickname_height(_equipped_hat_visual_id)
+	_set_nickname_height(height)
+	nickname.visible = true
+	if multiplayer.is_server():
+		_broadcast_nickname_height(height)
+
+func _align_pickup_area_with_camera() -> void:
+	var pickup_rotation := _pickup_area.global_rotation
+	pickup_rotation.y = wrapf(
+		_spring_arm_offset.global_rotation.y + _pickup_area_camera_yaw_offset,
+		-PI,
+		PI
+	)
+	_pickup_area.global_rotation = pickup_rotation
 
 func _physics_process(delta):
 	if not multiplayer.has_multiplayer_peer(): return
@@ -279,6 +333,21 @@ func _push_collided_items() -> void:
 func _process(_delta):
 	if not multiplayer.has_multiplayer_peer(): return
 	if not is_multiplayer_authority(): return
+	var first_person := (
+		_spring_arm_offset != null
+		and _spring_arm_offset.is_first_person
+	)
+	if first_person:
+		_align_pickup_area_with_camera()
+	var camera_input_blocked := false
+	var current_scene := get_tree().get_current_scene()
+	if current_scene and current_scene.has_method("is_camera_input_blocked"):
+		camera_input_blocked = current_scene.is_camera_input_blocked()
+	_first_person_hud.visible = (
+		first_person
+		and not camera_input_blocked
+		and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
+	)
 	_check_out_of_bounds()
 
 func freeze():
@@ -593,6 +662,7 @@ func _set_equipment_visibility(
 	hat_id: String,
 	backpack_id: String
 ) -> void:
+	_equipped_hat_visual_id = hat_id
 	_set_equipment_nodes_visibility(HEAD_EQUIPMENT_PATH, HAT_NODES_BY_ITEM, hat_id)
 	_set_equipment_nodes_visibility(HAND_EQUIPMENT_PATH, WEAPON_NODES_BY_ITEM, weapon_id)
 	_set_equipment_nodes_visibility(BACK_EQUIPMENT_PATH, BACKPACK_NODES_BY_ITEM, backpack_id)
@@ -617,7 +687,7 @@ func _set_equipment_nodes_visibility(
 func _update_nickname_height(hat_id: String = "") -> void:
 	if not nickname:
 		return
-	nickname.visible = true
+	nickname.visible = not _is_local_first_person()
 	_set_nickname_height(_calculate_nickname_height(hat_id))
 
 func _calculate_nickname_height(hat_id: String) -> float:
@@ -637,11 +707,18 @@ func _set_nickname_height(height: float) -> void:
 func apply_synced_nickname_height(height: float) -> void:
 	if not nickname:
 		return
-	nickname.visible = true
+	nickname.visible = not _is_local_first_person()
 	if height > -INF and height < INF:
 		_set_nickname_height(maxf(BASE_NICKNAME_HEIGHT, height))
 	else:
 		_set_nickname_height(BASE_NICKNAME_HEIGHT)
+
+func _is_local_first_person() -> bool:
+	return (
+		is_multiplayer_authority()
+		and _spring_arm_offset != null
+		and _spring_arm_offset.is_first_person
+	)
 
 func get_current_nickname_height() -> float:
 	return nickname.position.y if nickname else BASE_NICKNAME_HEIGHT
@@ -682,8 +759,7 @@ func _add_starting_items():
 		player_inventory.add_item(backpack, 1)
 
 	var starting_item_ids: Array[String] = [
-		"fedora", "graduation_cap",
-		"headphones", "pirate_hat", "sheriff_hat",
+		"fedora", "headphones", "pirate_hat", "sheriff_hat",
 		"sombrero", "wizard_hat",
 		"sword", "sword_big", "axe",
 		"chicken_leg", "bone", "chalice"

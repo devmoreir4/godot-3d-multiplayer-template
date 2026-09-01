@@ -18,7 +18,7 @@ player_scene = ExtResource("1_uvcbi")
 
 [node name="ItemMultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=150451317]
 unique_name_in_owner = true
-_spawnable_scenes = PackedStringArray("res://scenes/items/hats/fedora.tscn", "res://scenes/items/hats/graduation_cap.tscn", "res://scenes/items/hats/headphones.tscn", "res://scenes/items/hats/pirate_hat.tscn", "res://scenes/items/hats/sheriff_hat.tscn", "res://scenes/items/hats/sombrero.tscn", "res://scenes/items/hats/wizard_hat.tscn", "res://scenes/items/backpacks/backpack.tscn", "res://scenes/items/weapons/sword.tscn", "res://scenes/items/weapons/sword_big.tscn", "res://scenes/items/weapons/axe.tscn", "res://scenes/items/misc/chicken_leg.tscn", "res://scenes/items/misc/bone.tscn", "res://scenes/items/misc/chalice.tscn")
+_spawnable_scenes = PackedStringArray("res://scenes/items/hats/fedora.tscn", "res://scenes/items/hats/headphones.tscn", "res://scenes/items/hats/pirate_hat.tscn", "res://scenes/items/hats/sheriff_hat.tscn", "res://scenes/items/hats/sombrero.tscn", "res://scenes/items/hats/wizard_hat.tscn", "res://scenes/items/backpacks/backpack.tscn", "res://scenes/items/weapons/sword.tscn", "res://scenes/items/weapons/sword_big.tscn", "res://scenes/items/weapons/axe.tscn", "res://scenes/items/misc/chicken_leg.tscn", "res://scenes/items/misc/bone.tscn", "res://scenes/items/misc/chalice.tscn")
 spawn_path = NodePath("../Environment/ItemContainer")
 
 [node name="Environment" type="Node3D" parent="." unique_id=523076069]

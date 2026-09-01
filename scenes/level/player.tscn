@@ -13,7 +13,6 @@
 [ext_resource type="PackedScene" uid="uid://cc8gkp6u5tr2e" path="res://assets/items/backpacks/models/backpack.fbx" id="27_backpack"]
 [ext_resource type="PackedScene" uid="uid://dghg7ospl0imy" path="res://assets/items/weapons/models/axe.fbx" id="28_axe"]
 [ext_resource type="PackedScene" uid="uid://i1ar5au3vy7a" path="res://assets/items/hats/models/fedora.glb" id="34_fedora"]
-[ext_resource type="PackedScene" uid="uid://cs6e26h6hdgfd" path="res://assets/items/hats/models/graduation_cap.glb" id="37_graduation"]
 [ext_resource type="PackedScene" uid="uid://bcfswa3gh780w" path="res://assets/items/hats/models/headphones.glb" id="39_headphones"]
 [ext_resource type="PackedScene" uid="uid://dogjmlb8ci3gr" path="res://assets/items/hats/models/pirate_hat.glb" id="41_pirate"]
 [ext_resource type="PackedScene" uid="uid://crcqxt31qmp7k" path="res://assets/items/hats/models/sheriff_hat.glb" id="42_sheriff"]
@@ -4519,22 +4518,22 @@ properties/6/replication_mode = 2
 properties/7/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/Fedora:visible")
 properties/7/spawn = true
 properties/7/replication_mode = 2
-properties/8/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/GraduationCap:visible")
+properties/8/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/Headphones:visible")
 properties/8/spawn = true
 properties/8/replication_mode = 2
-properties/9/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/Headphones:visible")
+properties/9/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/PirateHat:visible")
 properties/9/spawn = true
 properties/9/replication_mode = 2
-properties/10/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/PirateHat:visible")
+properties/10/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/SheriffHat:visible")
 properties/10/spawn = true
 properties/10/replication_mode = 2
-properties/11/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/SheriffHat:visible")
+properties/11/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/Sombrero:visible")
 properties/11/spawn = true
 properties/11/replication_mode = 2
-properties/12/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/Sombrero:visible")
+properties/12/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/WizardHat:visible")
 properties/12/spawn = true
 properties/12/replication_mode = 2
-properties/13/path = NodePath("GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach/WizardHat:visible")
+properties/13/path = NodePath("GodotRobot3D/InfrontArea3D:rotation")
 properties/13/spawn = true
 properties/13/replication_mode = 2
 
@@ -4557,6 +4556,12 @@ shape = SubResource("CapsuleShape3D_mx45w")
 script = ExtResource("2_mexc5")
 _character = NodePath("..")
 animation_player = NodePath("AnimationPlayer")
+
+[node name="FirstPersonCameraSource" type="Node3D" parent="GodotRobot3D"]
+transform = Transform3D(-1, 6.8887773e-10, 1.5099906e-07, 1.878609e-09, 0.9999689, 0.007879177, -1.5098895e-07, 0.007879177, -0.9999689, -2.6044247e-09, 1.7220587, -0.029791456)
+
+[node name="FirstPersonCameraAnchor" type="Node3D" parent="GodotRobot3D/FirstPersonCameraSource"]
+transform = Transform3D(-1, -4.2919936e-08, 3.9609992e-07, -1.9330494e-07, 0.9215918, -0.38816008, -3.483829e-07, -0.38816008, -0.9215918, -2.6863398e-07, 1.2807279, -0.5394225)
 
 [node name="InfrontArea3D" type="Area3D" parent="GodotRobot3D" unique_id=1374521860]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9427734e-08, 0, 0.67977387)
@@ -4798,12 +4803,11 @@ transform = Transform3D(1, 9.325873e-15, -2.3841854e-07, 1.878527e-09, 0.9999688
 bone_name = "Head"
 bone_idx = 5
 
+[node name="FirstPersonCameraRemote" type="RemoteTransform3D" parent="GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach"]
+remote_path = NodePath("../../../../FirstPersonCameraSource")
+
 [node name="Fedora" parent="GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach" unique_id=525657311 instance=ExtResource("34_fedora")]
 transform = Transform3D(-4.8082526e-08, -6.661338e-16, -1.1, 1.8626451e-09, 1.1, -4.440892e-16, 1.1, 0, -4.8082512e-08, -1.1953105e-11, 0.93114185, -5.0127506e-05)
-visible = false
-
-[node name="GraduationCap" parent="GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach" unique_id=995573433 instance=ExtResource("37_graduation")]
-transform = Transform3D(0.6683522, 0.005860845, -0.7438221, -0.0058608423, 0.99997926, 0.0026130145, 0.74382216, 0.0026130052, 0.66837275, 1.9584334e-12, 0.8225336, 8.225441e-06)
 visible = false
 
 [node name="Headphones" parent="GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach" unique_id=1013512068 instance=ExtResource("39_headphones")]
@@ -4829,10 +4833,11 @@ visible = false
 [node name="AnimationPlayer" type="AnimationPlayer" parent="GodotRobot3D" unique_id=1646389398]
 libraries/ = SubResource("AnimationLibrary_135rq")
 
-[node name="SpringArmOffset" type="Node3D" parent="." unique_id=1408823775 node_paths=PackedStringArray("_spring_arm")]
+[node name="SpringArmOffset" type="Node3D" parent="." unique_id=1408823775 node_paths=PackedStringArray("_spring_arm", "_first_person_anchor")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 script = ExtResource("4_ygggd")
 _spring_arm = NodePath("SpringArm3D")
+_first_person_anchor = NodePath("../GodotRobot3D/FirstPersonCameraSource/FirstPersonCameraAnchor")
 
 [node name="SpringArm3D" type="SpringArm3D" parent="SpringArmOffset" unique_id=1915471732]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
@@ -4840,6 +4845,42 @@ spring_length = 5.0
 
 [node name="Camera3D" type="Camera3D" parent="SpringArmOffset/SpringArm3D" unique_id=1087327110]
 current = true
+near = 0.01
+
+[node name="FirstPersonHUD" type="CanvasLayer" parent="." unique_id=1104668221]
+layer = 10
+visible = false
+
+[node name="Crosshair" type="Control" parent="FirstPersonHUD" unique_id=1073328902]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -6.0
+offset_top = -6.0
+offset_right = 6.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Horizontal" type="ColorRect" parent="FirstPersonHUD/Crosshair" unique_id=1435305648]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 5.0
+offset_right = 10.0
+offset_bottom = 7.0
+mouse_filter = 2
+
+[node name="Vertical" type="ColorRect" parent="FirstPersonHUD/Crosshair" unique_id=150511760]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 2.0
+offset_right = 7.0
+offset_bottom = 10.0
+mouse_filter = 2
 
 [node name="PlayerNick" type="Node3D" parent="." unique_id=438524062]
 

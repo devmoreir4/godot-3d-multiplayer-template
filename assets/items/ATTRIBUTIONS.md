@@ -16,7 +16,6 @@ Each asset remains available under the license identified in its section.
 | Asset | Source |
 | --- | --- |
 | Fedora | https://poly.pizza/m/8TpZrCG3aRf |
-| Graduation Cap | https://poly.pizza/m/6bFfEY7M9qP |
 | Headphones | https://poly.pizza/m/4QQ-QHSQhOI |
 | Pirate Hat | https://poly.pizza/m/9QEds6cYAy6 |
 | Sheriff Hat | https://poly.pizza/m/ayNYjI4jcW4 |

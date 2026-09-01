@@ -1,7 +1,6 @@
 extends Node
 
 const FEDORA_ICON: Texture2D = preload("res://assets/items/hats/icons/fedora.png")
-const GRADUATION_CAP_ICON: Texture2D = preload("res://assets/items/hats/icons/graduation_cap.png")
 const HEADPHONES_ICON: Texture2D = preload("res://assets/items/hats/icons/headphones.png")
 const PIRATE_HAT_ICON: Texture2D = preload("res://assets/items/hats/icons/pirate_hat.png")
 const SHERIFF_HAT_ICON: Texture2D = preload("res://assets/items/hats/icons/sheriff_hat.png")
@@ -28,7 +27,6 @@ func get_all_items() -> Dictionary:
 
 func _create_sample_items():
 	_create_hat_item("fedora", "Fedora", "A timeless felt fedora.", "res://scenes/items/hats/fedora.tscn", FEDORA_ICON)
-	_create_hat_item("graduation_cap", "Graduation Cap", "A cap for celebrating academic success.", "res://scenes/items/hats/graduation_cap.tscn", GRADUATION_CAP_ICON)
 	_create_hat_item("headphones", "Headphones", "Comfortable over-ear headphones.", "res://scenes/items/hats/headphones.tscn", HEADPHONES_ICON)
 	_create_hat_item("pirate_hat", "Pirate Hat", "A weathered hat for a daring pirate.", "res://scenes/items/hats/pirate_hat.tscn", PIRATE_HAT_ICON)
 	_create_hat_item("sheriff_hat", "Sheriff Hat", "A frontier hat with a sheriff badge.", "res://scenes/items/hats/sheriff_hat.tscn", SHERIFF_HAT_ICON)
