@@ -1,27 +1,19 @@
 # Godot 3D Multiplayer Template
 
-This is a foundational template for a 3D multiplayer game, developed in Godot Engine 4.6. It offers a starting structure for your next multiplayer project, including essential functionalities for players to interact and communicate in real-time.
+Godot 4.7 starter project for building a 3D multiplayer game with player movement, sessions, inventory, equipment, chat, and dedicated-server support.
 
 > This template is also available on the [Godot Asset Library](https://godotengine.org/asset-library/asset/3377) and [Godot Asset Store](https://store.godotengine.org/asset/devmoreir4/godot-3d-multiplayer-template/).
 
 ## Key Features
 
-This template provides everything you need to kickstart multiplayer game development:
-
-- **Host, Join, and Dedicated Server Modes:** Start a local host, connect to an address, test multiple editor instances, or run the project as a headless dedicated server.
-- **Third-Person Character Controller:** Camera-relative movement, sprinting, jumping, double jumping, falling recovery, and synchronized movement animations.
-- **Player Management:** Multiplayer spawning and removal, synchronized player information, disconnect handling, and support for up to 10 players.
-- **Player Customization:** Choose between blue, yellow, green, and red Godot Robot palettes before joining a session.
-- **Synchronized Player Identity:** Sanitized nicknames are displayed above characters and automatically move above equipped hats.
-- **Online Player List:** Hold <kbd>Tab</kbd> to display a responsive list of connected players, including the player count, peer IDs, and a marker for the local player.
-- **Global Multiplayer Chat:** Send sanitized messages to every connected player and hide or show the chat without leaving the game.
-- **Server-Authoritative Inventory:** Inventory mutations, equipment changes, and collection requests are validated by the server before the resulting state is synchronized.
-- **Inventory and Equipment UI:** 16 base inventory slots, 4 additional slots from an equipped backpack, drag-and-drop organization, context actions, item tooltips, stacking, and dedicated hat, weapon, and backpack slots.
-- **Visible Equipment Synchronization:** Equipped hats, weapons, and backpacks are displayed on every connected player's character.
-- **Physical World Items:** Drop, push, and collect physics-based items. Collection only succeeds for a valid item in front of a grounded player during the pickup animation window.
-- **Multiplayer Request Protection:** Server-side validation and request limits protect animation and pickup requests from client spam.
-- **Pause and Input Management:** Pause, inventory, chat, and player-list interfaces coordinate mouse capture and block gameplay input when appropriate.
-- **Debug Inventory Shortcuts:** Add random items and print the local inventory while testing.
+- **Multiplayer Sessions:** Host, join, test multiple local instances, or run a headless dedicated server with support for up to 10 players.
+- **Character Controller:** Camera-relative movement, sprinting, double jumping, synchronized animations, and switchable first- and third-person views.
+- **Player Profiles:** Four selectable character skins and in-world name tags for every player.
+- **Chat and Player List:** Communicate with connected players and view the current session members.
+- **Server-Authoritative Inventory:** 16 base slots, 4 backpack slots, stacking, drag and drop, context actions, and server-validated changes.
+- **Synchronized Equipment:** Hats, weapons, and backpacks are visible on every player's character.
+- **World Items:** Drop, push, and collect physics-based items.
+- **Integrated Interfaces:** Inventory, chat, player list, and pause menu coordinate gameplay input and mouse capture.
 
 ## Project Structure
 
@@ -41,14 +33,22 @@ This template provides everything you need to kickstart multiplayer game develop
 Follow these simple steps to get the template up and running:
 
 1. **Clone or Download:** Obtain the repository by cloning it via Git or downloading the ZIP file.
-2. **Open in Godot Engine:** Load the project in [Godot Engine 4.6](https://godotengine.org).
+2. **Open in Godot Engine:** Load the project in [Godot Engine 4.7](https://godotengine.org).
 3. **Execute:** Press <kbd>F5</kbd> or click `Run Project` in the Godot editor.
 
 For local multiplayer testing, open `Debug > Customize Run Instances`, enable `Enable Multiple Instances`, choose the desired number of instances, and run the project.
 
 ## Dedicated Server
 
-To run the project as a dedicated server (headless mode), use the provided script:
+From the project directory, start a headless server with:
+
+```bash
+godot --headless --path .
+```
+
+Then start another project instance, choose `Join`, and connect to `127.0.0.1`. The server listens on UDP port `8080`. Press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the server terminal to stop it.
+
+On Linux or macOS, the provided wrapper can also locate the Godot executable and handle shutdown:
 
 ```bash
 ./run_headless_server.sh
@@ -59,8 +59,6 @@ Ensure the script has execution permissions (`chmod +x run_headless_server.sh`) 
 ```bash
 GODOT_BIN=/path/to/godot ./run_headless_server.sh
 ```
-
-Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop the server.
 
 ## Controls
 
@@ -73,6 +71,7 @@ Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop the server.
 - <kbd>T</kbd> to hide/show chat.
 - <kbd>I</kbd> to toggle inventory.
 - Hold <kbd>Tab</kbd> to show the online player list.
+- <kbd>V</kbd> to switch between first-person and third-person views.
 - <kbd>F1</kbd> to add a random test item (debug builds, host only).
 - <kbd>F2</kbd> to print the local inventory (debug).
 
@@ -82,7 +81,7 @@ If you want to contribute to this project, please refer to our [Contributing Gui
 
 ## Credits
 
-- [3D Godot Robot Platformer Character](https://github.com/AGChow/3D-Godot-Robot-Platformer-Character), by AGChow, licensed under CC0. See [`assets/characters/player/ATTRIBUTIONS.md`](assets/characters/player/ATTRIBUTIONS.md).
+- 3D Godot Robot Platformer Character, by AGChow, licensed under CC0. See [`assets/characters/player/ATTRIBUTIONS.md`](assets/characters/player/ATTRIBUTIONS.md).
 - Item models and icons by Poly by Google and Quaternius. See [`assets/items/ATTRIBUTIONS.md`](assets/items/ATTRIBUTIONS.md).
 - Prototype environment textures by Kenney, licensed under CC0. See [`assets/environment/ATTRIBUTIONS.md`](assets/environment/ATTRIBUTIONS.md).
 
