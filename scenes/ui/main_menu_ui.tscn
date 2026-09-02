@@ -72,7 +72,7 @@ layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 70
-text = "Multiplayer Template"
+text = "3D Multiplayer Template"
 
 [node name="MainMenu" type="VBoxContainer" parent="MainContainer" unique_id=792964549]
 layout_direction = 1

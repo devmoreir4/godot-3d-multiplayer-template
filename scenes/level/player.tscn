@@ -36,8 +36,8 @@ radius = 0.35796
 height = 1.73092
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_2l1sl"]
-height = 0.97265625
-radius = 0.6850586
+height = 1.2
+radius = 0.9
 
 [sub_resource type="Skin" id="Skin_ixatg"]
 resource_name = "Skin"
@@ -4557,19 +4557,19 @@ script = ExtResource("2_mexc5")
 _character = NodePath("..")
 animation_player = NodePath("AnimationPlayer")
 
-[node name="FirstPersonCameraSource" type="Node3D" parent="GodotRobot3D"]
-transform = Transform3D(-1, 6.8887773e-10, 1.5099906e-07, 1.878609e-09, 0.9999689, 0.007879177, -1.5098895e-07, 0.007879177, -0.9999689, -2.6044247e-09, 1.7220587, -0.029791456)
+[node name="FirstPersonCameraSource" type="Node3D" parent="GodotRobot3D" unique_id=1850216777]
+transform = Transform3D(0.5784721, 5.3845817e-15, -1.3791846e-07, 1.0866753e-09, 0.578454, 0.0045578484, 1.3791423e-07, -0.00455786, 0.5784541, 7.771561e-16, 0.996163, 0.017233532)
 
-[node name="FirstPersonCameraAnchor" type="Node3D" parent="GodotRobot3D/FirstPersonCameraSource"]
+[node name="FirstPersonCameraAnchor" type="Node3D" parent="GodotRobot3D/FirstPersonCameraSource" unique_id=1061916657]
 transform = Transform3D(-1, -4.2919936e-08, 3.9609992e-07, -1.9330494e-07, 0.9215918, -0.38816008, -3.483829e-07, -0.38816008, -0.9215918, -2.6863398e-07, 1.2807279, -0.5394225)
 
 [node name="InfrontArea3D" type="Area3D" parent="GodotRobot3D" unique_id=1374521860]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9427734e-08, 0, 0.67977387)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.9)
 collision_layer = 4
 collision_mask = 7
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GodotRobot3D/InfrontArea3D" unique_id=227783224]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6193653e-08, 0.5136719, -0.18523365)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 shape = SubResource("CylinderShape3D_2l1sl")
 
 [node name="RobotArmature" type="Node3D" parent="GodotRobot3D" unique_id=91632620]
@@ -4803,7 +4803,7 @@ transform = Transform3D(1, 9.325873e-15, -2.3841854e-07, 1.878527e-09, 0.9999688
 bone_name = "Head"
 bone_idx = 5
 
-[node name="FirstPersonCameraRemote" type="RemoteTransform3D" parent="GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach"]
+[node name="FirstPersonCameraRemote" type="RemoteTransform3D" parent="GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach" unique_id=229670266]
 remote_path = NodePath("../../../../FirstPersonCameraSource")
 
 [node name="Fedora" parent="GodotRobot3D/RobotArmature/Skeleton3D/HeadAttach" unique_id=525657311 instance=ExtResource("34_fedora")]

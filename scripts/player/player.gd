@@ -557,9 +557,12 @@ func add_world_item( scene_path:String, player_position:Vector3) -> void:
 	if not packed_scene:
 		push_warning("Cannot add world item: scene path is not a PackedScene '" + scene_path + "'")
 		return
-	var instance_item = packed_scene.instantiate()
-	instance_item.position = player_position
+	var instance_item := packed_scene.instantiate() as Node3D
+	if not instance_item:
+		push_warning("Cannot add world item: scene root is not a Node3D '" + scene_path + "'")
+		return
 	item_container.add_child(instance_item, true)
+	instance_item.global_position = player_position
 
 func get_inventory() -> PlayerInventory:
 	return player_inventory

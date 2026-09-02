@@ -9,8 +9,37 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu_ui.tscn" id="8_pause"]
 [ext_resource type="PackedScene" path="res://scenes/ui/player_list_ui.tscn" id="9_player_list"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
+sky_top_color = Color(0.22, 0.46, 0.72, 1)
+sky_horizon_color = Color(0.66, 0.8, 0.92, 1)
+sky_curve = 0.12
+ground_bottom_color = Color(0.12, 0.14, 0.17, 1)
+ground_horizon_color = Color(0.52, 0.61, 0.68, 1)
+ground_curve = 0.08
+sun_angle_max = 20.0
+sun_curve = 0.1
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_main")
+
 [sub_resource type="Environment" id="Environment_qb4jd"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 3
+reflected_light_source = 2
+tonemap_mode = 2
+ssao_enabled = true
+ssao_radius = 0.7
+ssao_intensity = 0.85
+ssao_power = 1.1
+ssao_detail = 0.35
 fog_enabled = true
+fog_light_color = Color(0.66, 0.76, 0.84, 1)
+fog_light_energy = 0.8
+fog_sun_scatter = 0.08
+fog_density = 0.0025
+fog_aerial_perspective = 0.45
+fog_sky_affect = 0.65
 
 [node name="Level" type="Node3D" unique_id=1359265925]
 script = ExtResource("1_e1sh7")
@@ -25,13 +54,15 @@ spawn_path = NodePath("../Environment/ItemContainer")
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2542782, 0)
 
-[node name="Arena" parent="Environment" instance=ExtResource("2_arena")]
+[node name="Arena" parent="Environment" unique_id=318485284 instance=ExtResource("2_arena")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=824936187]
 environment = SubResource("Environment_qb4jd")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment" unique_id=2096374065]
 transform = Transform3D(1, 0, 0, 0, -0.50000024, 0.8660253, 0, -0.8660253, -0.50000024, 0, 9.597253, 0)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.15
 shadow_enabled = true
 shadow_blur = 0.5
 
@@ -50,7 +81,7 @@ anchors_preset = -1
 [node name="InventoryUI" parent="." unique_id=2001567843 instance=ExtResource("4_x8g2h")]
 visible = false
 
-[node name="PlayerListUI" parent="." instance=ExtResource("9_player_list")]
+[node name="PlayerListUI" parent="." unique_id=517544055 instance=ExtResource("9_player_list")]
 visible = false
 
 [node name="PauseMenuUI" parent="." unique_id=358154633 instance=ExtResource("8_pause")]
