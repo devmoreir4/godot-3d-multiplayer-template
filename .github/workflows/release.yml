@@ -1,0 +1,115 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: Release tag, for example v2.0.0
+        required: true
+        type: string
+      target_ref:
+        description: Branch or commit to use as the base for the release
+        required: false
+        default: main
+        type: string
+      release_title:
+        description: Optional release title
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.event_name == 'push' && github.ref_name || inputs.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate project
+    permissions:
+      contents: read
+    uses: ./.github/workflows/godot-ci.yml
+    with:
+      checkout_ref: ${{ github.event_name == 'workflow_dispatch' && inputs.target_ref || github.ref }}
+
+  release:
+    name: Draft GitHub release
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.target_ref || github.ref }}
+
+      - name: Prepare release
+        id: prepare
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag_name }}
+          RELEASE_TITLE_INPUT: ${{ inputs.release_title }}
+        run: |
+          if [[ ! "${RELEASE_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Release tags must use the vX.Y.Z format."
+            exit 1
+          fi
+
+          RELEASE_SHA="$(git rev-parse HEAD)"
+          if ! git merge-base --is-ancestor "${RELEASE_SHA}" origin/main; then
+            echo "::error::The release commit must be contained in main."
+            exit 1
+          fi
+
+          EXISTING_TAG_SHA="$(git rev-parse -q --verify "refs/tags/${RELEASE_TAG}^{commit}" || true)"
+          if [[ -n "${EXISTING_TAG_SHA}" && "${EXISTING_TAG_SHA}" != "${RELEASE_SHA}" ]]; then
+            echo "::error::${RELEASE_TAG} points to a different commit than the selected target."
+            exit 1
+          fi
+
+          ARCHIVE_NAME="godot-3d-multiplayer-template-${RELEASE_TAG}.zip"
+          mkdir -p dist
+          git archive \
+            --format=zip \
+            --prefix="godot-3d-multiplayer-template-${RELEASE_TAG}/" \
+            --output="dist/${ARCHIVE_NAME}" \
+            "${RELEASE_SHA}"
+          (cd dist && sha256sum "${ARCHIVE_NAME}" > "${ARCHIVE_NAME}.sha256")
+
+          RELEASE_TITLE="${RELEASE_TITLE_INPUT:-${RELEASE_TAG}}"
+          echo "archive=dist/${ARCHIVE_NAME}" >> "${GITHUB_OUTPUT}"
+          echo "release_sha=${RELEASE_SHA}" >> "${GITHUB_OUTPUT}"
+          echo "release_tag=${RELEASE_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "release_title=${RELEASE_TITLE}" >> "${GITHUB_OUTPUT}"
+
+      - name: Create draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ steps.prepare.outputs.release_sha }}
+          RELEASE_TAG: ${{ steps.prepare.outputs.release_tag }}
+          RELEASE_TITLE: ${{ steps.prepare.outputs.release_title }}
+        run: |
+          RELEASE_ARGS=(
+            "${RELEASE_TAG}"
+            "${{ steps.prepare.outputs.archive }}#Godot project source"
+            "${{ steps.prepare.outputs.archive }}.sha256#SHA-256 checksum"
+            --draft
+            --generate-notes
+            --fail-on-no-commits
+            --title "${RELEASE_TITLE}"
+          )
+
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            RELEASE_ARGS+=(--verify-tag)
+          else
+            RELEASE_ARGS+=(--target "${RELEASE_SHA}")
+          fi
+
+          gh release create "${RELEASE_ARGS[@]}"

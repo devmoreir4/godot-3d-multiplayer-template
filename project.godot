@@ -14,30 +14,36 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="TemplateOnlineMultiplayer"
+config/name="3D Multiplayer Template"
 config/description="This is a foundational template for a 3D multiplayer game, developed in Godot Engine."
 config/tags=PackedStringArray("3d", "network")
 run/main_scene="res://scenes/level/level.tscn"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.png"
 
 [autoload]
 
-Network="*res://scripts/network.gd"
-ItemDatabase="*res://scripts/item_database.gd"
+Network="*res://scripts/autoload/network.gd"
+ItemDatabase="*res://scripts/autoload/item_database.gd"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
-[editor]
+[filesystem]
 
-movie_writer/movie_file="C:/Users/curti/Documents/fix_up/godot-3d-multiplayer-template/output.avi"
+import/blender/enabled=false
 
 [global_group]
 
 Players="A group containing all of the player nodes"
+
+[gui]
+
+theme/custom_font="res://assets/fonts/Kurland.ttf"
 
 [input]
 
@@ -71,7 +77,7 @@ shift={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194325,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
-quit={
+pause={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194305,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
@@ -96,8 +102,17 @@ attack={
 "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":1,"position":Vector2(53, 16),"global_position":Vector2(62, 64),"factor":1.0,"button_index":1,"canceled":false,"pressed":true,"double_click":false,"script":null)
 ]
 }
+toggle_camera={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":86,"key_label":0,"unicode":118,"location":0,"echo":false,"script":null)
+]
+}
 
 [layer_names]
 
 3d_physics/layer_1="player"
 3d_physics/layer_2="world"
+
+[rendering]
+
+anti_aliasing/quality/msaa_3d=2

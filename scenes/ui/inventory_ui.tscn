@@ -1,6 +1,22 @@
-[gd_scene format=3 uid="uid://bclq8vh1x2goy"]
+[gd_scene load_steps=5 format=3 uid="uid://bclq8vh1x2goy"]
 
-[ext_resource type="Script" uid="uid://c2w12kgcvtww4" path="res://scripts/inventory_ui.gd" id="1_h7x4v"]
+[ext_resource type="Script" uid="uid://c2w12kgcvtww4" path="res://scripts/ui/inventory_ui.gd" id="1_h7x4v"]
+[ext_resource type="Texture2D" path="res://assets/ui/close.svg" id="2_close"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.055, 0.06, 0.07, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.58, 0.62, 0.45)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_separator"]
+color = Color(0.65, 0.68, 0.72, 0.42)
 
 [node name="InventoryUI" type="Control" unique_id=1878305014]
 process_mode = 3
@@ -12,130 +28,150 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_h7x4v")
 
-[node name="Panel" type="Panel" parent="." unique_id=486763135]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -145.0
-offset_top = -200.0
-offset_right = 145.0
-offset_bottom = 200.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=1913204593]
+[node name="SafeArea" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="CenterContainer" type="CenterContainer" parent="SafeArea"]
+layout_mode = 2
+
+[node name="InventoryPanels" type="HBoxContainer" parent="SafeArea/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="EquipmentPanel" type="PanelContainer" parent="SafeArea/CenterContainer/InventoryPanels"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel"]
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=599957956]
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 6
 
-[node name="TitleBar" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=145161483]
+[node name="Title" type="Label" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Equipment"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Title" type="Label" parent="Panel/MarginContainer/VBoxContainer/TitleBar" unique_id=860210156]
+[node name="HSeparator" type="HSeparator" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Inventory"
+theme_override_styles/separator = SubResource("StyleBoxLine_separator")
+
+[node name="HatLabel" type="Label" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Hat"
 horizontal_alignment = 1
 
-[node name="CloseButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/TitleBar" unique_id=698056211]
+[node name="HatSlotContainer" type="CenterContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
-text = "X"
-
-[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer" unique_id=609650692]
-layout_mode = 2
-
-[node name="GridContainer" type="GridContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=789467804]
-layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 3
-columns = 4
 
-[node name="Weapon" type="Panel" parent="." unique_id=825838901]
-layout_mode = 0
-offset_left = 231.0
-offset_top = 160.0
-offset_right = 439.0
-offset_bottom = 316.0
-
-[node name="MarginContainer" type="MarginContainer" parent="Weapon" unique_id=564424952]
-layout_mode = 0
-offset_right = 206.0
-offset_bottom = 155.0
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Weapon/MarginContainer" unique_id=741072650]
-clip_contents = true
+[node name="WeaponLabel" type="Label" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-
-[node name="Label" type="Label" parent="Weapon/MarginContainer/VBoxContainer" unique_id=1876493316]
-layout_mode = 2
+theme_override_font_sizes/font_size = 15
 text = "Weapon"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="Weapon/MarginContainer/VBoxContainer" unique_id=1857717218]
+[node name="WeaponSlotContainer" type="CenterContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Armor" type="Panel" parent="." unique_id=79975516]
-layout_mode = 0
-offset_left = 233.0
-offset_top = 346.0
-offset_right = 441.0
-offset_bottom = 502.0
+[node name="BackpackLabel" type="Label" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Backpack"
+horizontal_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="Armor" unique_id=420675710]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 208.0
-offset_bottom = 152.0
+[node name="BackpackSlotContainer" type="CenterContainer" parent="SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InventoryPanel" type="PanelContainer" parent="SafeArea/CenterContainer/InventoryPanels" unique_id=486763135]
+custom_minimum_size = Vector2(296, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel" unique_id=1913204593]
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Armor/MarginContainer" unique_id=2065537359]
+[node name="VBoxContainer" type="VBoxContainer" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer" unique_id=599957956]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TitleBar" type="HBoxContainer" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer" unique_id=145161483]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+
+[node name="TitleSpacer" type="Control" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar"]
+custom_minimum_size = Vector2(28, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar" unique_id=860210156]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Inventory"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar" unique_id=698056211]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/icon_normal_color = Color(0.95, 0.97, 0.95, 1)
+theme_override_colors/icon_hover_color = Color(1, 0.55, 0.55, 1)
+theme_override_colors/icon_pressed_color = Color(0.82, 0.3, 0.3, 1)
+icon = ExtResource("2_close")
+flat = true
+tooltip_text = "Close inventory"
+
+[node name="HSeparator" type="HSeparator" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer" unique_id=609650692]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_separator")
+
+[node name="GridContainer" type="GridContainer" parent="SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer" unique_id=789467804]
 layout_mode = 2
 size_flags_horizontal = 4
-size_flags_vertical = 0
-
-[node name="Label" type="Label" parent="Armor/MarginContainer/VBoxContainer" unique_id=1743718879]
-layout_mode = 2
-text = "Armor"
-horizontal_alignment = 1
-
-[node name="HSeparator" type="HSeparator" parent="Armor/MarginContainer/VBoxContainer" unique_id=1922506625]
-layout_mode = 2
-
-[node name="MenuBar" type="MenuBar" parent="." unique_id=534801660]
-visible = false
-layout_mode = 0
-offset_right = 242.0
-offset_bottom = 252.0
+size_flags_vertical = 3
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 4
 
 [node name="ItemTooltip" type="Control" parent="." unique_id=1254507357]
 visible = false
 layout_mode = 1
 anchors_preset = 0
 offset_right = 280.0
-offset_bottom = 180.0
+offset_bottom = 1.0
+mouse_filter = 2
 
 [node name="Panel" type="Panel" parent="ItemTooltip" unique_id=323031125]
 layout_mode = 1
@@ -144,6 +180,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="ItemTooltip/Panel" unique_id=413423816]
 layout_mode = 1
@@ -152,6 +190,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
@@ -159,11 +198,8 @@ theme_override_constants/margin_bottom = 8
 
 [node name="TooltipText" type="RichTextLabel" parent="ItemTooltip/Panel/MarginContainer" unique_id=571796113]
 layout_mode = 2
+mouse_filter = 2
 bbcode_enabled = true
-text = "[b]Item Name[/b]
-Item description goes here.
-
-Type: Weapon
-Rarity: Common
-Value: 100 gold"
+text = ""
 fit_content = true
+scroll_active = false

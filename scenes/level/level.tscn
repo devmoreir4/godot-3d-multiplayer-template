@@ -1,24 +1,45 @@
 [gd_scene format=3 uid="uid://dugaivbj1o66n"]
 
-[ext_resource type="Script" uid="uid://d0dgljwwl463n" path="res://scripts/level.gd" id="1_e1sh7"]
+[ext_resource type="Script" uid="uid://d0dgljwwl463n" path="res://scripts/level/level.gd" id="1_e1sh7"]
 [ext_resource type="PackedScene" uid="uid://cffjduipbb3s5" path="res://scenes/level/player.tscn" id="1_uvcbi"]
+[ext_resource type="PackedScene" path="res://scenes/level/arena.tscn" id="2_arena"]
 [ext_resource type="PackedScene" uid="uid://bclq8vh1x2goy" path="res://scenes/ui/inventory_ui.tscn" id="4_x8g2h"]
 [ext_resource type="PackedScene" uid="uid://ccencq0lcd3ph" path="res://scenes/ui/multiplayer_chat_ui.tscn" id="5_x9g3h"]
 [ext_resource type="PackedScene" uid="uid://bx7mq8t8hjn7q" path="res://scenes/ui/main_menu_ui.tscn" id="6_x9g3h"]
-[ext_resource type="PackedScene" uid="uid://cqbpmqh1kef3f" path="res://scenes/scenary/red_block.tscn" id="7_wcngd"]
-[ext_resource type="PackedScene" uid="uid://cmhutalglf0aa" path="res://scenes/ui/health_bar.tscn" id="7_xv074"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu_ui.tscn" id="8_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/player_list_ui.tscn" id="9_player_list"]
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_r5xs5"]
-size = Vector2(90, 90)
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
+sky_top_color = Color(0.22, 0.46, 0.72, 1)
+sky_horizon_color = Color(0.66, 0.8, 0.92, 1)
+sky_curve = 0.12
+ground_bottom_color = Color(0.12, 0.14, 0.17, 1)
+ground_horizon_color = Color(0.52, 0.61, 0.68, 1)
+ground_curve = 0.08
+sun_angle_max = 20.0
+sun_curve = 0.1
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o02aj"]
-albedo_color = Color(0, 0.321569, 0.172549, 1)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_x3h1o"]
-size = Vector3(90, 0.05, 90)
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_main")
 
 [sub_resource type="Environment" id="Environment_qb4jd"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 3
+reflected_light_source = 2
+tonemap_mode = 2
+ssao_enabled = true
+ssao_radius = 0.7
+ssao_intensity = 0.85
+ssao_power = 1.1
+ssao_detail = 0.35
 fog_enabled = true
+fog_light_color = Color(0.66, 0.76, 0.84, 1)
+fog_light_energy = 0.8
+fog_sun_scatter = 0.08
+fog_density = 0.0025
+fog_aerial_perspective = 0.45
+fog_sky_affect = 0.65
 
 [node name="Level" type="Node3D" unique_id=1359265925]
 script = ExtResource("1_e1sh7")
@@ -26,43 +47,22 @@ player_scene = ExtResource("1_uvcbi")
 
 [node name="ItemMultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=150451317]
 unique_name_in_owner = true
-_spawnable_scenes = PackedStringArray("uid://c8xkx1htqjjid", "uid://cqi5eaqaobb3e", "uid://bpcrivjdy82nk", "uid://ba8ffkgetdio6", "uid://b3r8ojefaspnv", "uid://dixt7j41ak3ft")
+_spawnable_scenes = PackedStringArray("res://scenes/items/hats/fedora.tscn", "res://scenes/items/hats/headphones.tscn", "res://scenes/items/hats/pirate_hat.tscn", "res://scenes/items/hats/sheriff_hat.tscn", "res://scenes/items/hats/sombrero.tscn", "res://scenes/items/hats/wizard_hat.tscn", "res://scenes/items/backpacks/backpack.tscn", "res://scenes/items/weapons/sword.tscn", "res://scenes/items/weapons/sword_big.tscn", "res://scenes/items/weapons/axe.tscn", "res://scenes/items/misc/chicken_leg.tscn", "res://scenes/items/misc/bone.tscn", "res://scenes/items/misc/chalice.tscn")
 spawn_path = NodePath("../Environment/ItemContainer")
 
 [node name="Environment" type="Node3D" parent="." unique_id=523076069]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2542782, 0)
 
-[node name="Block5" parent="Environment" unique_id=964236966 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1491866, 5.4978743, 4.769345)
-
-[node name="Block3" parent="Environment" unique_id=1305052694 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5386019, 2.5812874, 10.739042)
-
-[node name="Block2" parent="Environment" unique_id=1377452148 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.750885, -0.36214256, 9.532318)
-
-[node name="Block1" parent="Environment" unique_id=842897557 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8754425, -0.18107128, 4.766159)
-
-[node name="Block4" parent="Environment" unique_id=2030620387 instance=ExtResource("7_wcngd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1332884, 5.4783096, 4.766159)
-
-[node name="Floor" type="StaticBody3D" parent="Environment" unique_id=1286358539]
-collision_layer = 2
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Floor" unique_id=928783741]
-mesh = SubResource("PlaneMesh_r5xs5")
-surface_material_override/0 = SubResource("StandardMaterial3D_o02aj")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Environment/Floor" unique_id=467016583]
-shape = SubResource("BoxShape3D_x3h1o")
+[node name="Arena" parent="Environment" unique_id=318485284 instance=ExtResource("2_arena")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=824936187]
 environment = SubResource("Environment_qb4jd")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Environment" unique_id=2096374065]
 transform = Transform3D(1, 0, 0, 0, -0.50000024, 0.8660253, 0, -0.8660253, -0.50000024, 0, 9.597253, 0)
+light_color = Color(1, 0.94, 0.84, 1)
+light_energy = 1.15
 shadow_enabled = true
 shadow_blur = 0.5
 
@@ -76,8 +76,13 @@ visible = false
 
 [node name="MultiplayerChatUI" parent="." unique_id=1655363280 instance=ExtResource("5_x9g3h")]
 visible = false
+anchors_preset = -1
 
 [node name="InventoryUI" parent="." unique_id=2001567843 instance=ExtResource("4_x8g2h")]
 visible = false
 
-[node name="HealthBar" parent="." unique_id=25732065 instance=ExtResource("7_xv074")]
+[node name="PlayerListUI" parent="." unique_id=517544055 instance=ExtResource("9_player_list")]
+visible = false
+
+[node name="PauseMenuUI" parent="." unique_id=358154633 instance=ExtResource("8_pause")]
+visible = false

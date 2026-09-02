@@ -1,10 +1,39 @@
 [gd_scene format=3 uid="uid://bx7mq8t8hjn7q"]
 
-[ext_resource type="FontFile" uid="uid://diapabmalpcrj" path="res://assets/fonts/Kurland.ttf" id="1_font"]
-[ext_resource type="Script" uid="uid://wfj6b11wkwx2" path="res://scripts/main_menu_ui.gd" id="2_script"]
+[ext_resource type="Script" uid="uid://c9x8y7z6a5b4c3d2" path="res://scripts/ui/main_menu_ui.gd" id="2_script"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_npnbc"]
 color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button_normal"]
+content_margin_left = 12.0
+content_margin_top = 4.0
+content_margin_right = 12.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.22, 0.25, 0.29, 0.92)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.14, 0.16, 0.19, 0.96)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button_focus"]
 
 [node name="MainMenuUI" type="Control" unique_id=1809417860]
 layout_mode = 3
@@ -26,12 +55,13 @@ color = Color(0.0901961, 0.0901961, 0.0901961, 1)
 
 [node name="MainContainer" type="VBoxContainer" parent="." unique_id=473263213]
 layout_mode = 1
-anchors_preset = 14
-anchor_top = 0.5
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -257.0
-offset_bottom = 257.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 50
@@ -41,9 +71,8 @@ alignment = 1
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 70
-text = "Multiplayer Template"
+text = "3D Multiplayer Template"
 
 [node name="MainMenu" type="VBoxContainer" parent="MainContainer" unique_id=792964549]
 layout_direction = 1
@@ -67,13 +96,11 @@ alignment = 1
 [node name="Label" type="Label" parent="MainContainer/MainMenu/Option1" unique_id=848326644]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 text = "Nickname : "
 
 [node name="NickInput" type="LineEdit" parent="MainContainer/MainMenu/Option1" unique_id=1087637066]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 placeholder_text = "YourNick"
 max_length = 20
@@ -87,14 +114,12 @@ alignment = 1
 [node name="Label" type="Label" parent="MainContainer/MainMenu/Option2" unique_id=1101934130]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 text = "Player Skin : "
 
 [node name="SkinInput" type="OptionButton" parent="MainContainer/MainMenu/Option2" unique_id=2039868006]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 
 [node name="Option3" type="HBoxContainer" parent="MainContainer/MainMenu" unique_id=1469914367]
@@ -106,13 +131,11 @@ alignment = 1
 [node name="Label" type="Label" parent="MainContainer/MainMenu/Option3" unique_id=492922165]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 text = "IP Address : "
 
 [node name="AddressInput" type="LineEdit" parent="MainContainer/MainMenu/Option3" unique_id=2119648065]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
 placeholder_text = "127.0.0.1"
 alignment = 1
@@ -130,19 +153,27 @@ alignment = 1
 
 [node name="Host" type="Button" parent="MainContainer/MainMenu/Buttons" unique_id=18102936]
 layout_mode = 2
-theme_override_colors/font_pressed_color = Color(0, 0.52549, 0, 1)
-theme_override_colors/font_hover_color = Color(0, 0.52549, 0, 1)
-theme_override_fonts/font = ExtResource("1_font")
+mouse_default_cursor_shape = 2
+theme_override_colors/font_pressed_color = Color(0.42, 0.62, 0.82, 1)
+theme_override_colors/font_hover_color = Color(0.55, 0.75, 0.95, 1)
 theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxEmpty_button_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button_focus")
 text = "HOST"
 flat = true
 
 [node name="Join" type="Button" parent="MainContainer/MainMenu/Buttons" unique_id=1615937929]
 layout_mode = 2
-theme_override_colors/font_pressed_color = Color(0, 0.52549, 0, 1)
-theme_override_colors/font_hover_color = Color(0, 0.525257, 0, 1)
-theme_override_fonts/font = ExtResource("1_font")
+mouse_default_cursor_shape = 2
+theme_override_colors/font_pressed_color = Color(0.42, 0.62, 0.82, 1)
+theme_override_colors/font_hover_color = Color(0.55, 0.75, 0.95, 1)
 theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxEmpty_button_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button_focus")
 text = "JOIN"
 flat = true
 
@@ -154,10 +185,11 @@ alignment = 1
 
 [node name="Quit" type="Button" parent="MainContainer/MainMenu/Option4" unique_id=1022123460]
 layout_mode = 2
+mouse_default_cursor_shape = 2
 theme_override_colors/font_pressed_color = Color(0.858824, 0, 0, 0.862745)
 theme_override_colors/font_hover_color = Color(0.858807, 4.71681e-06, 1.15514e-06, 0.862745)
-theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 35
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button_focus")
 text = "QUIT"
 flat = true
 
