@@ -9,12 +9,18 @@ on:
     branches:
       - main
       - develop
+  workflow_call:
+    inputs:
+      checkout_ref:
+        description: Branch, tag, or commit to validate
+        required: false
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: godot-ci-${{ github.ref }}
+  group: godot-ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}-${{ inputs.checkout_ref }}
   cancel-in-progress: true
 
 env:
@@ -28,6 +34,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout_ref || github.ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -52,6 +60,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.checkout_ref || github.ref }}
 
       - name: Cache Godot binary
         id: cache-godot
