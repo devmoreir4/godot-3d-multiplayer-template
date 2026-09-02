@@ -4,4 +4,19 @@
 # ignore files when exporting
 .gitignore      export-ignore
 .gitattributes  export-ignore
-/.github/       export-ignore
+/.github/**     export-ignore
+.editorconfig   export-ignore
+.gdlintrc       export-ignore
+.gdformatrc     export-ignore
+CONTRIBUTING.md export-ignore
+requirements-dev.txt export-ignore
+/screenshots/** export-ignore
+
+# Treat imported assets as binary files.
+*.png binary
+*.fbx binary
+*.glb binary
+*.ttf binary
+
+# Keep SVG assets as normalized, editable text.
+*.svg text eol=lf

@@ -1,5 +1,5 @@
-extends Node3D
 class_name Body
+extends Node3D
 
 const LERP_VELOCITY: float = 0.15
 
@@ -9,9 +9,11 @@ const LERP_VELOCITY: float = 0.15
 
 var _current_state: StringName = &""
 
+
 func apply_rotation(_velocity: Vector3) -> void:
 	var new_rotation_y = lerp_angle(rotation.y, atan2(-_velocity.x, -_velocity.z), LERP_VELOCITY)
 	rotation.y = new_rotation_y
+
 
 func get_movement_animation(_velocity: Vector3) -> StringName:
 	if not _character.is_on_floor():
@@ -22,11 +24,12 @@ func get_movement_animation(_velocity: Vector3) -> StringName:
 		return &"Jump"
 
 	if _velocity:
-		if _character.is_running() and _character.is_on_floor():
+		if _character._is_running() and _character.is_on_floor():
 			return &"Sprint"
 		return &"Run"
 
 	return &"Idle"
+
 
 func play_animation_state(state: StringName, restart: bool = false) -> void:
 	if not animation_player:

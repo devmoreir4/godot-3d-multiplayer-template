@@ -1,11 +1,7 @@
-extends Control
 class_name InventoryUI
+extends Control
 
-@onready var grid_container: GridContainer = $SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/GridContainer
-@onready var close_button: Button = $SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar/CloseButton
-@onready var tooltip: Control = $ItemTooltip
-@onready var tooltip_label: RichTextLabel = $ItemTooltip/Panel/MarginContainer/TooltipText
-@onready var inventory_panels: HBoxContainer = $SafeArea/CenterContainer/InventoryPanels
+signal inventory_closed
 
 const SAFE_AREA_MARGIN := 16.0
 const TOOLTIP_MAX_WIDTH := 280.0
@@ -21,16 +17,24 @@ const SLOT_INDEX_BACKPACK := -3
 var current_player: Character
 var slot_ui_scene: PackedScene
 var slot_uis: Array[InventorySlotUI] = []
-var current_item : Item
-var current_slot_index : int
-var weapon_slot_ui : InventorySlotUI
-var hat_slot_ui : InventorySlotUI
+var current_item: Item
+var current_slot_index: int
+var weapon_slot_ui: InventorySlotUI
+var hat_slot_ui: InventorySlotUI
 var backpack_slot_ui: InventorySlotUI
 var _tooltip_layout_request := 0
 var _tooltip_should_be_visible := false
 
+@onready var grid_container: GridContainer = get_node(
+	"SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/GridContainer"
+)
+@onready var close_button: Button = get_node(
+	"SafeArea/CenterContainer/InventoryPanels/InventoryPanel/MarginContainer/VBoxContainer/TitleBar/CloseButton"
+)
+@onready var tooltip: Control = $ItemTooltip
+@onready var tooltip_label: RichTextLabel = $ItemTooltip/Panel/MarginContainer/TooltipText
+@onready var inventory_panels: HBoxContainer = $SafeArea/CenterContainer/InventoryPanels
 
-signal inventory_closed
 
 func _ready():
 	slot_ui_scene = preload("res://scenes/ui/inventory_slot_ui.tscn")
@@ -44,6 +48,7 @@ func _ready():
 	resized.connect(_update_responsive_layout)
 	call_deferred("_update_responsive_layout")
 
+
 func _create_hat_slot_ui():
 	hat_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
 	hat_slot_ui.custom_minimum_size = Vector2(64, 64)
@@ -52,7 +57,13 @@ func _create_hat_slot_ui():
 	hat_slot_ui.slot_clicked.connect(_on_slot_clicked)
 	hat_slot_ui.item_hovered.connect(_on_item_hovered)
 	hat_slot_ui.item_unhovered.connect(_on_item_unhovered)
-	get_node("SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/HatSlotContainer").add_child(hat_slot_ui)
+	(
+		get_node(
+			"SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/HatSlotContainer"
+		)
+		. add_child(hat_slot_ui)
+	)
+
 
 func _create_weapon_slot_ui():
 	weapon_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
@@ -62,7 +73,13 @@ func _create_weapon_slot_ui():
 	weapon_slot_ui.slot_clicked.connect(_on_slot_clicked)
 	weapon_slot_ui.item_hovered.connect(_on_item_hovered)
 	weapon_slot_ui.item_unhovered.connect(_on_item_unhovered)
-	get_node("SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/WeaponSlotContainer").add_child(weapon_slot_ui)
+	(
+		get_node(
+			"SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/WeaponSlotContainer"
+		)
+		. add_child(weapon_slot_ui)
+	)
+
 
 func _create_backpack_slot_ui() -> void:
 	backpack_slot_ui = slot_ui_scene.instantiate() as InventorySlotUI
@@ -72,7 +89,13 @@ func _create_backpack_slot_ui() -> void:
 	backpack_slot_ui.slot_clicked.connect(_on_slot_clicked)
 	backpack_slot_ui.item_hovered.connect(_on_item_hovered)
 	backpack_slot_ui.item_unhovered.connect(_on_item_unhovered)
-	get_node("SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/BackpackSlotContainer").add_child(backpack_slot_ui)
+	(
+		get_node(
+			"SafeArea/CenterContainer/InventoryPanels/EquipmentPanel/MarginContainer/VBoxContainer/BackpackSlotContainer"
+		)
+		. add_child(backpack_slot_ui)
+	)
+
 
 func _create_slot_uis():
 	for child in grid_container.get_children():
@@ -95,6 +118,7 @@ func _create_slot_uis():
 		grid_container.add_child(slot_ui)
 		slot_uis.append(slot_ui)
 
+
 func update_inventory_display():
 	if not current_player or not current_player.get_inventory():
 		return
@@ -112,9 +136,11 @@ func update_inventory_display():
 	backpack_slot_ui.set_slot_data(player_inventory.equipped_backpack, SLOT_INDEX_BACKPACK)
 	call_deferred("_update_responsive_layout")
 
+
 func _on_slot_clicked(slot_index: int, button: int):
 	if button == MOUSE_BUTTON_RIGHT:
 		_handle_right_click(slot_index)
+
 
 func _on_slot_double_clicked(slot_index: int) -> void:
 	if not current_player or not current_player.get_inventory():
@@ -138,6 +164,7 @@ func _on_slot_double_clicked(slot_index: int) -> void:
 
 	current_player.request_equip_item.rpc_id(1, slot_index, item.item_type)
 
+
 func _handle_right_click(slot_index: int):
 	if not current_player or not current_player.get_inventory():
 		return
@@ -160,14 +187,16 @@ func _handle_right_click(slot_index: int):
 			var context_menu = PopupMenu.new()
 			add_child(context_menu)
 			context_menu.popup_hide.connect(context_menu.queue_free)
-			context_menu.id_pressed.connect( _on_item_selected )
+			context_menu.id_pressed.connect(_on_item_selected)
 			if slot_index == SLOT_INDEX_WEAPON or slot_index == SLOT_INDEX_HAT or slot_index == SLOT_INDEX_BACKPACK:
-				context_menu.add_item(_get_context_menu_string(Item.ContextOptions.UNEQUIP), Item.ContextOptions.UNEQUIP)
+				context_menu.add_item(
+					_get_context_menu_string(Item.ContextOptions.UNEQUIP), Item.ContextOptions.UNEQUIP
+				)
 			else:
 				for item_option in current_item.context_options:
-					context_menu.add_item( _get_context_menu_string(item_option), item_option )
+					context_menu.add_item(_get_context_menu_string(item_option), item_option)
 
-			context_menu.set_position( get_viewport().get_mouse_position() )
+			context_menu.set_position(get_viewport().get_mouse_position())
 			context_menu.popup()
 
 
@@ -181,17 +210,24 @@ func _on_item_selected(index: int):
 		current_player.request_unequip_item.rpc_id(1, current_item.item_type)
 	elif index == Item.ContextOptions.DROP:
 		if current_item.scene_path.is_empty() or not ResourceLoader.exists(current_item.scene_path):
-			push_warning("Cannot drop item '" + current_item.id + "': invalid scene path '" + current_item.scene_path + "'")
+			push_warning(
+				"Cannot drop item '" + current_item.id + "': invalid scene path '" + current_item.scene_path + "'"
+			)
 			return
-		current_player.add_world_item.rpc_id( 1, current_item.scene_path,  current_player.get_node("GodotRobot3D/InfrontArea3D").global_position )
-		current_player.request_remove_item.rpc_id( 1,  current_item.id, 1 )
+		current_player.add_world_item.rpc_id(
+			1, current_item.scene_path, current_player.get_node("GodotRobot3D/InfrontArea3D").global_position
+		)
+		current_player.request_remove_item.rpc_id(1, current_item.id, 1)
 		refresh_display()
+
 
 func _on_item_hovered(_slot_index: int, item: Item):
 	_show_tooltip(item)
 
+
 func _on_item_unhovered():
 	_hide_tooltip()
+
 
 func _show_tooltip(item: Item):
 	if not item:
@@ -210,11 +246,13 @@ func _show_tooltip(item: Item):
 	_tooltip_should_be_visible = true
 	_queue_tooltip_layout()
 
+
 func _hide_tooltip():
 	_tooltip_should_be_visible = false
 	_tooltip_layout_request += 1
 	tooltip.visible = false
 	tooltip.modulate = Color.WHITE
+
 
 func _queue_tooltip_layout() -> void:
 	_set_tooltip_width()
@@ -224,28 +262,19 @@ func _queue_tooltip_layout() -> void:
 	tooltip.visible = true
 	_apply_tooltip_layout_after_frame(request_id)
 
+
 func _apply_tooltip_layout_after_frame(request_id: int) -> void:
 	await get_tree().process_frame
-	if (
-		request_id != _tooltip_layout_request
-		or not _tooltip_should_be_visible
-		or not tooltip
-		or not tooltip_label
-	):
+	if request_id != _tooltip_layout_request or not _tooltip_should_be_visible or not tooltip or not tooltip_label:
 		return
 
 	var tooltip_size := tooltip.size
-	var available_height := minf(
-		TOOLTIP_MAX_HEIGHT,
-		maxf(1.0, size.y - TOOLTIP_SCREEN_MARGIN * 2.0)
-	)
-	tooltip_size.y = minf(
-		float(tooltip_label.get_content_height()) + TOOLTIP_VERTICAL_PADDING,
-		available_height
-	)
+	var available_height := minf(TOOLTIP_MAX_HEIGHT, maxf(1.0, size.y - TOOLTIP_SCREEN_MARGIN * 2.0))
+	tooltip_size.y = minf(float(tooltip_label.get_content_height()) + TOOLTIP_VERTICAL_PADDING, available_height)
 	tooltip.size = tooltip_size
 	_position_tooltip_smartly()
 	tooltip.modulate = Color.WHITE
+
 
 func _set_tooltip_width() -> void:
 	var tooltip_size := tooltip.size
@@ -258,6 +287,7 @@ func _set_tooltip_width() -> void:
 	var label_size := tooltip_label.size
 	label_size.x = label_minimum_size.x
 	tooltip_label.size = label_size
+
 
 func _position_tooltip_smartly():
 	var mouse_pos = get_global_mouse_position()
@@ -277,19 +307,16 @@ func _position_tooltip_smartly():
 
 	tooltip.global_position = tooltip_pos
 
+
 func _update_responsive_layout() -> void:
 	if not inventory_panels or not tooltip:
 		return
 	var available_size := Vector2(
-		maxf(1.0, size.x - SAFE_AREA_MARGIN * 2.0),
-		maxf(1.0, size.y - SAFE_AREA_MARGIN * 2.0)
+		maxf(1.0, size.x - SAFE_AREA_MARGIN * 2.0), maxf(1.0, size.y - SAFE_AREA_MARGIN * 2.0)
 	)
 	var content_size := inventory_panels.size
 	if content_size.x > 0.0 and content_size.y > 0.0:
-		var scale_factor := minf(
-			1.0,
-			minf(available_size.x / content_size.x, available_size.y / content_size.y)
-		)
+		var scale_factor := minf(1.0, minf(available_size.x / content_size.x, available_size.y / content_size.y))
 		inventory_panels.pivot_offset = content_size * 0.5
 		inventory_panels.scale = Vector2.ONE * scale_factor
 
@@ -297,31 +324,51 @@ func _update_responsive_layout() -> void:
 	if _tooltip_should_be_visible:
 		_queue_tooltip_layout()
 
+
 func _get_item_type_string(type: Item.ItemType) -> String:
+	var type_name := "Unknown"
 	match type:
-		Item.ItemType.WEAPON: return "Weapon"
-		Item.ItemType.HAT: return "Hat"
-		Item.ItemType.BACKPACK: return "Backpack"
-		Item.ItemType.CONSUMABLE: return "Consumable"
-		Item.ItemType.TOOL: return "Tool"
-		Item.ItemType.MISC: return "Miscellaneous"
-		_: return "Unknown"
+		Item.ItemType.WEAPON:
+			type_name = "Weapon"
+		Item.ItemType.HAT:
+			type_name = "Hat"
+		Item.ItemType.BACKPACK:
+			type_name = "Backpack"
+		Item.ItemType.CONSUMABLE:
+			type_name = "Consumable"
+		Item.ItemType.TOOL:
+			type_name = "Tool"
+		Item.ItemType.MISC:
+			type_name = "Miscellaneous"
+	return type_name
+
 
 func _get_rarity_string(rarity: Item.ItemRarity) -> String:
 	match rarity:
-		Item.ItemRarity.COMMON: return "Common"
-		Item.ItemRarity.UNCOMMON: return "Uncommon"
-		Item.ItemRarity.RARE: return "Rare"
-		Item.ItemRarity.EPIC: return "Epic"
-		Item.ItemRarity.LEGENDARY: return "Legendary"
-		_: return "Unknown"
+		Item.ItemRarity.COMMON:
+			return "Common"
+		Item.ItemRarity.UNCOMMON:
+			return "Uncommon"
+		Item.ItemRarity.RARE:
+			return "Rare"
+		Item.ItemRarity.EPIC:
+			return "Epic"
+		Item.ItemRarity.LEGENDARY:
+			return "Legendary"
+		_:
+			return "Unknown"
 
-func _get_context_menu_string( context: Item.ContextOptions ) -> String:
+
+func _get_context_menu_string(context: Item.ContextOptions) -> String:
 	match context:
-		Item.ContextOptions.DROP: return "Drop"
-		Item.ContextOptions.EQUIP: return "Equip"
-		Item.ContextOptions.UNEQUIP: return "Unequip"
-		_: return "Unknown"
+		Item.ContextOptions.DROP:
+			return "Drop"
+		Item.ContextOptions.EQUIP:
+			return "Equip"
+		Item.ContextOptions.UNEQUIP:
+			return "Unequip"
+		_:
+			return "Unknown"
 
 
 func handle_item_drop(from_slot: int, to_slot: int):
@@ -336,10 +383,12 @@ func handle_item_drop(from_slot: int, to_slot: int):
 	else:
 		current_player.request_move_item.rpc_id(1, from_slot, to_slot)
 
+
 func _on_close_pressed():
 	_hide_tooltip()
 	inventory_closed.emit()
 	visible = false
+
 
 func open_inventory(player: Character = null):
 	_hide_tooltip()
@@ -348,20 +397,25 @@ func open_inventory(player: Character = null):
 		update_inventory_display()
 	visible = true
 
+
 func close_inventory():
 	_hide_tooltip()
 	visible = false
 
+
 func refresh_display():
 	update_inventory_display()
+
 
 func handle_weapon_equip(from_slot: int, item: Dictionary):
 	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.WEAPON:
 		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.WEAPON)
 
+
 func handle_hat_equip(from_slot: int, item: Dictionary):
 	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.HAT:
 		current_player.request_equip_item.rpc_id(1, from_slot, Item.ItemType.HAT)
+
 
 func handle_backpack_equip(from_slot: int, item: Dictionary) -> void:
 	if current_player and from_slot >= 0 and item.inventory_type == Item.ItemType.BACKPACK:

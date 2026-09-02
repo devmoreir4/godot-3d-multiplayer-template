@@ -1,20 +1,18 @@
 extends Node
 
+signal player_connected(peer_id, player_info)
+signal server_disconnected
+
 const SERVER_ADDRESS: String = "127.0.0.1"
 const SERVER_PORT: int = 8080
-const MAX_PLAYERS : int = 10
+const MAX_PLAYERS: int = 10
 const MAX_NICK_LENGTH := 24
 const MAX_ADDRESS_LENGTH := 253
 
 var players = {}
-var player_info = {
-	"nick" : "host",
-	"skin" : Character.SkinColor.BLUE
-}
+var player_info = {"nick": "host", "skin": Character.SkinColor.BLUE}
 var _session_active := false
 
-signal player_connected(peer_id, player_info)
-signal server_disconnected
 
 func _ready() -> void:
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
@@ -23,11 +21,12 @@ func _ready() -> void:
 	multiplayer.peer_connected.connect(_on_player_connected)
 	multiplayer.connected_to_server.connect(_on_connected_ok)
 
+
 func start_host(nickname: String, skin_color_str: String):
 	var peer = ENetMultiplayerPeer.new()
 	var error = peer.create_server(SERVER_PORT, MAX_PLAYERS)
 	if error:
-		return 	error
+		return error
 
 	peer.host.compress(ENetConnection.COMPRESS_RANGE_CODER)
 	multiplayer.multiplayer_peer = peer
@@ -35,12 +34,13 @@ func start_host(nickname: String, skin_color_str: String):
 
 	player_info["nick"] = sanitize_nickname(nickname, "Host_" + str(multiplayer.get_unique_id()))
 	player_info["skin"] = skin_str_to_e(skin_color_str)
-	
+
 	if DisplayServer.get_name() == "headless":
 		return
 
 	players[1] = player_info
 	player_connected.emit(1, player_info)
+
 
 func join_game(nickname: String, skin_color_str: String, address: String = SERVER_ADDRESS):
 	address = sanitize_address(address)
@@ -59,17 +59,20 @@ func join_game(nickname: String, skin_color_str: String, address: String = SERVE
 	player_info["nick"] = sanitize_nickname(nickname, "Player_" + str(multiplayer.get_unique_id()))
 	player_info["skin"] = skin_str_to_e(skin_color_str)
 
+
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
 	players[peer_id] = player_info
 	player_connected.emit(peer_id, player_info)
 	_register_player.rpc_id(1, player_info)
 
+
 func _on_player_connected(id):
 	if not multiplayer.is_server():
 		return
 	for peer_id in players:
 		_sync_registered_player.rpc_id(id, peer_id, players[peer_id])
+
 
 @rpc("any_peer", "reliable")
 func _register_player(new_player_info):
@@ -87,20 +90,25 @@ func _register_player(new_player_info):
 	player_connected.emit(new_player_id, sanitized_info)
 	_sync_registered_player.rpc(new_player_id, sanitized_info)
 
+
 func _on_player_disconnected(id):
 	players.erase(id)
+
 
 func _on_connection_failed():
 	_finish_session()
 
+
 func _on_server_disconnected():
 	_finish_session()
+
 
 func leave_game() -> void:
 	var peer := multiplayer.multiplayer_peer
 	if peer:
 		peer.close()
 	_finish_session()
+
 
 func _finish_session() -> void:
 	var had_session := _session_active or multiplayer.multiplayer_peer != null or not players.is_empty()
@@ -110,13 +118,20 @@ func _finish_session() -> void:
 	if had_session:
 		server_disconnected.emit()
 
+
 func skin_str_to_e(s):
 	match str(s).strip_edges().to_lower():
-		"blue": return Character.SkinColor.BLUE
-		"yellow": return Character.SkinColor.YELLOW
-		"green": return Character.SkinColor.GREEN
-		"red": return Character.SkinColor.RED
-		_: return Character.SkinColor.BLUE
+		"blue":
+			return Character.SkinColor.BLUE
+		"yellow":
+			return Character.SkinColor.YELLOW
+		"green":
+			return Character.SkinColor.GREEN
+		"red":
+			return Character.SkinColor.RED
+		_:
+			return Character.SkinColor.BLUE
+
 
 @rpc("authority", "reliable")
 func _sync_registered_player(peer_id: int, registered_player_info: Dictionary):
@@ -128,11 +143,13 @@ func _sync_registered_player(peer_id: int, registered_player_info: Dictionary):
 	players[peer_id] = sanitized_info
 	player_connected.emit(peer_id, sanitized_info)
 
+
 func sanitize_player_info(info: Dictionary, fallback_nick: String) -> Dictionary:
 	return {
 		"nick": sanitize_nickname(str(info.get("nick", "")), fallback_nick),
 		"skin": sanitize_skin_value(info.get("skin", Character.SkinColor.BLUE))
 	}
+
 
 func sanitize_nickname(nickname: String, fallback: String) -> String:
 	var clean := ""
@@ -163,6 +180,7 @@ func sanitize_nickname(nickname: String, fallback: String) -> String:
 		clean = "Player"
 	return clean
 
+
 func sanitize_address(address: String) -> String:
 	var clean = address.strip_edges()
 	if clean.is_empty():
@@ -172,6 +190,7 @@ func sanitize_address(address: String) -> String:
 	if clean.contains("://") or clean.contains("/") or clean.contains("\\") or clean.contains(":"):
 		return ""
 	return clean
+
 
 func sanitize_skin_value(value) -> Character.SkinColor:
 	if value is int:

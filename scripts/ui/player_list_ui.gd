@@ -1,22 +1,25 @@
-extends Control
 class_name PlayerListUI
+extends Control
 
 const PLAYER_ROW_HEIGHT := 28.0
 const MAX_VISIBLE_ROWS := 8
 const RESERVED_VERTICAL_SPACE := 190.0
 const SAFE_AREA_MARGIN := 16.0
 
+var _player_count := 0
+
 @onready var panel: PanelContainer = $SafeArea/PositionContainer/Panel
 @onready var count_label: Label = $SafeArea/PositionContainer/Panel/MarginContainer/Content/Count
 @onready var player_scroll: ScrollContainer = $SafeArea/PositionContainer/Panel/MarginContainer/Content/PlayerScroll
-@onready var players_label: RichTextLabel = $SafeArea/PositionContainer/Panel/MarginContainer/Content/PlayerScroll/Players
+@onready
+var players_label: RichTextLabel = $SafeArea/PositionContainer/Panel/MarginContainer/Content/PlayerScroll/Players
 
-var _player_count := 0
 
 func _ready() -> void:
 	resized.connect(_update_layout)
 	_update_layout()
 	hide()
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible or not (event is InputEventMouseButton):
@@ -29,14 +32,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif mouse_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 		player_scroll.scroll_vertical += int(PLAYER_ROW_HEIGHT)
 
+
 func show_players(players: Dictionary, local_peer_id: int) -> void:
 	refresh_players(players, local_peer_id)
 	player_scroll.scroll_vertical = 0
 	show()
 	call_deferred("_apply_panel_scale")
 
+
 func hide_players() -> void:
 	hide()
+
 
 func refresh_players(players: Dictionary, local_peer_id: int) -> void:
 	var peer_ids: Array[int] = []
@@ -52,18 +58,18 @@ func refresh_players(players: Dictionary, local_peer_id: int) -> void:
 	for index in range(peer_ids.size()):
 		var peer_id := peer_ids[index]
 		var player_info: Dictionary = players.get(peer_id, {})
-		var nickname := Network.sanitize_nickname(
-			str(player_info.get("nick", "")),
-			"Player_" + str(peer_id)
-		)
+		var nickname := Network.sanitize_nickname(str(player_info.get("nick", "")), "Player_" + str(peer_id))
 		var local_marker := " [color=#c7ccd4](you)[/color]" if peer_id == local_peer_id else ""
 		players_label.append_text(
-			"[color=#a8adb5]>[/color] [b]%s[/b]%s [color=#9aa0a8]#%d[/color]"
-			% [_escape_bbcode(nickname), local_marker, peer_id]
+			(
+				"[color=#a8adb5]>[/color] [b]%s[/b]%s [color=#9aa0a8]#%d[/color]"
+				% [_escape_bbcode(nickname), local_marker, peer_id]
+			)
 		)
 		if index < peer_ids.size() - 1:
 			players_label.append_text("\n")
 	_update_layout()
+
 
 func _update_layout() -> void:
 	if not panel or not player_scroll:
@@ -84,22 +90,20 @@ func _update_layout() -> void:
 	players_label.custom_minimum_size = players_minimum_size
 	call_deferred("_apply_panel_scale")
 
+
 func _apply_panel_scale() -> void:
 	if not panel:
 		return
 	var available_size := Vector2(
-		maxf(1.0, size.x - SAFE_AREA_MARGIN * 2.0),
-		maxf(1.0, size.y - SAFE_AREA_MARGIN * 2.0)
+		maxf(1.0, size.x - SAFE_AREA_MARGIN * 2.0), maxf(1.0, size.y - SAFE_AREA_MARGIN * 2.0)
 	)
 	var panel_size := panel.size
 	if panel_size.x <= 0.0 or panel_size.y <= 0.0:
 		return
-	var scale_factor := minf(
-		1.0,
-		minf(available_size.x / panel_size.x, available_size.y / panel_size.y)
-	)
+	var scale_factor := minf(1.0, minf(available_size.x / panel_size.x, available_size.y / panel_size.y))
 	panel.pivot_offset = panel_size * 0.5
 	panel.scale = Vector2.ONE * scale_factor
+
 
 func _escape_bbcode(text: String) -> String:
 	return text.replace("[", "[lb]")

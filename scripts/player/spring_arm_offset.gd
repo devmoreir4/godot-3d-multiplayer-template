@@ -1,12 +1,13 @@
-extends Node3D
 class_name SpringArmCharacter
+extends Node3D
+
+signal perspective_changed(first_person: bool)
 
 const MOUSE_SENSIBILITY: float = 0.005
 
 @export_category("Objects")
 @export var _spring_arm: SpringArm3D = null
 @export var _first_person_anchor: Node3D = null
-@onready var _camera: Camera3D = _spring_arm.get_node_or_null("Camera3D") as Camera3D
 
 @export_category("Camera Perspective")
 @export_range(0.0, 10.0, 0.05) var third_person_distance := 5.0
@@ -19,7 +20,8 @@ var is_first_person := false
 var _yaw := 0.0
 var _pitch := 0.0
 
-signal perspective_changed(first_person: bool)
+@onready var _camera: Camera3D = _spring_arm.get_node_or_null("Camera3D") as Camera3D
+
 
 func _ready() -> void:
 	_yaw = rotation.y
@@ -27,10 +29,12 @@ func _ready() -> void:
 	_apply_axis_lock()
 	_apply_perspective()
 
+
 func _process(_delta: float) -> void:
 	_apply_axis_lock()
 	if is_first_person and _spring_arm and _first_person_anchor:
 		_spring_arm.global_position = _first_person_anchor.global_position
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_multiplayer_authority():
@@ -53,17 +57,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		return
 
-	_yaw = wrapf(
-		_yaw - event.relative.x * MOUSE_SENSIBILITY,
-		-PI,
-		PI
-	)
-	_pitch = clampf(
-		_pitch - event.relative.y * MOUSE_SENSIBILITY,
-		-PI / 4.0,
-		PI / 24.0
-	)
+	_yaw = wrapf(_yaw - event.relative.x * MOUSE_SENSIBILITY, -PI, PI)
+	_pitch = clampf(_pitch - event.relative.y * MOUSE_SENSIBILITY, -PI / 4.0, PI / 24.0)
 	_apply_axis_lock()
+
 
 func _apply_axis_lock() -> void:
 	rotation = Vector3(0.0, _yaw, 0.0)
@@ -71,6 +68,7 @@ func _apply_axis_lock() -> void:
 		_spring_arm.rotation = Vector3(_pitch, 0.0, 0.0)
 	if _camera:
 		_camera.rotation = Vector3.ZERO
+
 
 func _apply_perspective() -> void:
 	if not _spring_arm:

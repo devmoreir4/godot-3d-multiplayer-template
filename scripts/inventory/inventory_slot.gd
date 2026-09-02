@@ -4,8 +4,10 @@ extends RefCounted
 var item_id: String = ""
 var quantity: int = 0
 
+
 func is_empty() -> bool:
 	return item_id.is_empty() or quantity <= 0
+
 
 func add_item(item: Item, amount: int = 1) -> int:
 	var max_quantity = item.max_stack if item.stackable else 1
@@ -20,6 +22,7 @@ func add_item(item: Item, amount: int = 1) -> int:
 		return amount - amount_to_add
 	return amount
 
+
 func remove_item(amount: int = 1) -> int:
 	var removed = min(amount, quantity)
 	quantity -= removed
@@ -27,12 +30,15 @@ func remove_item(amount: int = 1) -> int:
 		clear()
 	return removed
 
+
 func clear() -> void:
 	item_id = ""
 	quantity = 0
 
+
 func to_dict() -> Dictionary:
 	return {"item_id": item_id, "quantity": quantity}
+
 
 func from_dict(data: Dictionary) -> void:
 	item_id = data.get("item_id", "")
