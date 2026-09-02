@@ -24,7 +24,7 @@ labels: bug
 
 ## Environment
 
-- **Godot version:** <!-- e.g. 4.6-stable -->
+- **Godot version:** <!-- e.g. 4.7-stable -->
 - **OS:** <!-- e.g. Windows 11, Ubuntu 22.04 -->
 - **Mode tested:** <!-- Host / Client / Dedicated server -->
 - **Number of players connected:** <!-- e.g. 2 -->

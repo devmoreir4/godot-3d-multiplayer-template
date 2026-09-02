@@ -18,9 +18,33 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GODOT_VERSION: 4.6-stable
+  GODOT_VERSION: 4.7-stable
 
 jobs:
+  gdscript-quality:
+    name: GDScript lint and format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install development tools
+        run: python -m pip install --requirement requirements-dev.txt
+
+      - name: Lint GDScript
+        run: gdlint scripts
+
+      - name: Check GDScript formatting
+        run: gdformat --check scripts
+
   godot-headless-check:
     name: Godot headless check
     runs-on: ubuntu-latest

@@ -22,7 +22,7 @@ server, and how many players were connected.
 ## Contributing pull requests
 
 Direct pushes to `main` are not allowed. All changes go through a pull request,
-which must pass the CI check before merging.
+which must pass the CI checks before merging.
 
 Before opening a pull request:
 
@@ -59,6 +59,14 @@ Examples: `fix: chat freeze when player disconnects`, `feat: add player skin sel
 
 There is no automated test suite in this repository. Validate changes manually
 before opening a pull request.
+
+Install the development tools and verify GDScript quality before submitting:
+
+```bash
+python -m pip install --requirement requirements-dev.txt
+gdlint scripts
+gdformat --check scripts
+```
 
 For local multiplayer testing, use **Debug > Customize Run Instances** in the
 Godot editor, enable multiple instances, and run at least two players.
