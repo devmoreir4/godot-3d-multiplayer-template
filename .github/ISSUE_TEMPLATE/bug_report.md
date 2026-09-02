@@ -1,34 +1,36 @@
-﻿---
+---
 name: Bug Report
 about: Report a bug or unexpected behavior
+title: ""
 labels: bug
+assignees: ""
 ---
 
 ## Description
 
-<!-- A short, clear description of what is happening. -->
+<!-- A short description of what happened. -->
 
 ## Steps to Reproduce
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Expected Behavior
 
-<!-- What should happen instead? -->
+<!-- What did you expect to happen? -->
 
 ## Actual Behavior
 
-<!-- What actually happens? -->
+<!-- What happened instead? -->
 
 ## Environment
 
 - **Godot version:** <!-- e.g. 4.7-stable -->
-- **OS:** <!-- e.g. Windows 11, Ubuntu 22.04 -->
-- **Mode tested:** <!-- Host / Client / Dedicated server -->
-- **Number of players connected:** <!-- e.g. 2 -->
+- **Operating system:**
+- **Tested as:** <!-- Host, client, or dedicated server -->
+- **Number of connected players:**
 
 ## Additional Context
 
-<!-- Screenshots, videos, logs, or anything else that helps explain the problem. -->
+<!-- Add any relevant screenshots, videos, or logs. -->

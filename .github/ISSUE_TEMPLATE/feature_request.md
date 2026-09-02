@@ -1,21 +1,23 @@
-﻿---
+---
 name: Feature Request
-about: Suggest a new feature or improvement for the template
+about: Suggest an improvement for the template
+title: ""
 labels: enhancement
+assignees: ""
 ---
 
 ## Summary
 
-<!-- One sentence describing what you want added or changed. -->
+<!-- Describe the requested feature. -->
 
 ## Motivation
 
-<!-- Why would this be useful for this template? What problem does it solve? -->
+<!-- Explain the problem this feature would solve. -->
 
 ## Proposed Solution
 
-<!-- If you have an idea of how it could work, describe it here. Mockups, pseudocode, or examples are welcome. -->
+<!-- Describe how the feature could work. -->
 
 ## Alternatives Considered
 
-<!-- Have you considered other approaches? Why did you prefer this one? -->
+<!-- Describe any alternatives you considered. -->

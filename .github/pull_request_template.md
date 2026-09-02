@@ -1,4 +1,4 @@
-﻿## Description
+## Description
 
 <!-- What does this PR change and why? Link related issues with "Closes #N" if applicable. -->
 
